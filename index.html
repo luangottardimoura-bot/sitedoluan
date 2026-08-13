@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almanaque do Futebol Clássico</title>
+
+    <style>
+        :root {
+            --bg-color: #f4efe6;
+            --card-bg: #eae3d2;
+            --text-primary: #2b261f;
+            --text-secondary: #5c5346;
+            --accent-gold: #b8860b;
+            --border-color: #8c7a6b;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding-bottom: 40px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--card-bg);
+            border-bottom: 3px double var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 320px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            filter: grayscale(100%) sepia(30%); /* Efeito foto antiga */
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .card-content p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .like-btn {
+            background-color: #3b3228;
+            color: #f4efe6;
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            align-self: flex-start;
+        }
+
+        .like-btn:hover {
+            background-color: #524638;
+        }
+
+        .like-btn.liked {
+            background-color: var(--accent-gold);
+            color: #2b261f;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📜 Almanaque do Futebol de Raíz</h1>
+        <p>Recordando a época de ouro das chuteiras de couro e dos grandes mitos</p>
+    </header>
+
+    <main class="gallery-container">
+
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?w=500&q=80" alt="Bola de futebol vintage de couro">
+            <div class="card-content">
+                <h3>A Clássica Bola de Couro</h3>
+                <p>Muito mais pesada e costurada a mão. Em dias de chuva, dobrava de peso e exigia pura raça dos atletas.</p>
+                <button type="button" class="like-btn">
+                    🏆 <span class="like-count">0</span> Aplausos
+                </button>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&q=80" alt="Estádio antigo lotado">
+            <div class="card-content">
+                <h3>Arquibancadas Lotadas</h3>
+                <p>A paixão das torcidas sem divisórias modernas, com rádios de pilha grudados no ouvido durante os 90 minutos.</p>
+                <button type="button" class="like-btn">
+                    🏆 <span class="like-count">0</span> Aplausos
+                </button>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?w=500&q=80" alt="Gramado e chuteira clássica">
+            <div class="card-content">
+                <h3>O Famoso Esquema 4-2-4</h3>
+                <p>A era dos pontas velocistas e atacantes artilheiros que jogavam por amor à camisa do clube.</p>
+                <button type="button" class="like-btn">
+                    🏆 <span class="like-count">0</span> Aplausos
+                </button>
+            </div>
+        </article>
+
+    </main>
+
+    <script>
+        const botoesVoto = document.querySelectorAll('.like-btn');
+
+        botoesVoto.forEach((botao) => {
+            botao.addEventListener('click', () => {
+                const spanContador = botao.querySelector('.like-count');
+                let votosAtuais = parseInt(spanContador.textContent, 10);
+
+                const foiVotado = botao.classList.toggle('liked');
+
+                if (foiVotado) {
+                    votosAtuais++;
+                } else {
+                    votosAtuais--;
+                }
+
+                spanContador.textContent = votosAtuais;
+            });
+        });
+    </script>
+</body>
+</html>
