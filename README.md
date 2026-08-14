@@ -2,265 +2,229 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Nico: A Grande Aventura</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Nico: Zona Zumbi</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #10182e;
-    font-family: Arial, Helvetica, sans-serif;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#07100d;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-body {
-    touch-action: none;
+body{
+    touch-action:none;
 }
 
-#game {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+#game{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
 }
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    image-rendering: auto;
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
 }
 
-/* HUD */
+/* ================= HUD ================= */
 
-#hud {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+#hud{
+    position:fixed;
+    z-index:20;
+    top:14px;
+    left:50%;
+    transform:translateX(-50%);
 
-    z-index: 20;
+    display:flex;
+    gap:12px;
+    align-items:center;
 
-    display: flex;
-    align-items: center;
-    gap: 24px;
+    padding:10px 16px;
 
-    padding: 10px 20px;
+    color:white;
+    background:rgba(5,12,10,.82);
 
-    color: white;
+    border:2px solid rgba(255,255,255,.18);
+    border-radius:16px;
 
-    background: rgba(15, 25, 55, .78);
+    box-shadow:0 8px 30px rgba(0,0,0,.4);
 
-    border: 2px solid rgba(255,255,255,.22);
-    border-radius: 18px;
+    font-weight:900;
+    font-size:15px;
 
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.25),
-        inset 0 1px rgba(255,255,255,.15);
-
-    backdrop-filter: blur(8px);
-
-    font-size: 16px;
-    font-weight: 800;
-
-    white-space: nowrap;
+    white-space:nowrap;
 }
 
-.hud-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
+.hudItem{
+    display:flex;
+    gap:5px;
+    align-items:center;
 }
 
-/* TELA INICIAL / FINAL */
+/* ================= TELA ================= */
 
-.screen {
-    position: fixed;
-    inset: 0;
+.screen{
+    position:fixed;
+    inset:0;
+    z-index:50;
 
-    z-index: 50;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding:20px;
 
     background:
         radial-gradient(
             circle at center,
-            rgba(44, 93, 180, .35),
-            rgba(7, 12, 30, .92)
+            rgba(45,90,65,.5),
+            rgba(2,7,6,.96)
         );
-
-    padding: 20px;
 }
 
-.panel {
-    width: min(650px, 94vw);
+.panel{
+    width:min(680px,94vw);
 
-    padding: 38px 28px;
+    padding:38px 28px;
 
-    color: white;
-    text-align: center;
+    color:white;
+    text-align:center;
 
     background:
         linear-gradient(
             145deg,
-            rgba(39,64,120,.96),
-            rgba(20,28,65,.97)
+            rgba(25,55,42,.97),
+            rgba(7,18,14,.98)
         );
 
-    border: 2px solid rgba(255,255,255,.2);
-    border-radius: 28px;
+    border:2px solid rgba(115,255,150,.25);
+    border-radius:25px;
 
     box-shadow:
-        0 30px 80px rgba(0,0,0,.5),
-        inset 0 1px rgba(255,255,255,.15);
+        0 30px 80px rgba(0,0,0,.65),
+        inset 0 1px rgba(255,255,255,.1);
 }
 
-.logo {
-    font-size: clamp(38px, 8vw, 70px);
-    font-weight: 1000;
-    letter-spacing: -3px;
+.logo{
+    font-size:clamp(42px,9vw,78px);
+    font-weight:1000;
+    letter-spacing:-4px;
 
-    color: #fff;
+    color:#d8ff55;
 
     text-shadow:
-        0 5px 0 #174ea6,
-        0 10px 20px rgba(0,0,0,.35);
+        0 5px 0 #427316,
+        0 10px 30px rgba(0,0,0,.7);
 }
 
-.subtitle {
-    margin-top: 8px;
-    margin-bottom: 25px;
-
-    color: #cfe8ff;
-
-    font-size: 19px;
+.subtitle{
+    margin:5px 0 25px;
+    color:#a7dcb5;
+    font-size:21px;
+    font-weight:bold;
 }
 
-.panel h2 {
-    font-size: clamp(28px, 6vw, 46px);
-    margin-bottom: 12px;
+.panel p{
+    color:#dceee2;
+    line-height:1.6;
 }
 
-.panel p {
-    line-height: 1.6;
-    color: #dce8ff;
-}
+.button{
+    margin-top:25px;
 
-.game-button {
-    margin-top: 25px;
+    padding:15px 35px;
 
-    padding: 15px 34px;
+    border:0;
+    border-radius:13px;
 
-    border: 0;
-    border-radius: 14px;
+    background:linear-gradient(#dcff63,#87c92c);
+    color:#17220d;
 
-    color: #17213d;
-    background: linear-gradient(#ffe66b, #ffc928);
+    font-size:20px;
+    font-weight:1000;
 
-    font-size: 20px;
-    font-weight: 900;
-
-    cursor: pointer;
+    cursor:pointer;
 
     box-shadow:
-        0 5px 0 #c28d00,
-        0 12px 25px rgba(0,0,0,.25);
-
-    transition:
-        transform .12s,
-        filter .12s;
+        0 5px 0 #477b19,
+        0 12px 25px rgba(0,0,0,.35);
 }
 
-.game-button:hover {
-    filter: brightness(1.08);
-    transform: translateY(-2px);
+.button:active{
+    transform:translateY(4px);
+    box-shadow:0 1px 0 #477b19;
 }
 
-.game-button:active {
-    transform: translateY(4px);
-    box-shadow: 0 1px 0 #c28d00;
+/* ================= CONTROLES ================= */
+
+#controls{
+    position:fixed;
+    z-index:30;
+    left:0;
+    right:0;
+    bottom:18px;
+
+    display:none;
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    pointer-events:none;
 }
 
-/* CONTROLES MOBILE */
-
-#mobileControls {
-    position: fixed;
-
-    z-index: 30;
-
-    left: 0;
-    right: 0;
-    bottom: 18px;
-
-    display: none;
-
-    justify-content: space-between;
-
-    padding: 0 18px;
-
-    pointer-events: none;
+.group{
+    display:flex;
+    gap:10px;
 }
 
-.mobile-group {
-    display: flex;
-    gap: 12px;
+.control{
+    width:64px;
+    height:64px;
+
+    border-radius:50%;
+
+    border:3px solid rgba(255,255,255,.65);
+
+    background:rgba(5,15,10,.65);
+
+    color:white;
+    font-size:25px;
+    font-weight:bold;
+
+    pointer-events:auto;
 }
 
-.mobile-button {
-    width: 66px;
-    height: 66px;
-
-    border-radius: 50%;
-
-    color: white;
-
-    background: rgba(12,22,48,.65);
-
-    border: 3px solid rgba(255,255,255,.7);
-
-    font-size: 27px;
-    font-weight: bold;
-
-    box-shadow: 0 6px 15px rgba(0,0,0,.25);
-
-    pointer-events: auto;
-
-    user-select: none;
-    -webkit-user-select: none;
+.control:active{
+    transform:scale(.9);
+    background:rgba(130,255,130,.25);
 }
 
-.mobile-button:active {
-    transform: scale(.92);
-    background: rgba(255,255,255,.25);
+.hidden{
+    display:none!important;
 }
 
-@media (max-width: 800px) {
-    #mobileControls {
-        display: flex;
+@media(max-width:800px){
+    #controls{
+        display:flex;
     }
 
-    #hud {
-        top: 9px;
-        gap: 10px;
-        padding: 8px 12px;
-        font-size: 13px;
+    #hud{
+        top:8px;
+        gap:7px;
+        padding:7px 9px;
+        font-size:12px;
     }
-}
-
-.hidden {
-    display: none !important;
 }
 </style>
 </head>
@@ -269,1947 +233,1437 @@ canvas {
 
 <div id="game">
 
-    <canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
 
-    <div id="hud">
+<div id="hud">
+    <div class="hudItem">❤️ <span id="lives">3</span></div>
+    <div class="hudItem">🔫 <span id="ammo">30</span></div>
+    <div class="hudItem">🧟 <span id="kills">0</span></div>
+    <div class="hudItem">⭐ <span id="score">0</span></div>
+    <div class="hudItem">🏆 <span id="mission">0%</span></div>
+</div>
 
-        <div class="hud-item">
-            🪙 <span id="coins">0</span>
+<div id="start" class="screen">
+    <div class="panel">
+
+        <div class="logo">NICO</div>
+
+        <div class="subtitle">
+            ZONA ZUMBI
         </div>
 
-        <div class="hud-item">
-            ❤️ <span id="lives">3</span>
-        </div>
+        <p>
+            A cidade foi tomada por zumbis!
+            Explore o mapa, sobreviva aos ataques,
+            encontre munição e elimine todos os inimigos.
+        </p>
 
-        <div class="hud-item">
-            ⭐ <span id="score">0</span>
-        </div>
+        <p style="margin-top:12px">
+            <b>← →</b> mover •
+            <b>↑</b> pular •
+            <b>ESPAÇO</b> atirar
+        </p>
 
-        <div class="hud-item">
-            🏁 <span id="level">1</span>/3
-        </div>
-
-    </div>
-
-    <div id="startScreen" class="screen">
-
-        <div class="panel">
-
-            <div class="logo">
-                NICO
-            </div>
-
-            <div class="subtitle">
-                A Grande Aventura
-            </div>
-
-            <p>
-                Ajude Nico a atravessar o mundo,
-                pegar moedas, derrotar os Bubus
-                e chegar à bandeira!
-            </p>
-
-            <p style="margin-top:10px">
-                <b>← →</b> mover &nbsp; • &nbsp;
-                <b>Espaço / ↑</b> pular
-            </p>
-
-            <button id="startButton" class="game-button">
-                JOGAR AGORA
-            </button>
-
-        </div>
-
-    </div>
-
-    <div id="endScreen" class="screen hidden">
-
-        <div class="panel">
-
-            <h2 id="endTitle">
-                Você venceu! 🏆
-            </h2>
-
-            <p id="endText">
-                Nico terminou a aventura!
-            </p>
-
-            <button id="restartButton" class="game-button">
-                JOGAR NOVAMENTE
-            </button>
-
-        </div>
-
-    </div>
-
-    <div id="mobileControls">
-
-        <div class="mobile-group">
-
-            <button
-                class="mobile-button"
-                id="leftButton">
-                ◀
-            </button>
-
-            <button
-                class="mobile-button"
-                id="rightButton">
-                ▶
-            </button>
-
-        </div>
-
-        <button
-            class="mobile-button"
-            id="jumpButton">
-            ▲
+        <button id="startButton" class="button">
+            COMEÇAR MISSÃO
         </button>
 
     </div>
+</div>
+
+<div id="end" class="screen hidden">
+    <div class="panel">
+
+        <h1 id="endTitle">
+            MISSÃO CONCLUÍDA!
+        </h1>
+
+        <p id="endText"></p>
+
+        <button id="restart" class="button">
+            JOGAR NOVAMENTE
+        </button>
+
+    </div>
+</div>
+
+<div id="controls">
+
+    <div class="group">
+        <button class="control" id="left">◀</button>
+        <button class="control" id="right">▶</button>
+    </div>
+
+    <div class="group">
+        <button class="control" id="shoot">🔫</button>
+        <button class="control" id="jump">▲</button>
+    </div>
+
+</div>
 
 </div>
 
 <script>
 "use strict";
 
-/* =========================================================
-   NICO — A GRANDE AVENTURA
-   JOGO DE PLATAFORMA EM CANVAS
-========================================================= */
+/* =====================================================
+   NICO — ZONA ZUMBI
+===================================================== */
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-const coinsEl = document.getElementById("coins");
-const livesEl = document.getElementById("lives");
-const scoreEl = document.getElementById("score");
-const levelEl = document.getElementById("level");
+let W=innerWidth;
+let H=innerHeight;
 
-const startScreen = document.getElementById("startScreen");
-const endScreen = document.getElementById("endScreen");
+function resize(){
 
-const endTitle = document.getElementById("endTitle");
-const endText = document.getElementById("endText");
+    W=innerWidth;
+    H=innerHeight;
 
-const startButton = document.getElementById("startButton");
-const restartButton = document.getElementById("restartButton");
+    const dpr=Math.min(devicePixelRatio||1,2);
 
+    canvas.width=W*dpr;
+    canvas.height=H*dpr;
 
-/* =========================================================
-   CANVAS
-========================================================= */
+    canvas.style.width=W+"px";
+    canvas.style.height=H+"px";
 
-let W = window.innerWidth;
-let H = window.innerHeight;
-
-function resize() {
-
-    W = window.innerWidth;
-    H = window.innerHeight;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    canvas.width = W * dpr;
-    canvas.height = H * dpr;
-
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-window.addEventListener("resize", resize);
-
+addEventListener("resize",resize);
 resize();
 
 
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
-
-const TILE = 48;
-
-const GRAVITY = 0.72;
-
-const MOVE_SPEED = 6.2;
-
-const JUMP_FORCE = 15;
-
-const MAX_LIVES = 3;
-
-const LEVEL_WIDTH = 4200;
-
-
-/* =========================================================
+/* =====================================================
    ESTADO
-========================================================= */
+===================================================== */
 
-const state = {
-
-    running: false,
-
-    level: 1,
-
-    cameraX: 0,
-
-    score: 0,
-
-    coins: 0,
-
-    lives: MAX_LIVES,
-
-    time: 0,
-
-    shake: 0
+const state={
+    running:false,
+    camera:0,
+    score:0,
+    kills:0,
+    lives:3,
+    ammo:30,
+    maxAmmo:30,
+    shake:0,
+    time:0
 };
 
 
-/* =========================================================
-   TECLAS
-========================================================= */
+/* =====================================================
+   CONTROLES
+===================================================== */
 
-const keys = {
-
-    left: false,
-
-    right: false,
-
-    jump: false
+const keys={
+    left:false,
+    right:false,
+    jump:false,
+    shoot:false
 };
 
+let jumpPressed=false;
+let shootPressed=false;
 
-let jumpPressed = false;
+addEventListener("keydown",e=>{
 
+    const k=e.key.toLowerCase();
 
-document.addEventListener("keydown", event => {
-
-    const key = event.key.toLowerCase();
-
-    if (
-        key === "arrowleft" ||
-        key === "a"
-    ) {
-
-        keys.left = true;
-        event.preventDefault();
+    if(k==="arrowleft"||k==="a"){
+        keys.left=true;
+        e.preventDefault();
     }
 
-    if (
-        key === "arrowright" ||
-        key === "d"
-    ) {
-
-        keys.right = true;
-        event.preventDefault();
+    if(k==="arrowright"||k==="d"){
+        keys.right=true;
+        e.preventDefault();
     }
 
-    if (
-        key === "arrowup" ||
-        key === "w" ||
-        key === " "
-    ) {
+    if(k==="arrowup"||k==="w"){
+        if(!keys.jump) jumpPressed=true;
+        keys.jump=true;
+        e.preventDefault();
+    }
 
-        if (!keys.jump) {
-            jumpPressed = true;
-        }
-
-        keys.jump = true;
-
-        event.preventDefault();
+    if(k===" "){
+        shootPressed=true;
+        keys.shoot=true;
+        e.preventDefault();
     }
 });
 
+addEventListener("keyup",e=>{
 
-document.addEventListener("keyup", event => {
+    const k=e.key.toLowerCase();
 
-    const key = event.key.toLowerCase();
+    if(k==="arrowleft"||k==="a")
+        keys.left=false;
 
-    if (
-        key === "arrowleft" ||
-        key === "a"
-    ) {
-        keys.left = false;
-    }
+    if(k==="arrowright"||k==="d")
+        keys.right=false;
 
-    if (
-        key === "arrowright" ||
-        key === "d"
-    ) {
-        keys.right = false;
-    }
+    if(k==="arrowup"||k==="w")
+        keys.jump=false;
 
-    if (
-        key === "arrowup" ||
-        key === "w" ||
-        key === " "
-    ) {
-        keys.jump = false;
-    }
+    if(k===" ")
+        keys.shoot=false;
 });
 
 
-/* =========================================================
-   CONTROLES MOBILE
-========================================================= */
+function button(id,key){
 
-function holdButton(button, property) {
+    const b=document.getElementById(id);
 
-    button.addEventListener("pointerdown", event => {
+    b.addEventListener("pointerdown",e=>{
 
-        event.preventDefault();
+        e.preventDefault();
 
-        if (property === "jump") {
-            jumpPressed = true;
-        }
+        if(key==="jump")
+            jumpPressed=true;
 
-        keys[property] = true;
+        if(key==="shoot")
+            shootPressed=true;
 
-        try {
-            button.setPointerCapture(event.pointerId);
-        } catch (_) {}
+        keys[key]=true;
+
+        try{
+            b.setPointerCapture(e.pointerId);
+        }catch(_){}
     });
 
-    const release = () => {
-        keys[property] = false;
+    const release=()=>{
+        keys[key]=false;
     };
 
-    button.addEventListener("pointerup", release);
-    button.addEventListener("pointercancel", release);
-    button.addEventListener("lostpointercapture", release);
+    b.addEventListener("pointerup",release);
+    b.addEventListener("pointercancel",release);
+    b.addEventListener("lostpointercapture",release);
 }
 
-
-holdButton(
-    document.getElementById("leftButton"),
-    "left"
-);
-
-holdButton(
-    document.getElementById("rightButton"),
-    "right"
-);
-
-holdButton(
-    document.getElementById("jumpButton"),
-    "jump"
-);
+button("left","left");
+button("right","right");
+button("jump","jump");
+button("shoot","shoot");
 
 
-/* =========================================================
-   NICO
-========================================================= */
+/* =====================================================
+   JOGADOR
+===================================================== */
 
-const player = {
+const player={
 
-    x: 120,
+    x:160,
+    y:0,
 
-    y: 300,
+    w:42,
+    h:62,
 
-    w: 42,
+    vx:0,
+    vy:0,
 
-    h: 62,
+    speed:6,
+    jump:15,
 
-    vx: 0,
+    grounded:false,
+    facing:1,
 
-    vy: 0,
+    shootCooldown:0,
+    invincible:0,
 
-    grounded: false,
-
-    facing: 1,
-
-    invincible: 0,
-
-    animation: 0,
-
-    squash: 1,
-
-    dead: false
+    animation:0
 };
 
 
-/* =========================================================
+/* =====================================================
    MUNDO
-========================================================= */
+===================================================== */
 
-let platforms = [];
-let coins = [];
-let enemies = [];
-let particles = [];
-let clouds = [];
-let decorations = [];
+const WORLD=5200;
 
-let finishX = 3900;
+const ground={
+    y:0,
+    h:300
+};
+
+let platforms=[];
+let zombies=[];
+let bullets=[];
+let particles=[];
+let ammoBoxes=[];
+let medkits=[];
+let trees=[];
+let buildings=[];
 
 
-/* =========================================================
-   CRIAR NÍVEL
-========================================================= */
+/* =====================================================
+   CRIAR MUNDO
+===================================================== */
 
-function createLevel(level) {
+function createWorld(){
 
-    platforms = [];
-    coins = [];
-    enemies = [];
-    particles = [];
-    decorations = [];
+    platforms=[];
+    zombies=[];
+    bullets=[];
+    particles=[];
+    ammoBoxes=[];
+    medkits=[];
+    trees=[];
+    buildings=[];
 
-    player.x = 120;
-    player.y = 300;
+    ground.y=H-105;
 
-    player.vx = 0;
-    player.vy = 0;
+    player.x=160;
+    player.y=ground.y-player.h;
 
-    player.grounded = false;
-
-    player.dead = false;
-
-    state.cameraX = 0;
-
-    const groundY = H - 105;
-
-    /* CHÃO */
-
-    platforms.push({
-        x: 0,
-        y: groundY,
-        w: LEVEL_WIDTH + 400,
-        h: 200,
-        ground: true
-    });
-
+    player.vx=0;
+    player.vy=0;
 
     /* PLATAFORMAS */
 
-    const layouts = [
-
-        [480, groundY - 100, 220],
-        [820, groundY - 180, 180],
-        [1120, groundY - 100, 250],
-        [1500, groundY - 210, 220],
-        [1840, groundY - 120, 260],
-        [2220, groundY - 230, 200],
-        [2520, groundY - 130, 260],
-        [2900, groundY - 210, 230],
-        [3250, groundY - 110, 270],
-        [3600, groundY - 220, 220]
+    const p=[
+        [500,ground.y-100,220],
+        [900,ground.y-180,190],
+        [1220,ground.y-110,250],
+        [1600,ground.y-210,220],
+        [1950,ground.y-120,260],
+        [2350,ground.y-230,220],
+        [2700,ground.y-130,280],
+        [3150,ground.y-220,230],
+        [3500,ground.y-120,300],
+        [4000,ground.y-210,250],
+        [4400,ground.y-120,300]
     ];
 
-    for (const p of layouts) {
+    for(const a of p){
 
         platforms.push({
-            x: p[0],
-            y: p[1],
-            w: p[2],
-            h: 32,
-            ground: false
+            x:a[0],
+            y:a[1],
+            w:a[2],
+            h:28
         });
     }
 
 
-    /* BLOCOS */
+    /* ZUMBIS */
 
-    const blocks = [
-        [560, groundY - 190],
-        [620, groundY - 190],
-        [875, groundY - 270],
-        [1180, groundY - 190],
-        [1240, groundY - 190],
-        [1580, groundY - 300],
-        [1930, groundY - 210],
-        [2280, groundY - 320],
-        [2600, groundY - 220],
-        [2970, groundY - 300],
-        [3310, groundY - 200],
-        [3670, groundY - 310]
+    const positions=[
+        650,1050,1350,1750,
+        2100,2500,2900,3300,
+        3700,4100,4500,4800
     ];
 
-    for (const b of blocks) {
+    positions.forEach((x,i)=>{
 
-        platforms.push({
-            x: b[0],
-            y: b[1],
-            w: TILE,
-            h: TILE,
-            block: true
+        zombies.push({
+
+            x,
+            y:ground.y-55,
+
+            w:46,
+            h:52,
+
+            vx:0,
+            vy:0,
+
+            speed:1.0+Math.random()*.55,
+
+            health:i%4===0?2:1,
+
+            alive:true,
+
+            animation:Math.random()*10
+        });
+    });
+
+
+    /* CAIXAS DE MUNIÇÃO */
+
+    [780,1450,2300,3200,3950,4700]
+    .forEach(x=>{
+        ammoBoxes.push({
+            x,
+            y:ground.y-35,
+            collected:false
+        });
+    });
+
+
+    /* KITS */
+
+    [1100,2850,4300]
+    .forEach(x=>{
+        medkits.push({
+            x,
+            y:ground.y-35,
+            collected:false
+        });
+    });
+
+
+    /* ÁRVORES */
+
+    for(let x=250;x<WORLD;x+=180+Math.random()*130){
+
+        trees.push({
+            x,
+            y:ground.y,
+            scale:.8+Math.random()*.6
         });
     }
 
 
-    /* MOEDAS */
+    /* PRÉDIOS */
 
-    const coinPositions = [
+    for(let x=350;x<WORLD;x+=500){
 
-        [520, groundY - 155],
-        [575, groundY - 155],
-        [630, groundY - 155],
-
-        [850, groundY - 240],
-        [900, groundY - 240],
-        [950, groundY - 240],
-
-        [1160, groundY - 155],
-        [1220, groundY - 155],
-        [1280, groundY - 155],
-
-        [1530, groundY - 270],
-        [1590, groundY - 270],
-        [1650, groundY - 270],
-
-        [1880, groundY - 175],
-        [1940, groundY - 175],
-        [2000, groundY - 175],
-
-        [2260, groundY - 290],
-        [2320, groundY - 290],
-        [2380, groundY - 290],
-
-        [2570, groundY - 185],
-        [2630, groundY - 185],
-        [2690, groundY - 185],
-
-        [2940, groundY - 270],
-        [3000, groundY - 270],
-        [3060, groundY - 270],
-
-        [3290, groundY - 170],
-        [3350, groundY - 170],
-        [3410, groundY - 170],
-
-        [3640, groundY - 290],
-        [3700, groundY - 290],
-        [3760, groundY - 290]
-    ];
-
-    for (const c of coinPositions) {
-
-        coins.push({
-            x: c[0],
-            y: c[1],
-            r: 13,
-            collected: false,
-            spin: Math.random() * Math.PI * 2
+        buildings.push({
+            x,
+            w:130+Math.random()*100,
+            h:100+Math.random()*140
         });
     }
-
-
-    /* BUBUS */
-
-    const bubuPositions = [
-
-        [700, groundY - 45],
-        [1050, groundY - 45],
-        [1370, groundY - 45],
-        [1770, groundY - 45],
-        [2140, groundY - 45],
-        [2470, groundY - 45],
-        [2820, groundY - 45],
-        [3180, groundY - 45],
-        [3540, groundY - 45]
-    ];
-
-    for (let i = 0; i < bubuPositions.length; i++) {
-
-        enemies.push({
-
-            x: bubuPositions[i][0],
-
-            y: bubuPositions[i][1],
-
-            w: 48,
-
-            h: 44,
-
-            vx: i % 2 === 0 ? 1.1 : -1.1,
-
-            vy: 0,
-
-            alive: true,
-
-            minX: bubuPositions[i][0] - 70,
-
-            maxX: bubuPositions[i][0] + 70,
-
-            animation: Math.random() * 10
-        });
-    }
-
-
-    finishX = 3950;
-
-
-    /* NUVENS */
-
-    clouds = [];
-
-    for (let i = 0; i < 25; i++) {
-
-        clouds.push({
-
-            x: i * 220 + Math.random() * 80,
-
-            y: 60 + Math.random() * 180,
-
-            scale: .65 + Math.random() * .8
-        });
-    }
-
-
-    /* DECORAÇÕES */
-
-    for (let i = 0; i < 80; i++) {
-
-        decorations.push({
-
-            x: i * 65 + Math.random() * 40,
-
-            type: Math.random() > .5
-                ? "flower"
-                : "grass"
-        });
-    }
-
-    updateHUD();
 }
 
 
-/* =========================================================
-   UTILIDADES
-========================================================= */
+/* =====================================================
+   COLISÃO
+===================================================== */
 
-function clamp(value, min, max) {
+function overlap(a,b){
 
-    return Math.max(
-        min,
-        Math.min(max, value)
+    return(
+        a.x<b.x+b.w &&
+        a.x+a.w>b.x &&
+        a.y<b.y+b.h &&
+        a.y+a.h>b.y
     );
 }
 
 
-function overlap(a, b) {
-
-    return (
-        a.x < b.x + b.w &&
-        a.x + a.w > b.x &&
-        a.y < b.y + b.h &&
-        a.y + a.h > b.y
-    );
-}
-
-
-function playerRect() {
-
-    return {
-
-        x: player.x,
-
-        y: player.y,
-
-        w: player.w,
-
-        h: player.h
-    };
-}
-
-
-/* =========================================================
+/* =====================================================
    PARTÍCULAS
-========================================================= */
+===================================================== */
 
-function spawnParticles(
-    x,
-    y,
-    color,
-    amount = 8
-) {
+function particles(x,y,color,count=10){
 
-    for (let i = 0; i < amount; i++) {
+    for(let i=0;i<count;i++){
 
-        particles.push({
-
+        particles.list.push({
             x,
             y,
 
-            vx:
-                (Math.random() - .5) * 5,
+            vx:(Math.random()-.5)*6,
+            vy:-Math.random()*5,
 
-            vy:
-                -Math.random() * 4 - 1,
+            life:1,
 
-            life: 1,
-
-            size:
-                3 + Math.random() * 5,
+            size:2+Math.random()*5,
 
             color
         });
     }
 }
 
+particles.list=[];
 
-function updateParticles() {
+function updateParticles(){
 
-    for (let i = particles.length - 1; i >= 0; i--) {
+    for(let i=particles.list.length-1;i>=0;i--){
 
-        const p = particles[i];
+        const p=particles.list[i];
 
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x+=p.vx;
+        p.y+=p.vy;
 
-        p.vy += .15;
+        p.vy+=.18;
+        p.life-=.035;
 
-        p.life -= .035;
-
-        if (p.life <= 0) {
-            particles.splice(i, 1);
-        }
+        if(p.life<=0)
+            particles.list.splice(i,1);
     }
 }
 
+function drawParticles(){
 
-/* =========================================================
-   MOEDAS
-========================================================= */
+    for(const p of particles.list){
 
-function collectCoins() {
+        ctx.globalAlpha=p.life;
+        ctx.fillStyle=p.color;
 
-    const pr = playerRect();
+        ctx.beginPath();
 
-    for (const coin of coins) {
+        ctx.arc(
+            p.x-state.camera,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
 
-        if (coin.collected) {
-            continue;
-        }
-
-        const box = {
-
-            x: coin.x - coin.r,
-
-            y: coin.y - coin.r,
-
-            w: coin.r * 2,
-
-            h: coin.r * 2
-        };
-
-        if (overlap(pr, box)) {
-
-            coin.collected = true;
-
-            state.coins++;
-
-            state.score += 100;
-
-            spawnParticles(
-                coin.x,
-                coin.y,
-                "#ffe45c",
-                10
-            );
-        }
+        ctx.fill();
     }
+
+    ctx.globalAlpha=1;
 }
 
 
-/* =========================================================
-   FÍSICA DO NICO
-========================================================= */
+/* =====================================================
+   JOGADOR
+===================================================== */
 
-function updatePlayer() {
+function updatePlayer(){
 
-    if (player.dead) {
-        return;
+    if(player.invincible>0)
+        player.invincible--;
+
+    if(keys.left){
+
+        player.vx-=.75;
+        player.facing=-1;
+
+    }else if(keys.right){
+
+        player.vx+=.75;
+        player.facing=1;
+
+    }else{
+
+        player.vx*=.8;
     }
 
-
-    /* MOVIMENTO */
-
-    if (keys.left) {
-
-        player.vx -= .75;
-
-        player.facing = -1;
-
-    } else if (keys.right) {
-
-        player.vx += .75;
-
-        player.facing = 1;
-
-    } else {
-
-        player.vx *= .80;
-    }
-
-
-    player.vx = clamp(
-        player.vx,
-        -MOVE_SPEED,
-        MOVE_SPEED
+    player.vx=Math.max(
+        -player.speed,
+        Math.min(player.speed,player.vx)
     );
 
 
-    /* PULO */
+    if(jumpPressed && player.grounded){
 
-    if (
-        jumpPressed &&
-        player.grounded
-    ) {
+        player.vy=-player.jump;
+        player.grounded=false;
 
-        player.vy = -JUMP_FORCE;
-
-        player.grounded = false;
-
-        player.squash = .8;
-
-        spawnParticles(
-            player.x + player.w / 2,
-            player.y + player.h,
-            "#ffffff",
-            7
+        particles(
+            player.x+player.w/2,
+            player.y+player.h,
+            "#d7ead9",
+            8
         );
     }
 
-    jumpPressed = false;
+    jumpPressed=false;
 
 
-    /* GRAVIDADE */
+    player.vy+=.72;
 
-    player.vy += GRAVITY;
-
-    if (player.vy > 18) {
-        player.vy = 18;
-    }
+    if(player.vy>18)
+        player.vy=18;
 
 
-    /* MOVIMENTO HORIZONTAL */
+    player.x+=player.vx;
 
-    player.x += player.vx;
-
-    player.x = clamp(
-        player.x,
+    player.x=Math.max(
         0,
-        LEVEL_WIDTH - player.w
+        Math.min(WORLD-player.w,player.x)
     );
 
 
-    /* COLISÃO HORIZONTAL */
+    const oldBottom=player.y+player.h;
 
-    for (const platform of platforms) {
+    player.y+=player.vy;
 
-        if (!overlap(playerRect(), platform)) {
-            continue;
-        }
+    player.grounded=false;
 
-        if (platform.ground) {
-            continue;
-        }
 
-        if (
-            player.vx > 0 &&
-            player.x + player.w >
-            platform.x &&
-            player.x <
-            platform.x
-        ) {
+    /* CHÃO */
 
-            player.x =
-                platform.x - player.w;
+    if(player.y+player.h>=ground.y){
 
-            player.vx = 0;
-        }
+        player.y=ground.y-player.h;
 
-        else if (
-            player.vx < 0 &&
-            player.x <
-            platform.x + platform.w &&
-            player.x + player.w >
-            platform.x + platform.w
-        ) {
+        player.vy=0;
+        player.grounded=true;
+    }
 
-            player.x =
-                platform.x + platform.w;
 
-            player.vx = 0;
+    /* PLATAFORMAS */
+
+    for(const p of platforms){
+
+        if(
+            player.x+player.w<=p.x ||
+            player.x>=p.x+p.w
+        ) continue;
+
+        if(
+            player.vy>=0 &&
+            oldBottom<=p.y &&
+            player.y+player.h>=p.y
+        ){
+
+            player.y=p.y-player.h;
+            player.vy=0;
+            player.grounded=true;
         }
     }
 
 
-    /* MOVIMENTO VERTICAL */
+    /* TIRO */
 
-    const oldBottom =
-        player.y + player.h;
+    if(
+        (keys.shoot||shootPressed) &&
+        player.shootCooldown<=0
+    ){
 
-    player.y += player.vy;
-
-    player.grounded = false;
-
-
-    for (const platform of platforms) {
-
-        if (
-            player.x + player.w <= platform.x ||
-            player.x >= platform.x + platform.w
-        ) {
-            continue;
-        }
-
-
-        const newBottom =
-            player.y + player.h;
-
-
-        /* CAINDO */
-
-        if (
-            player.vy >= 0 &&
-            oldBottom <= platform.y &&
-            newBottom >= platform.y
-        ) {
-
-            player.y =
-                platform.y - player.h;
-
-            player.vy = 0;
-
-            player.grounded = true;
-
-            player.squash = 1.12;
-
-            break;
-        }
-
-
-        /* BATENDO A CABEÇA */
-
-        if (
-            player.vy < 0 &&
-            player.y <= platform.y + platform.h &&
-            oldBottom >= platform.y + platform.h
-        ) {
-
-            player.y =
-                platform.y + platform.h;
-
-            player.vy = 0;
-
-            if (platform.block) {
-
-                spawnParticles(
-                    platform.x + platform.w / 2,
-                    platform.y + platform.h,
-                    "#f6b83d",
-                    6
-                );
-            }
-
-            break;
-        }
+        shoot();
+        shootPressed=false;
     }
 
-
-    /* CAIU DO MAPA */
-
-    if (player.y > H + 200) {
-
-        loseLife();
-    }
+    if(player.shootCooldown>0)
+        player.shootCooldown--;
 
 
-    /* ANIMAÇÃO */
-
-    player.animation +=
-        Math.abs(player.vx) * .18;
-
-    player.squash +=
-        (1 - player.squash) * .15;
-
-    if (player.invincible > 0) {
-        player.invincible--;
-    }
+    player.animation+=Math.abs(player.vx)*.18;
 }
 
 
-/* =========================================================
-   BUBUS
-========================================================= */
+/* =====================================================
+   TIRO
+===================================================== */
 
-function updateEnemies() {
+function shoot(){
 
-    const pr = playerRect();
+    if(state.ammo<=0)
+        return;
 
-    for (const enemy of enemies) {
+    state.ammo--;
 
-        if (!enemy.alive) {
-            continue;
-        }
+    player.shootCooldown=10;
+
+    bullets.push({
+
+        x:player.facing===1
+            ? player.x+player.w
+            : player.x,
+
+        y:player.y+27,
+
+        vx:player.facing*13,
+
+        life:70
+    });
+
+    state.shake=2;
+
+    particles(
+        player.x+(player.facing===1?player.w:0),
+        player.y+27,
+        "#ffd85a",
+        5
+    );
+}
 
 
-        enemy.x += enemy.vx;
+/* =====================================================
+   BALAS
+===================================================== */
 
-        enemy.animation += .08;
+function updateBullets(){
 
+    for(let i=bullets.length-1;i>=0;i--){
 
-        if (
-            enemy.x < enemy.minX ||
-            enemy.x > enemy.maxX
-        ) {
+        const b=bullets[i];
 
-            enemy.vx *= -1;
-        }
+        b.x+=b.vx;
+        b.life--;
 
-
-        /* GRAVIDADE */
-
-        enemy.vy += GRAVITY;
-
-        enemy.y += enemy.vy;
+        let remove=false;
 
 
-        /* CHÃO / PLATAFORMAS */
+        for(const z of zombies){
 
-        for (const platform of platforms) {
-
-            if (
-                enemy.x + enemy.w <= platform.x ||
-                enemy.x >= platform.x + platform.w
-            ) {
+            if(!z.alive)
                 continue;
-            }
 
+            const hit={
 
-            if (
-                enemy.y + enemy.h >= platform.y &&
-                enemy.y + enemy.h <=
-                platform.y + 30
-            ) {
+                x:b.x-4,
+                y:b.y-3,
+                w:8,
+                h:6
+            };
 
-                enemy.y =
-                    platform.y - enemy.h;
+            if(overlap(hit,z)){
 
-                enemy.vy = 0;
+                z.health--;
+
+                particles(
+                    b.x,
+                    b.y,
+                    "#d84b38",
+                    8
+                );
+
+                remove=true;
+
+                if(z.health<=0){
+
+                    z.alive=false;
+
+                    state.kills++;
+                    state.score+=250;
+
+                    state.shake=7;
+
+                    particles(
+                        z.x+z.w/2,
+                        z.y+z.h/2,
+                        "#70d66d",
+                        18
+                    );
+                }
 
                 break;
             }
         }
 
 
-        if (!overlap(pr, enemy)) {
+        if(
+            remove ||
+            b.life<=0 ||
+            b.x<0 ||
+            b.x>WORLD
+        ){
+
+            bullets.splice(i,1);
+        }
+    }
+}
+
+
+/* =====================================================
+   ZUMBIS
+===================================================== */
+
+function updateZombies(){
+
+    for(const z of zombies){
+
+        if(!z.alive)
             continue;
+
+        z.animation+=.08;
+
+
+        const distance=
+            player.x-z.x;
+
+
+        /* IA */
+
+        if(Math.abs(distance)<650){
+
+            z.vx=
+                Math.sign(distance)*
+                z.speed;
+
+        }else{
+
+            z.vx=
+                Math.sin(z.animation)*.7;
         }
 
 
-        /* PISOU */
-
-        const playerBottom =
-            player.y + player.h;
-
-        const enemyTop =
-            enemy.y;
+        z.x+=z.vx;
 
 
-        if (
-            player.vy > 0 &&
-            playerBottom - enemyTop < 25
-        ) {
+        z.vy+=.7;
 
-            enemy.alive = false;
+        z.y+=z.vy;
 
-            player.vy =
-                -JUMP_FORCE * .65;
 
-            state.score += 250;
+        if(z.y+z.h>=ground.y){
 
-            spawnParticles(
-                enemy.x + enemy.w / 2,
-                enemy.y + enemy.h / 2,
-                "#ff8b38",
-                16
+            z.y=ground.y-z.h;
+            z.vy=0;
+        }
+
+
+        /* ATAQUE */
+
+        if(
+            overlap(player,z) &&
+            player.invincible<=0
+        ){
+
+            state.lives--;
+
+            player.invincible=100;
+
+            state.shake=12;
+
+            particles(
+                player.x+player.w/2,
+                player.y+player.h/2,
+                "#e94b4b",
+                15
             );
 
-            state.shake = 7;
+            player.x-=
+                Math.sign(distance)*70;
 
-            continue;
-        }
+            if(state.lives<=0){
 
+                state.running=false;
 
-        /* BATEU NO BUBU */
-
-        if (player.invincible <= 0) {
-
-            loseLife();
-        }
-    }
-}
-
-
-/* =========================================================
-   PERDER VIDA
-========================================================= */
-
-function loseLife() {
-
-    if (
-        !state.running ||
-        player.invincible > 0
-    ) {
-        return;
-    }
-
-
-    state.lives--;
-
-    state.shake = 12;
-
-    spawnParticles(
-        player.x + player.w / 2,
-        player.y + player.h / 2,
-        "#ff5368",
-        18
-    );
-
-
-    if (state.lives <= 0) {
-
-        state.running = false;
-
-        showEnd(
-            "Fim de jogo! 💥",
-            "O Nico ficou sem vidas."
-        );
-
-        return;
-    }
-
-
-    player.invincible = 110;
-
-    player.x =
-        Math.max(100, player.x - 180);
-
-    player.y =
-        H - 105 - player.h;
-
-    player.vx = 0;
-    player.vy = 0;
-}
-
-
-/* =========================================================
-   CHEGAR AO FINAL
-========================================================= */
-
-function checkFinish() {
-
-    if (
-        player.x + player.w >
-        finishX
-    ) {
-
-        state.running = false;
-
-        showEnd(
-            "Você venceu! 🏆",
-            `Nico terminou a aventura com ${state.coins} moedas e ${state.score} pontos!`
-        );
-    }
-}
-
-
-/* =========================================================
-   CÂMERA
-========================================================= */
-
-function updateCamera() {
-
-    const target =
-        player.x - W * .38;
-
-    state.cameraX +=
-        (target - state.cameraX) * .10;
-
-    state.cameraX =
-        clamp(
-            state.cameraX,
-            0,
-            LEVEL_WIDTH - W
-        );
-}
-
-
-/* =========================================================
-   DESENHO DO CÉU
-========================================================= */
-
-function drawSky() {
-
-    const gradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            H
-        );
-
-    gradient.addColorStop(
-        0,
-        "#43bdf4"
-    );
-
-    gradient.addColorStop(
-        .55,
-        "#8fe4ff"
-    );
-
-    gradient.addColorStop(
-        1,
-        "#d8f5ff"
-    );
-
-    ctx.fillStyle = gradient;
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /* SOL */
-
-    const sunX =
-        W - 120;
-
-    const sunY =
-        100;
-
-    const glow =
-        ctx.createRadialGradient(
-            sunX,
-            sunY,
-            15,
-            sunX,
-            sunY,
-            90
-        );
-
-    glow.addColorStop(
-        0,
-        "rgba(255,240,110,.95)"
-    );
-
-    glow.addColorStop(
-        1,
-        "rgba(255,240,110,0)"
-    );
-
-    ctx.fillStyle = glow;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        sunX,
-        sunY,
-        90,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle = "#ffe36b";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        sunX,
-        sunY,
-        42,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-
-    /* NUVENS PARALLAX */
-
-    for (const cloud of clouds) {
-
-        const x =
-            cloud.x -
-            state.cameraX * .22;
-
-        if (
-            x < -200 ||
-            x > W + 200
-        ) {
-            continue;
-        }
-
-        drawCloud(
-            x,
-            cloud.y,
-            cloud.scale
-        );
-    }
-}
-
-
-function drawCloud(x, y, scale) {
-
-    ctx.save();
-
-    ctx.translate(x, y);
-
-    ctx.scale(scale, scale);
-
-    ctx.fillStyle =
-        "rgba(255,255,255,.88)";
-
-    ctx.beginPath();
-
-    ctx.arc(25, 25, 25, 0, Math.PI * 2);
-
-    ctx.arc(60, 15, 35, 0, Math.PI * 2);
-
-    ctx.arc(100, 25, 27, 0, Math.PI * 2);
-
-    ctx.roundRect(
-        10,
-        20,
-        105,
-        35,
-        20
-    );
-
-    ctx.fill();
-
-    ctx.restore();
-}
-
-
-/* =========================================================
-   MONTANHAS
-========================================================= */
-
-function drawMountains() {
-
-    const offset =
-        state.cameraX * .15;
-
-    ctx.save();
-
-    ctx.translate(
-        -offset % 700,
-        0
-    );
-
-    for (
-        let x = -700;
-        x < W + 1400;
-        x += 700
-    ) {
-
-        ctx.fillStyle =
-            "rgba(69,151,172,.55)";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x,
-            H - 105
-        );
-
-        ctx.lineTo(
-            x + 260,
-            H - 400
-        );
-
-        ctx.lineTo(
-            x + 470,
-            H - 105
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-
-
-        ctx.fillStyle =
-            "rgba(255,255,255,.45)";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x + 260,
-            H - 400
-        );
-
-        ctx.lineTo(
-            x + 205,
-            H - 335
-        );
-
-        ctx.lineTo(
-            x + 260,
-            H - 350
-        );
-
-        ctx.lineTo(
-            x + 310,
-            H - 335
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-    }
-
-    ctx.restore();
-}
-
-
-/* =========================================================
-   TERRENO
-========================================================= */
-
-function drawPlatforms() {
-
-    for (const platform of platforms) {
-
-        const x =
-            platform.x -
-            state.cameraX;
-
-        if (
-            x + platform.w < 0 ||
-            x > W
-        ) {
-            continue;
-        }
-
-
-        if (platform.ground) {
-
-            /* GRAMA */
-
-            ctx.fillStyle =
-                "#38a84b";
-
-            ctx.fillRect(
-                x,
-                platform.y,
-                platform.w,
-                16
-            );
-
-
-            /* TERRA */
-
-            ctx.fillStyle =
-                "#8b522e";
-
-            ctx.fillRect(
-                x,
-                platform.y + 16,
-                platform.w,
-                platform.h - 16
-            );
-
-
-            /* TEXTURA */
-
-            ctx.fillStyle =
-                "rgba(80,38,20,.25)";
-
-            for (
-                let tx = x;
-                tx < x + platform.w;
-                tx += 70
-            ) {
-
-                ctx.fillRect(
-                    tx + 10,
-                    platform.y + 35,
-                    20,
-                    5
+                finish(
+                    "NICO FOI DERROTADO 💀",
+                    "Os zumbis dominaram a cidade."
                 );
             }
-
-            continue;
         }
-
-
-        if (platform.block) {
-
-            drawBlock(
-                x,
-                platform.y
-            );
-
-            continue;
-        }
-
-
-        /* PLATAFORMA */
-
-        ctx.fillStyle =
-            "#9c5b32";
-
-        ctx.fillRect(
-            x,
-            platform.y + 8,
-            platform.w,
-            platform.h - 8
-        );
-
-
-        ctx.fillStyle =
-            "#47bd50";
-
-        ctx.fillRect(
-            x,
-            platform.y,
-            platform.w,
-            11
-        );
-
-
-        ctx.fillStyle =
-            "#31913b";
-
-        ctx.fillRect(
-            x,
-            platform.y + 9,
-            platform.w,
-            4
-        );
     }
 }
 
 
-function drawBlock(x, y) {
+/* =====================================================
+   ITENS
+===================================================== */
 
-    const gradient =
+function updateItems(){
+
+    const pr={
+        x:player.x,
+        y:player.y,
+        w:player.w,
+        h:player.h
+    };
+
+
+    for(const box of ammoBoxes){
+
+        if(
+            !box.collected &&
+            overlap(pr,{
+                x:box.x,
+                y:box.y,
+                w:30,
+                h:30
+            })
+        ){
+
+            box.collected=true;
+
+            state.ammo=
+                Math.min(
+                    state.maxAmmo,
+                    state.ammo+15
+                );
+
+            state.score+=50;
+
+            particles(
+                box.x,
+                box.y,
+                "#ffd34d",
+                12
+            );
+        }
+    }
+
+
+    for(const kit of medkits){
+
+        if(
+            !kit.collected &&
+            overlap(pr,{
+                x:kit.x,
+                y:kit.y,
+                w:30,
+                h:30
+            })
+        ){
+
+            kit.collected=true;
+
+            state.lives=
+                Math.min(3,state.lives+1);
+
+            state.score+=100;
+
+            particles(
+                kit.x,
+                kit.y,
+                "#ff6475",
+                12
+            );
+        }
+    }
+}
+
+
+/* =====================================================
+   CÂMERA
+===================================================== */
+
+function updateCamera(){
+
+    const target=
+        player.x-W*.38;
+
+    state.camera+=
+        (target-state.camera)*.1;
+
+    state.camera=Math.max(
+        0,
+        Math.min(WORLD-W,state.camera)
+    );
+}
+
+
+/* =====================================================
+   FUNDO
+===================================================== */
+
+function drawBackground(){
+
+    const sky=
         ctx.createLinearGradient(
-            x,
-            y,
-            x,
-            y + TILE
+            0,0,0,H
         );
 
-    gradient.addColorStop(
+    sky.addColorStop(0,"#071b28");
+    sky.addColorStop(.55,"#12352f");
+    sky.addColorStop(1,"#182419");
+
+    ctx.fillStyle=sky;
+
+    ctx.fillRect(0,0,W,H);
+
+
+    /* LUA */
+
+    ctx.fillStyle="#d9e9c8";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        W-130,
+        100,
+        43,
         0,
-        "#ffd34d"
+        Math.PI*2
     );
 
-    gradient.addColorStop(
-        1,
-        "#e89b1c"
-    );
+    ctx.fill();
 
-    ctx.fillStyle = gradient;
+
+    /* NÉVOA */
+
+    ctx.fillStyle="rgba(190,220,190,.07)";
+
+    for(let i=0;i<8;i++){
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            i*180-(state.camera*.15%180),
+            H-180,
+            180,
+            45,
+            0,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    }
+
+
+    /* PRÉDIOS */
+
+    for(const b of buildings){
+
+        const x=b.x-state.camera*.35;
+
+        if(x<-250||x>W+250)
+            continue;
+
+        ctx.fillStyle="#172522";
+
+        ctx.fillRect(
+            x,
+            ground.y-b.h,
+            b.w,
+            b.h
+        );
+
+
+        for(let wy=b.y||0;wy<b.h-20;wy+=35){
+
+            for(let wx=15;wx<b.w-15;wx+=35){
+
+                ctx.fillStyle=
+                    Math.random()>.25
+                    ? "#b7b75c"
+                    : "#273b34";
+
+                ctx.fillRect(
+                    x+wx,
+                    ground.y-b.h+wy+10,
+                    12,
+                    16
+                );
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   TERRENO
+===================================================== */
+
+function drawGround(){
+
+    const x=-state.camera;
+
+    ctx.fillStyle="#304a2c";
 
     ctx.fillRect(
         x,
-        y,
-        TILE,
-        TILE
+        ground.y,
+        WORLD,
+        300
     );
 
 
-    ctx.strokeStyle =
-        "#a96112";
+    ctx.fillStyle="#3e7834";
 
-    ctx.lineWidth = 4;
-
-    ctx.strokeRect(
-        x + 2,
-        y + 2,
-        TILE - 4,
-        TILE - 4
+    ctx.fillRect(
+        x,
+        ground.y,
+        WORLD,
+        14
     );
 
 
-    ctx.fillStyle =
-        "#fff3a0";
+    /* ESTRADA */
 
-    ctx.font =
-        "bold 27px Arial";
+    ctx.fillStyle="#222925";
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    ctx.fillText(
-        "?",
-        x + TILE / 2,
-        y + TILE / 2 + 1
+    ctx.fillRect(
+        x,
+        ground.y+50,
+        WORLD,
+        90
     );
-}
 
 
-/* =========================================================
-   DECORAÇÕES
-========================================================= */
+    ctx.strokeStyle="#b2ad63";
+    ctx.lineWidth=5;
 
-function drawDecorations() {
+    for(
+        let xx=0;
+        xx<WORLD;
+        xx+=100
+    ){
 
-    for (const d of decorations) {
+        ctx.beginPath();
 
-        const x =
-            d.x -
-            state.cameraX;
+        ctx.moveTo(
+            xx-state.camera,
+            ground.y+93
+        );
 
-        if (
-            x < -30 ||
-            x > W + 30
-        ) {
-            continue;
-        }
+        ctx.lineTo(
+            xx+55-state.camera,
+            ground.y+93
+        );
 
-        const groundY =
-            H - 105;
-
-
-        if (d.type === "grass") {
-
-            ctx.strokeStyle =
-                "#258c3b";
-
-            ctx.lineWidth = 3;
-
-            ctx.beginPath();
-
-            ctx.moveTo(x, groundY);
-
-            ctx.lineTo(
-                x - 4,
-                groundY - 14
-            );
-
-            ctx.moveTo(x, groundY);
-
-            ctx.lineTo(
-                x + 5,
-                groundY - 18
-            );
-
-            ctx.stroke();
-
-        } else {
-
-            ctx.fillStyle =
-                "#ffdc45";
-
-            ctx.beginPath();
-
-            ctx.arc(
-                x,
-                groundY - 9,
-                5,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-            ctx.fillStyle =
-                "#ff6b7a";
-
-            ctx.beginPath();
-
-            ctx.arc(
-                x - 5,
-                groundY - 11,
-                4,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.arc(
-                x + 5,
-                groundY - 11,
-                4,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-        }
+        ctx.stroke();
     }
 }
 
 
-/* =========================================================
-   MOEDAS — GRÁFICO
-========================================================= */
+/* =====================================================
+   PLATAFORMAS
+===================================================== */
 
-function drawCoins() {
+function drawPlatforms(){
 
-    for (const coin of coins) {
+    for(const p of platforms){
 
-        if (coin.collected) {
+        const x=p.x-state.camera;
+
+        ctx.fillStyle="#465c38";
+
+        ctx.fillRect(
+            x,
+            p.y,
+            p.w,
+            p.h
+        );
+
+        ctx.fillStyle="#6b9146";
+
+        ctx.fillRect(
+            x,
+            p.y,
+            p.w,
+            7
+        );
+    }
+}
+
+
+/* =====================================================
+   ÁRVORES
+===================================================== */
+
+function drawTrees(){
+
+    for(const t of trees){
+
+        const x=t.x-state.camera*.75;
+
+        if(x<-100||x>W+100)
             continue;
-        }
-
-        const x =
-            coin.x -
-            state.cameraX;
-
-        if (
-            x < -30 ||
-            x > W + 30
-        ) {
-            continue;
-        }
-
-
-        coin.spin += .06;
-
-        const scale =
-            .65 +
-            Math.abs(
-                Math.sin(coin.spin)
-            ) * .35;
-
 
         ctx.save();
 
         ctx.translate(
             x,
-            coin.y
+            t.y
         );
 
         ctx.scale(
-            scale,
-            1
+            t.scale,
+            t.scale
         );
 
+        ctx.fillStyle="#4a2c1d";
 
-        ctx.shadowColor =
-            "rgba(255,220,50,.7)";
-
-        ctx.shadowBlur = 15;
-
-
-        const gradient =
-            ctx.createLinearGradient(
-                -12,
-                0,
-                12,
-                0
-            );
-
-        gradient.addColorStop(
-            0,
-            "#e3a400"
-        );
-
-        gradient.addColorStop(
-            .5,
-            "#fff16b"
-        );
-
-        gradient.addColorStop(
-            1,
-            "#e5a400"
-        );
-
-        ctx.fillStyle = gradient;
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            0,
-            0,
-            12,
+        ctx.fillRect(
+            -8,
+            -75,
             16,
-            0,
-            0,
-            Math.PI * 2
+            75
         );
 
-        ctx.fill();
-
-        ctx.shadowBlur = 0;
-
-        ctx.strokeStyle =
-            "#b77b00";
-
-        ctx.lineWidth = 2;
-
-        ctx.stroke();
-
-
-        ctx.fillStyle =
-            "rgba(255,255,255,.55)";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            -4,
-            -5,
-            3,
-            6,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-        ctx.restore();
-    }
-}
-
-
-/* =========================================================
-   BUBU — GRÁFICO
-========================================================= */
-
-function drawEnemies() {
-
-    for (const e of enemies) {
-
-        if (!e.alive) {
-            continue;
-        }
-
-        const x =
-            e.x -
-            state.cameraX;
-
-        const y =
-            e.y;
-
-
-        if (
-            x < -80 ||
-            x > W + 80
-        ) {
-            continue;
-        }
-
-
-        const bounce =
-            Math.sin(e.animation) * 2;
-
-
-        ctx.save();
-
-        ctx.translate(
-            x + e.w / 2,
-            y + e.h / 2 + bounce
-        );
-
-
-        /* SOMBRA */
-
-        ctx.fillStyle =
-            "rgba(0,0,0,.2)";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            0,
-            25,
-            24,
-            6,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-
-        /* CHIFRES */
-
-        drawHorn(
-            -15,
-            -25,
-            -25
-        );
-
-        drawHorn(
-            15,
-            -25,
-            25
-        );
-
-
-        /* CORPO */
-
-        const body =
-            ctx.createLinearGradient(
-                -24,
-                -18,
-                24,
-                22
-            );
-
-        body.addColorStop(
-            0,
-            "#ff9a3d"
-        );
-
-        body.addColorStop(
-            .55,
-            "#f07828"
-        );
-
-        body.addColorStop(
-            1,
-            "#c94d1c"
-        );
-
-        ctx.fillStyle = body;
-
-        ctx.beginPath();
-
-        ctx.roundRect(
-            -25,
-            -17,
-            50,
-            39,
-            16
-        );
-
-        ctx.fill();
-
-
-        ctx.strokeStyle =
-            "#8d3518";
-
-        ctx.lineWidth = 4;
-
-        ctx.stroke();
-
-
-        /* OLHOS */
-
-        drawBubuEye(-10);
-        drawBubuEye(10);
-
-
-        /* BOCA */
-
-        ctx.strokeStyle =
-            "#6b2415";
-
-        ctx.lineWidth = 3;
+        ctx.fillStyle="#163b24";
 
         ctx.beginPath();
 
         ctx.arc(
             0,
-            8,
-            8,
+            -90,
+            35,
             0,
-            Math.PI
+            Math.PI*2
         );
+
+        ctx.arc(
+            -25,
+            -70,
+            28,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            25,
+            -70,
+            28,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+    }
+}
+
+
+/* =====================================================
+   ITENS
+===================================================== */
+
+function drawItems(){
+
+    for(const box of ammoBoxes){
+
+        if(box.collected)
+            continue;
+
+        const x=box.x-state.camera;
+
+        ctx.fillStyle="#c99b31";
+
+        ctx.fillRect(
+            x,
+            box.y,
+            30,
+            30
+        );
+
+        ctx.strokeStyle="#ffe47c";
+
+        ctx.lineWidth=3;
+
+        ctx.strokeRect(
+            x+2,
+            box.y+2,
+            26,
+            26
+        );
+
+        ctx.fillStyle="#191e18";
+
+        ctx.font="bold 16px Arial";
+        ctx.textAlign="center";
+
+        ctx.fillText(
+            "AM",
+            x+15,
+            box.y+20
+        );
+    }
+
+
+    for(const kit of medkits){
+
+        if(kit.collected)
+            continue;
+
+        const x=kit.x-state.camera;
+
+        ctx.fillStyle="#e9e9df";
+
+        ctx.fillRect(
+            x,
+            kit.y,
+            30,
+            25
+        );
+
+        ctx.fillStyle="#d92e40";
+
+        ctx.fillRect(
+            x+12,
+            kit.y+4,
+            6,
+            17
+        );
+
+        ctx.fillRect(
+            x+6,
+            kit.y+10,
+            18,
+            6
+        );
+    }
+}
+
+
+/* =====================================================
+   ZUMBI — GRÁFICO
+===================================================== */
+
+function drawZombies(){
+
+    for(const z of zombies){
+
+        if(!z.alive)
+            continue;
+
+        const x=z.x-state.camera;
+
+        const bob=
+            Math.sin(z.animation)*2;
+
+        ctx.save();
+
+        ctx.translate(
+            x+z.w/2,
+            z.y+z.h/2+bob
+        );
+
+
+        /* sombra */
+
+        ctx.fillStyle="rgba(0,0,0,.3)";
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            0,
+            29,
+            25,
+            6,
+            0,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* pernas */
+
+        ctx.fillStyle="#24382e";
+
+        ctx.fillRect(
+            -15,
+            13,
+            11,
+            18
+        );
+
+        ctx.fillRect(
+            4,
+            13,
+            11,
+            18
+        );
+
+
+        /* corpo */
+
+        const body=
+            ctx.createLinearGradient(
+                -22,-5,22,25
+            );
+
+        body.addColorStop(
+            0,
+            "#6fa85c"
+        );
+
+        body.addColorStop(
+            1,
+            "#315c38"
+        );
+
+        ctx.fillStyle=body;
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            -22,
+            -6,
+            44,
+            31,
+            8
+        );
+
+        ctx.fill();
+
+
+        /* cabeça */
+
+        ctx.fillStyle="#82b96a";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -20,
+            20,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* cabelo */
+
+        ctx.fillStyle="#18231c";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            -11,
+            -36,
+            10,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            0,
+            -39,
+            11,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            11,
+            -35,
+            9,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* olhos */
+
+        ctx.fillStyle="#d9ff66";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            -7,
+            -20,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            7,
+            -20,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* boca */
+
+        ctx.strokeStyle="#371d19";
+        ctx.lineWidth=3;
+
+        ctx.beginPath();
+
+        ctx.moveTo(-8,-8);
+        ctx.lineTo(8,-8);
+
+        ctx.stroke();
+
+
+        /* braços */
+
+        ctx.strokeStyle="#82b96a";
+        ctx.lineWidth=9;
+        ctx.lineCap="round";
+
+        ctx.beginPath();
+
+        ctx.moveTo(-18,0);
+        ctx.lineTo(-32,10);
+
+        ctx.moveTo(18,0);
+        ctx.lineTo(32,7);
 
         ctx.stroke();
 
@@ -2219,230 +1673,113 @@ function drawEnemies() {
 }
 
 
-function drawHorn(x, y, rotation) {
-
-    ctx.save();
-
-    ctx.translate(
-        x,
-        y
-    );
-
-    ctx.rotate(
-        rotation * Math.PI / 180
-    );
-
-    ctx.fillStyle =
-        "#ffe05b";
-
-    ctx.strokeStyle =
-        "#8d3518";
-
-    ctx.lineWidth = 3;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0, 16);
-
-    ctx.quadraticCurveTo(
-        3,
-        2,
-        12,
-        -4
-    );
-
-    ctx.quadraticCurveTo(
-        7,
-        12,
-        0,
-        16
-    );
-
-    ctx.fill();
-
-    ctx.stroke();
-
-    ctx.restore();
-}
-
-
-function drawBubuEye(x) {
-
-    ctx.fillStyle =
-        "#fff";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        x,
-        -4,
-        7,
-        9,
-        0,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle =
-        "#171717";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        -3,
-        3,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-}
-
-
-/* =========================================================
+/* =====================================================
    NICO — GRÁFICO
-========================================================= */
+===================================================== */
 
-function drawPlayer() {
+function drawPlayer(){
 
-    if (
-        player.invincible > 0 &&
-        Math.floor(player.invincible / 7) % 2 === 0
-    ) {
+    if(
+        player.invincible>0 &&
+        Math.floor(player.invincible/7)%2===0
+    )
         return;
-    }
 
-
-    const x =
-        player.x -
-        state.cameraX;
-
-    const y =
-        player.y;
-
+    const x=player.x-state.camera;
+    const y=player.y;
 
     ctx.save();
 
     ctx.translate(
-        x + player.w / 2,
-        y + player.h / 2
+        x+player.w/2,
+        y+player.h/2
     );
 
-
-    ctx.scale(
-        player.facing,
-        1
-    );
+    ctx.scale(player.facing,1);
 
 
-    /* ANIMAÇÃO */
+    /* sombra */
 
-    const walking =
-        Math.abs(player.vx) > .5 &&
-        player.grounded;
-
-    const leg =
-        walking
-            ? Math.sin(player.animation) * 4
-            : 0;
-
-
-    /* SOMBRA */
-
-    ctx.fillStyle =
-        "rgba(0,0,0,.2)";
+    ctx.fillStyle="rgba(0,0,0,.35)";
 
     ctx.beginPath();
 
     ctx.ellipse(
         0,
-        34,
-        21,
+        35,
+        23,
         6,
         0,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.fill();
 
 
-    /* PERNAS */
+    const walk=
+        player.grounded &&
+        Math.abs(player.vx)>.4;
 
-    ctx.fillStyle =
-        "#174d91";
+    const leg=
+        walk
+        ? Math.sin(player.animation)*5
+        : 0;
+
+
+    /* pernas */
+
+    ctx.fillStyle="#172f5c";
 
     ctx.fillRect(
         -15,
-        17 + leg,
+        16+leg,
         11,
-        15
+        17
     );
 
     ctx.fillRect(
         4,
-        17 - leg,
+        16-leg,
         11,
-        15
+        17
     );
 
 
-    /* SAPATOS */
+    /* botas */
 
-    ctx.fillStyle =
-        "#542e20";
+    ctx.fillStyle="#38231b";
 
     ctx.beginPath();
 
     ctx.roundRect(
-        -19,
-        27 + leg,
-        19,
-        9,
+        -20,
+        27+leg,
+        20,
+        10,
         5
     );
 
     ctx.roundRect(
-        1,
-        27 - leg,
-        19,
-        9,
+        0,
+        27-leg,
+        20,
+        10,
         5
     );
 
     ctx.fill();
 
 
-    /* CORPO */
+    /* corpo */
 
-    const shirt =
-        ctx.createLinearGradient(
-            -22,
-            -2,
-            22,
-            25
-        );
-
-    shirt.addColorStop(
-        0,
-        "#35d875"
-    );
-
-    shirt.addColorStop(
-        1,
-        "#15934c"
-    );
-
-    ctx.fillStyle = shirt;
+    ctx.fillStyle="#2ba85d";
 
     ctx.beginPath();
 
     ctx.roundRect(
         -21,
-        -3,
+        -4,
         42,
         29,
         10
@@ -2451,229 +1788,201 @@ function drawPlayer() {
     ctx.fill();
 
 
-    ctx.strokeStyle =
-        "#116638";
+    ctx.strokeStyle="#164e2d";
+    ctx.lineWidth=3;
+    ctx.stroke();
 
-    ctx.lineWidth = 3;
+
+    /* mochila */
+
+    ctx.fillStyle="#70462b";
+
+    ctx.fillRect(
+        -25,
+        -1,
+        7,
+        23
+    );
+
+
+    /* braços */
+
+    ctx.strokeStyle="#ffc98f";
+    ctx.lineWidth=8;
+    ctx.lineCap="round";
+
+    ctx.beginPath();
+
+    ctx.moveTo(-19,4);
+    ctx.lineTo(-27,14);
 
     ctx.stroke();
 
 
-    /* BRAÇOS */
+    ctx.beginPath();
 
-    ctx.fillStyle =
-        "#ffc98f";
+    ctx.moveTo(19,4);
+    ctx.lineTo(28,5);
+
+    ctx.stroke();
+
+
+    /* arma */
+
+    ctx.strokeStyle="#202522";
+    ctx.lineWidth=6;
 
     ctx.beginPath();
 
-    ctx.arc(
-        -22,
-        9,
-        7,
-        0,
-        Math.PI * 2
+    ctx.moveTo(17,4);
+    ctx.lineTo(43,4);
+
+    ctx.stroke();
+
+    ctx.fillStyle="#111";
+
+    ctx.fillRect(
+        38,
+        1,
+        11,
+        6
     );
 
-    ctx.arc(
-        22,
-        9,
-        7,
-        0,
-        Math.PI * 2
-    );
 
-    ctx.fill();
+    /* pescoço */
 
-
-    /* PESCOÇO */
-
-    ctx.fillStyle =
-        "#eeb77d";
+    ctx.fillStyle="#e7af76";
 
     ctx.fillRect(
         -6,
-        -12,
+        -13,
         12,
         8
     );
 
 
-    /* CABEÇA */
+    /* cabeça */
 
-    ctx.fillStyle =
-        "#ffc98f";
+    ctx.fillStyle="#ffc98f";
 
     ctx.beginPath();
 
     ctx.ellipse(
         0,
-        -19,
+        -21,
         20,
         22,
         0,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.fill();
 
-    ctx.strokeStyle =
-        "#713f2b";
 
-    ctx.lineWidth = 3;
-
+    ctx.strokeStyle="#713f2b";
+    ctx.lineWidth=3;
     ctx.stroke();
 
 
-    /* CABELO */
+    /* cabelo */
 
-    ctx.fillStyle =
-        "#174ea6";
+    ctx.fillStyle="#174ea6";
 
     ctx.beginPath();
 
     ctx.arc(
         -11,
-        -34,
+        -36,
         11,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.arc(
         0,
-        -38,
+        -39,
         12,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.arc(
         12,
-        -34,
+        -35,
         10,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
     ctx.fill();
 
 
-    /* FRANJA */
+    /* franja */
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        -19,
-        -29
-    );
-
-    ctx.lineTo(
-        -4,
-        -34
-    );
-
-    ctx.lineTo(
-        1,
-        -25
-    );
-
-    ctx.lineTo(
-        9,
-        -34
-    );
-
-    ctx.lineTo(
-        19,
-        -27
-    );
-
-    ctx.lineTo(
-        19,
-        -39
-    );
-
-    ctx.lineTo(
-        -19,
-        -39
-    );
+    ctx.moveTo(-18,-31);
+    ctx.lineTo(-5,-35);
+    ctx.lineTo(0,-27);
+    ctx.lineTo(9,-35);
+    ctx.lineTo(18,-28);
+    ctx.lineTo(18,-40);
+    ctx.lineTo(-18,-40);
 
     ctx.closePath();
 
     ctx.fill();
 
 
-    /* OLHOS */
+    /* olhos */
 
-    ctx.fillStyle =
-        "#151515";
+    ctx.fillStyle="#111";
 
     ctx.beginPath();
 
     ctx.ellipse(
-        -7,
-        -20,
-        3,
-        5,
-        0,
-        0,
-        Math.PI * 2
+        -7,-21,3,5,
+        0,0,Math.PI*2
     );
 
     ctx.ellipse(
-        7,
-        -20,
-        3,
-        5,
-        0,
-        0,
-        Math.PI * 2
+        7,-21,3,5,
+        0,0,Math.PI*2
     );
 
     ctx.fill();
 
 
-    /* BRILHO DOS OLHOS */
+    /* brilho */
 
-    ctx.fillStyle =
-        "#fff";
+    ctx.fillStyle="#fff";
 
     ctx.beginPath();
 
     ctx.arc(
-        -6,
-        -22,
-        1,
-        0,
-        Math.PI * 2
+        -6,-23,1,
+        0,Math.PI*2
     );
 
     ctx.arc(
-        8,
-        -22,
-        1,
-        0,
-        Math.PI * 2
+        8,-23,1,
+        0,Math.PI*2
     );
 
     ctx.fill();
 
 
-    /* BOCA */
+    /* boca */
 
-    ctx.strokeStyle =
-        "#7b3028";
-
-    ctx.lineWidth = 2;
+    ctx.strokeStyle="#7b3028";
+    ctx.lineWidth=2;
 
     ctx.beginPath();
 
     ctx.arc(
-        0,
-        -11,
-        6,
-        0,
-        Math.PI
+        0,-12,6,
+        0,Math.PI
     );
 
     ctx.stroke();
@@ -2683,346 +1992,265 @@ function drawPlayer() {
 }
 
 
-/* =========================================================
-   BANDEIRA
-========================================================= */
+/* =====================================================
+   BALAS
+===================================================== */
 
-function drawFinish() {
+function drawBullets(){
 
-    const x =
-        finishX -
-        state.cameraX;
+    for(const b of bullets){
 
-    if (
-        x < -100 ||
-        x > W + 100
-    ) {
-        return;
-    }
+        ctx.fillStyle="#ffe36a";
 
-
-    const groundY =
-        H - 105;
-
-
-    /* POSTE */
-
-    ctx.fillStyle =
-        "#e9e9e9";
-
-    ctx.fillRect(
-        x,
-        groundY - 170,
-        8,
-        170
-    );
-
-
-    /* BANDEIRA */
-
-    ctx.fillStyle =
-        "#ffdf38";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x + 7,
-        groundY - 165
-    );
-
-    ctx.lineTo(
-        x + 80,
-        groundY - 145
-    );
-
-    ctx.lineTo(
-        x + 7,
-        groundY - 125
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-
-    ctx.strokeStyle =
-        "#a87800";
-
-    ctx.lineWidth = 3;
-
-    ctx.stroke();
-
-
-    ctx.fillStyle =
-        "#fff";
-
-    ctx.font =
-        "bold 24px Arial";
-
-    ctx.fillText(
-        "N",
-        x + 25,
-        groundY - 140
-    );
-}
-
-
-/* =========================================================
-   PARTÍCULAS
-========================================================= */
-
-function drawParticles() {
-
-    for (const p of particles) {
-
-        const x =
-            p.x -
-            state.cameraX;
-
-        ctx.globalAlpha =
-            Math.max(0, p.life);
-
-        ctx.fillStyle =
-            p.color;
+        ctx.shadowColor="#ffb300";
+        ctx.shadowBlur=10;
 
         ctx.beginPath();
 
         ctx.arc(
-            x,
-            p.y,
-            p.size,
+            b.x-state.camera,
+            b.y,
+            4,
             0,
-            Math.PI * 2
+            Math.PI*2
         );
 
         ctx.fill();
-    }
 
-    ctx.globalAlpha = 1;
+        ctx.shadowBlur=0;
+    }
 }
 
 
-/* =========================================================
-   DESENHAR TUDO
-========================================================= */
+/* =====================================================
+   RENDER
+===================================================== */
 
-function render() {
+function render(){
 
     ctx.clearRect(
-        0,
-        0,
-        W,
-        H
+        0,0,W,H
     );
 
-
-    drawSky();
-
-    drawMountains();
-
+    drawBackground();
+    drawTrees();
+    drawGround();
     drawPlatforms();
-
-    drawDecorations();
-
-    drawCoins();
-
-    drawFinish();
-
-    drawEnemies();
-
+    drawItems();
+    drawZombies();
+    drawBullets();
     drawPlayer();
-
     drawParticles();
 }
 
 
-/* =========================================================
+/* =====================================================
    HUD
-========================================================= */
+===================================================== */
 
-function updateHUD() {
+function updateHUD(){
 
-    coinsEl.textContent =
-        state.coins;
+    document.getElementById("lives")
+        .textContent=state.lives;
 
-    livesEl.textContent =
-        state.lives;
+    document.getElementById("ammo")
+        .textContent=state.ammo;
 
-    scoreEl.textContent =
-        state.score;
+    document.getElementById("kills")
+        .textContent=state.kills;
 
-    levelEl.textContent =
-        state.level;
+    document.getElementById("score")
+        .textContent=state.score;
+
+
+    const percent=Math.min(
+        100,
+        Math.floor(
+            player.x/(WORLD-300)*100
+        )
+    );
+
+    document.getElementById("mission")
+        .textContent=percent+"%";
 }
 
 
-/* =========================================================
-   TELA FINAL
-========================================================= */
+/* =====================================================
+   FINAL
+===================================================== */
 
-function showEnd(title, text) {
+function finish(title,text){
 
-    endTitle.textContent =
-        title;
+    document.getElementById("endTitle")
+        .textContent=title;
 
-    endText.textContent =
-        text;
+    document.getElementById("endText")
+        .textContent=text;
 
-    endScreen.classList.remove(
-        "hidden"
-    );
+    document.getElementById("end")
+        .classList.remove("hidden");
 }
 
 
-/* =========================================================
-   INICIAR
-========================================================= */
+/* =====================================================
+   UPDATE
+===================================================== */
 
-function startGame() {
+function update(){
 
-    state.running = true;
-
-    state.level = 1;
-
-    state.score = 0;
-
-    state.coins = 0;
-
-    state.lives = MAX_LIVES;
-
-    state.time = 0;
-
-    createLevel(1);
-
-    startScreen.classList.add(
-        "hidden"
-    );
-
-    endScreen.classList.add(
-        "hidden"
-    );
-}
-
-
-startButton.addEventListener(
-    "click",
-    startGame
-);
-
-
-restartButton.addEventListener(
-    "click",
-    startGame
-);
-
-
-/* =========================================================
-   ATUALIZAÇÃO
-========================================================= */
-
-function update() {
-
-    if (!state.running) {
+    if(!state.running)
         return;
-    }
 
-
-    state.time += .016;
-
+    state.time+=.016;
 
     updatePlayer();
-
-    updateEnemies();
-
-    collectCoins();
-
-    checkFinish();
-
+    updateBullets();
+    updateZombies();
+    updateItems();
     updateParticles();
-
     updateCamera();
 
 
-    if (state.shake > 0) {
-        state.shake *= .85;
+    /* VITÓRIA */
 
-        if (state.shake < .2) {
-            state.shake = 0;
+    const remaining=zombies.filter(
+        z=>z.alive
+    ).length;
+
+    if(
+        player.x>WORLD-350 &&
+        remaining===0
+    ){
+
+        state.running=false;
+
+        finish(
+            "MISSÃO CONCLUÍDA! 🏆",
+            `Nico sobreviveu à Zona Zumbi! ${state.kills} zumbis derrotados e ${state.score} pontos.`
+        );
+    }
+
+
+    /* caiu */
+
+    if(player.y>H+200){
+
+        state.lives--;
+
+        player.x=Math.max(
+            100,
+            player.x-250
+        );
+
+        player.y=ground.y-player.h;
+
+        player.vy=0;
+
+        if(state.lives<=0){
+
+            state.running=false;
+
+            finish(
+                "FIM DE JOGO 💀",
+                "Nico não conseguiu sobreviver."
+            );
         }
     }
 
+
+    if(state.shake>0){
+
+        state.shake*=.85;
+
+        if(state.shake<.2)
+            state.shake=0;
+    }
 
     updateHUD();
 }
 
 
-/* =========================================================
+/* =====================================================
    LOOP
-========================================================= */
+===================================================== */
 
-let lastTime = 0;
+let last=0;
 
-function loop(time) {
+function loop(time){
 
-    const delta =
+    const delta=
         Math.min(
-            (time - lastTime) / 16.67,
+            (time-last)/16.67,
             2
         );
 
-    lastTime = time;
+    last=time;
 
+    if(state.running){
 
-    /* Atualização baseada em tempo */
+        const steps=Math.max(
+            1,
+            Math.round(delta)
+        );
 
-    if (state.running) {
-
-        const steps =
-            Math.max(
-                1,
-                Math.round(delta)
-            );
-
-        for (
-            let i = 0;
-            i < steps;
-            i++
-        ) {
+        for(let i=0;i<steps;i++)
             update();
-        }
     }
 
-
-    /* SHAKE */
 
     ctx.save();
 
-    if (state.shake > 0) {
+    if(state.shake>0){
 
         ctx.translate(
-            (Math.random() - .5) *
-            state.shake,
-
-            (Math.random() - .5) *
-            state.shake
+            (Math.random()-.5)*state.shake,
+            (Math.random()-.5)*state.shake
         );
     }
-
 
     render();
 
     ctx.restore();
 
-
     requestAnimationFrame(loop);
 }
 
 
-/* =========================================================
-   COMEÇAR LOOP
-========================================================= */
+/* =====================================================
+   START
+===================================================== */
 
-createLevel(1);
+function startGame(){
+
+    state.running=true;
+    state.score=0;
+    state.kills=0;
+    state.lives=3;
+    state.ammo=30;
+    state.camera=0;
+    state.shake=0;
+
+    createWorld();
+
+    document.getElementById("start")
+        .classList.add("hidden");
+
+    document.getElementById("end")
+        .classList.add("hidden");
+
+    updateHUD();
+}
+
+
+document.getElementById("startButton")
+    .addEventListener("click",startGame);
+
+document.getElementById("restart")
+    .addEventListener("click",startGame);
+
+
+createWorld();
+updateHUD();
 
 requestAnimationFrame(loop);
 
