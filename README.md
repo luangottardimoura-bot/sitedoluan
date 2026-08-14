@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>A CASA CAIU</title>
+<title>Último Sobrevivente</title>
 
 <style>
 *{
@@ -16,7 +16,7 @@ html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  background:#111;
+  background:#080b12;
   font-family:Arial,sans-serif;
   touch-action:none;
   user-select:none;
@@ -31,64 +31,30 @@ canvas{
 
 #hud{
   position:fixed;
-  z-index:20;
-  top:10px;
+  z-index:10;
+  top:12px;
   left:50%;
   transform:translateX(-50%);
   display:flex;
-  align-items:center;
-  gap:12px;
+  gap:14px;
   padding:9px 14px;
+  border-radius:15px;
+  background:#000c;
+  border:1px solid #ffffff22;
   color:white;
-  background:#000d;
-  border:1px solid #ffffff33;
-  border-radius:14px;
   font-weight:bold;
   white-space:nowrap;
-  font-size:14px;
 }
 
-.life{
-  color:#ff5665;
-}
-
-.time{
-  color:#5eeaff;
-}
-
-.score{
-  color:#ffd83d;
-}
-
-.wanted{
-  color:#ff4858;
-}
-
-#lifeBar{
-  position:fixed;
-  z-index:20;
-  top:52px;
-  left:50%;
-  transform:translateX(-50%);
-  width:220px;
-  height:13px;
-  border-radius:20px;
-  background:#160609;
-  border:1px solid #ffffff55;
-  overflow:hidden;
-}
-
-#lifeFill{
-  width:100%;
-  height:100%;
-  background:linear-gradient(90deg,#ff283d,#ff9b35);
-  transition:width .15s;
-}
+.hp{color:#ff5265}
+.score{color:#ffd83d}
+.coin{color:#4de8ff}
+.time{color:#9cff70}
 
 .screen{
   position:fixed;
   inset:0;
-  z-index:100;
+  z-index:50;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -100,105 +66,102 @@ canvas{
 }
 
 .panel{
-  width:min(620px,92vw);
-  padding:32px 25px;
+  width:min(600px,92vw);
+  padding:32px 24px;
   text-align:center;
   color:white;
   border-radius:25px;
-  background:linear-gradient(145deg,#253e52,#080e14);
+  background:
+    radial-gradient(circle at top,#273f67,#080c15 70%);
   border:2px solid #ffffff22;
   box-shadow:0 20px 80px #000;
 }
 
 h1{
-  font-size:clamp(42px,11vw,78px);
-  font-style:italic;
+  font-size:clamp(40px,10vw,70px);
   color:#fff;
-  text-shadow:0 5px #8b1724;
+  text-shadow:0 5px #394cff;
 }
 
 h2{
-  color:#ff4858;
-  margin:5px 0 18px;
+  color:#ffd83d;
+  margin:8px;
 }
 
 p{
-  color:#dce8ee;
+  color:#dce5ee;
   line-height:1.6;
-  margin:13px 0;
+  margin:15px 0;
 }
 
 button{
   border:0;
-  cursor:pointer;
-  color:white;
-  font-size:19px;
-  font-weight:bold;
   border-radius:15px;
   padding:15px 28px;
-  background:linear-gradient(#ff5968,#b51f35);
-  box-shadow:0 5px #651321;
+  color:white;
+  background:linear-gradient(#ff566b,#b51d38);
+  font-size:18px;
+  font-weight:bold;
+  box-shadow:0 5px #671323;
 }
 
 button:active{
   transform:translateY(3px);
+  box-shadow:0 2px #671323;
 }
 
 #mobile{
   position:fixed;
-  z-index:30;
+  z-index:20;
   left:0;
   right:0;
-  bottom:14px;
+  bottom:15px;
   display:none;
   justify-content:space-between;
-  padding:0 15px;
+  padding:0 18px;
 }
 
 .group{
   display:flex;
-  gap:9px;
+  gap:8px;
 }
 
 .mob{
-  width:65px;
-  height:65px;
+  width:62px;
+  height:62px;
   padding:0;
   border-radius:50%;
-  background:#07121ddd;
+  background:#07101ddd;
   border:2px solid #ffffff55;
-  box-shadow:0 5px 15px #0008;
-  font-size:25px;
+  box-shadow:0 4px 15px #0008;
 }
 
-#message{
+#attack{
+  width:75px;
+  height:75px;
   position:fixed;
-  z-index:25;
-  top:85px;
-  left:50%;
-  transform:translateX(-50%);
-  color:#fff;
-  font-size:22px;
-  font-weight:bold;
-  text-shadow:0 3px 8px #000;
-  pointer-events:none;
+  right:20px;
+  bottom:105px;
+  z-index:21;
+  display:none;
+  padding:0;
+  border-radius:50%;
+  background:linear-gradient(#ff4d61,#a70d27);
 }
 
 @media(max-width:800px){
-
   #mobile{
     display:flex;
   }
 
-  #hud{
-    font-size:10px;
-    gap:6px;
-    padding:7px 8px;
+  #attack{
+    display:block;
   }
 
-  #lifeBar{
-    width:180px;
-    top:47px;
+  #hud{
+    font-size:11px;
+    gap:7px;
+    padding:7px 9px;
   }
 }
 </style>
@@ -209,92 +172,59 @@ button:active{
 <canvas id="game"></canvas>
 
 <div id="hud">
-  ❤️ <span class="life" id="lifeText">12</span>
-  ⏱️ <span class="time" id="timeText">0</span>s
-  ⭐ <span class="score" id="scoreText">0</span>
-  🚨 <span class="wanted" id="wantedText">1</span>
+  ❤️ <span class="hp" id="hp">100</span>
+  ⭐ <span class="score" id="score">0</span>
+  🪙 <span class="coin" id="coins">0</span>
+  ⏱️ <span class="time" id="time">0</span>s
 </div>
-
-<div id="lifeBar">
-  <div id="lifeFill"></div>
-</div>
-
-<div id="message"></div>
-
-<!-- INÍCIO -->
 
 <div id="start" class="screen">
-
   <div class="panel">
-
-    <h1>A CASA<br>CAIU</h1>
-
-    <h2>🚨 FUGA URBANA</h2>
+    <h1>ÚLTIMO</h1>
+    <h2>SOBREVIVENTE</h2>
 
     <p>
-      Entre na cidade, dirija para onde quiser,
-      fuja da polícia e tente bater o recorde!
+      Sobreviva o máximo possível,
+      derrote os inimigos e consiga a maior pontuação.
     </p>
 
     <p>
-      ⌨️ <b>WASD / Setas</b> = dirigir<br>
-      📱 Use os controles na tela no celular
+      ⌨️ WASD / Setas = mover<br>
+      ⚔️ Espaço = atacar
     </p>
 
-    <p>
-      ❤️ Você tem 12 pontos de vida.<br>
-      🚨 A polícia fica cada vez mais forte.<br>
-      🚁 Em perseguições extremas aparece um helicóptero.
-    </p>
-
-    <button id="startBtn">
-      🚨 COMEÇAR
-    </button>
-
+    <button id="startBtn">COMEÇAR</button>
   </div>
-
 </div>
-
-<!-- FIM -->
 
 <div id="end" class="screen hidden">
-
   <div class="panel">
-
-    <h1 id="endTitle">FIM</h1>
-
+    <h1>💀 FIM</h1>
     <p id="endText"></p>
-
-    <button id="restartBtn">
-      🔄 JOGAR NOVAMENTE
-    </button>
-
+    <button id="restartBtn">JOGAR NOVAMENTE</button>
   </div>
-
 </div>
 
-<!-- CONTROLES -->
-
 <div id="mobile">
+  <div class="group">
+    <button class="mob" id="up">▲</button>
+  </div>
 
   <div class="group">
     <button class="mob" id="left">◀</button>
+    <button class="mob" id="down">▼</button>
     <button class="mob" id="right">▶</button>
   </div>
-
-  <div class="group">
-    <button class="mob" id="brake">▼</button>
-    <button class="mob" id="gas">▲</button>
-  </div>
-
 </div>
+
+<button id="attack">⚔️</button>
 
 <script>
 "use strict";
 
-/* =====================================================
+/* =========================
    CANVAS
-===================================================== */
+========================= */
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
@@ -303,10 +233,8 @@ let W=innerWidth;
 let H=innerHeight;
 
 function resize(){
-
   W=innerWidth;
   H=innerHeight;
-
   canvas.width=W;
   canvas.height=H;
 }
@@ -315,27 +243,31 @@ addEventListener("resize",resize);
 resize();
 
 
-/* =====================================================
-   HUD
-===================================================== */
+/* =========================
+   ELEMENTOS
+========================= */
 
-const lifeText=document.getElementById("lifeText");
-const timeText=document.getElementById("timeText");
-const scoreText=document.getElementById("scoreText");
-const wantedText=document.getElementById("wantedText");
-const lifeFill=document.getElementById("lifeFill");
-const message=document.getElementById("message");
+const start=document.getElementById("start");
+const end=document.getElementById("end");
+
+const hpEl=document.getElementById("hp");
+const scoreEl=document.getElementById("score");
+const coinsEl=document.getElementById("coins");
+const timeEl=document.getElementById("time");
+
+const endText=document.getElementById("endText");
 
 
-/* =====================================================
+/* =========================
    CONTROLES
-===================================================== */
+========================= */
 
 const keys={
   up:false,
   down:false,
   left:false,
-  right:false
+  right:false,
+  attack:false
 };
 
 addEventListener("keydown",e=>{
@@ -354,12 +286,15 @@ addEventListener("keydown",e=>{
   if(k==="d"||k==="arrowright")
     keys.right=true;
 
-  if([
-    "w","s","a","d",
-    "arrowup","arrowdown",
-    "arrowleft","arrowright"
-  ].includes(k))
+  if(k===" ")
+    keys.attack=true;
+
+  if(
+    ["arrowup","arrowdown","arrowleft","arrowright"," "]
+    .includes(k)
+  ){
     e.preventDefault();
+  }
 });
 
 addEventListener("keyup",e=>{
@@ -377,21 +312,22 @@ addEventListener("keyup",e=>{
 
   if(k==="d"||k==="arrowright")
     keys.right=false;
+
+  if(k===" ")
+    keys.attack=false;
 });
 
 
-/* =====================================================
-   CONTROLES MOBILE
-===================================================== */
+/* =========================
+   CONTROLES TOUCH
+========================= */
 
 function hold(id,key){
 
   const b=document.getElementById(id);
 
   b.addEventListener("pointerdown",e=>{
-
     e.preventDefault();
-
     keys[key]=true;
 
     try{
@@ -399,727 +335,363 @@ function hold(id,key){
     }catch(_){}
   });
 
-  const release=e=>{
-
-    if(e)
-      e.preventDefault();
-
+  function release(e){
+    if(e)e.preventDefault();
     keys[key]=false;
-  };
+  }
 
   b.addEventListener("pointerup",release);
   b.addEventListener("pointercancel",release);
   b.addEventListener("lostpointercapture",release);
 }
 
+hold("up","up");
+hold("down","down");
 hold("left","left");
 hold("right","right");
-hold("gas","up");
-hold("brake","down");
+hold("attack","attack");
 
 
-/* =====================================================
-   JOGO
-===================================================== */
+/* =========================
+   ESTADO
+========================= */
 
 const game={
-
   running:false,
-
-  worldW:6000,
-  worldH:6000,
-
-  cameraX:0,
-  cameraY:0,
-
-  time:0,
+  hp:100,
+  maxHp:100,
   score:0,
-
-  wanted:1,
-
-  policeTimer:100,
-
-  shake:0,
-
-  helicopter:false,
-
-  helicopterTimer:0,
-
-  messageTimer:0
+  coins:0,
+  time:0,
+  spawnTimer:0,
+  attackTimer:0,
+  difficulty:1,
+  shake:0
 };
-
-
-/* =====================================================
-   PLAYER
-===================================================== */
 
 const player={
-
-  x:3000,
-  y:3000,
-
-  w:42,
-  h:72,
-
-  angle:0,
-
-  speed:0,
-
-  maxSpeed:7,
-
-  health:12,
-
-  invincible:0,
-
-  color:"#e63145"
+  x:0,
+  y:0,
+  r:22,
+  speed:4.5,
+  facingX:1,
+  facingY:0,
+  invincible:0
 };
 
-
-/* =====================================================
-   OBJETOS
-===================================================== */
-
-let buildings=[];
-let trees=[];
-let cars=[];
-let police=[];
-let bullets=[];
+let enemies=[];
 let coins=[];
 let particles=[];
 
 
-/* =====================================================
+/* =========================
    UTILIDADES
-===================================================== */
+========================= */
 
 function clamp(v,a,b){
-
   return Math.max(a,Math.min(b,v));
 }
 
 function rand(a,b){
-
   return Math.random()*(b-a)+a;
 }
 
 function dist(a,b){
-
-  return Math.hypot(
-    a.x-b.x,
-    a.y-b.y
-  );
-}
-
-function collision(a,b){
-
-  return(
-    a.x<b.x+b.w &&
-    a.x+a.w>b.x &&
-    a.y<b.y+b.h &&
-    a.y+a.h>b.y
-  );
+  return Math.hypot(a.x-b.x,a.y-b.y);
 }
 
 
-/* =====================================================
-   CRIAR CIDADE
-===================================================== */
-
-function createCity(){
-
-  buildings=[];
-  trees=[];
-  cars=[];
-  police=[];
-  bullets=[];
-  coins=[];
-  particles=[];
-
-  /* prédios */
-
-  for(let x=150;x<game.worldW-150;x+=380){
-
-    for(let y=150;y<game.worldH-150;y+=380){
-
-      const roadX=
-        Math.abs(
-          (x%900)-450
-        );
-
-      const roadY=
-        Math.abs(
-          (y%900)-450
-        );
-
-      if(
-        roadX<170 ||
-        roadY<170
-      )
-        continue;
-
-      buildings.push({
-
-        x:x+rand(-50,50),
-        y:y+rand(-50,50),
-        w:rand(180,280),
-        h:rand(180,280),
-
-        color:[
-          "#555c67",
-          "#725d51",
-          "#3f5967",
-          "#685b72",
-          "#4f684f"
-        ][Math.floor(rand(0,5))]
-      });
-    }
-  }
-
-  /* árvores */
-
-  for(let i=0;i<280;i++){
-
-    trees.push({
-
-      x:rand(80,game.worldW-80),
-      y:rand(80,game.worldH-80),
-      r:rand(10,19)
-    });
-  }
-
-  /* carros */
-
-  for(let i=0;i<70;i++){
-
-    const horizontal=Math.random()>0.5;
-
-    const road=900*
-      Math.floor(
-        rand(0,game.worldW/900)
-      );
-
-    cars.push({
-
-      x:horizontal
-        ?rand(100,game.worldW-100)
-        :road+rand(-100,100),
-
-      y:horizontal
-        ?road+rand(-100,100)
-        :rand(100,game.worldH-100),
-
-      w:38,
-      h:65,
-
-      angle:horizontal
-        ?0
-        :Math.PI/2,
-
-      speed:rand(1.2,2.5),
-
-      color:[
-        "#2776c8",
-        "#f0bf32",
-        "#35a45d",
-        "#c33cc4",
-        "#e8752d",
-        "#e9e9e9"
-      ][Math.floor(rand(0,6))],
-
-      police:false
-    });
-  }
-
-  /* moedas */
-
-  for(let i=0;i<100;i++){
-
-    coins.push({
-
-      x:rand(150,game.worldW-150),
-      y:rand(150,game.worldH-150),
-      taken:false
-    });
-  }
-}
-
-
-/* =====================================================
-   INÍCIO
-===================================================== */
+/* =========================
+   INICIAR
+========================= */
 
 function startGame(){
 
   game.running=true;
-
-  game.time=0;
+  game.hp=100;
   game.score=0;
-  game.wanted=1;
-  game.policeTimer=100;
-  game.helicopter=false;
-  game.helicopterTimer=0;
+  game.coins=0;
+  game.time=0;
+  game.spawnTimer=20;
+  game.attackTimer=0;
+  game.difficulty=1;
   game.shake=0;
 
-  player.x=game.worldW/2;
-  player.y=game.worldH/2;
-  player.angle=0;
-  player.speed=0;
-  player.health=12;
-  player.invincible=100;
+  enemies=[];
+  coins=[];
+  particles=[];
 
-  createCity();
+  player.x=W/2;
+  player.y=H/2;
+  player.invincible=60;
 
-  document
-    .getElementById("start")
-    .classList.add("hidden");
-
-  document
-    .getElementById("end")
-    .classList.add("hidden");
+  start.classList.add("hidden");
+  end.classList.add("hidden");
 
   updateHUD();
 }
 
 
-/* =====================================================
+/* =========================
    PLAYER
-===================================================== */
+========================= */
 
 function updatePlayer(){
 
-  if(keys.up)
-    player.speed+=0.12;
-  else
-    player.speed-=0.035;
+  let dx=0;
+  let dy=0;
 
-  if(keys.down)
-    player.speed-=0.16;
+  if(keys.left)dx--;
+  if(keys.right)dx++;
+  if(keys.up)dy--;
+  if(keys.down)dy++;
 
-  player.speed=
-    clamp(
-      player.speed,
-      -2.5,
-      player.maxSpeed
-    );
+  if(dx!==0||dy!==0){
 
-  if(keys.left){
+    const len=Math.hypot(dx,dy);
 
-    player.angle-=
-      0.045*
-      (Math.abs(player.speed)+0.5);
+    dx/=len;
+    dy/=len;
+
+    player.x+=dx*player.speed;
+    player.y+=dy*player.speed;
+
+    player.facingX=dx;
+    player.facingY=dy;
   }
 
-  if(keys.right){
+  const margin=30;
 
-    player.angle+=
-      0.045*
-      (Math.abs(player.speed)+0.5);
-  }
+  player.x=clamp(
+    player.x,
+    margin,
+    W-margin
+  );
 
-  player.x+=
-    Math.sin(player.angle)*
-    player.speed;
-
-  player.y+=
-    -Math.cos(player.angle)*
-    player.speed;
-
-  player.x=
-    clamp(
-      player.x,
-      40,
-      game.worldW-40
-    );
-
-  player.y=
-    clamp(
-      player.y,
-      40,
-      game.worldH-40
-    );
+  player.y=clamp(
+    player.y,
+    80,
+    H-margin
+  );
 
   if(player.invincible>0)
     player.invincible--;
 
-  /* colisão com prédios */
-
-  const box={
-    x:player.x-player.w/2,
-    y:player.y-player.h/2,
-    w:player.w,
-    h:player.h
-  };
-
-  for(const b of buildings){
-
-    if(collision(box,b)){
-
-      player.x-=
-        Math.sin(player.angle)*
-        player.speed;
-
-      player.y+=
-        Math.cos(player.angle)*
-        player.speed;
-
-      player.speed*=0.45;
-
-      damage(1);
-
-      break;
-    }
-  }
-
-  game.score+=
-    Math.max(
-      0,
-      Math.floor(Math.abs(player.speed)*0.03)
-    );
+  if(game.attackTimer>0)
+    game.attackTimer--;
 }
 
 
-/* =====================================================
-   TRÂNSITO
-===================================================== */
+/* =========================
+   ATAQUE
+========================= */
 
-function updateCars(){
+function attack(){
 
-  for(const c of cars){
+  if(!game.running)return;
+  if(game.attackTimer>0)return;
 
-    if(c.angle===0)
-      c.x+=c.speed;
-    else
-      c.y+=c.speed;
+  game.attackTimer=18;
 
-    if(c.x>game.worldW+100)
-      c.x=-100;
+  const range=75;
 
-    if(c.y>game.worldH+100)
-      c.y=-100;
+  let hit=false;
 
-    const box={
+  for(const e of enemies){
 
-      x:c.x-c.w/2,
-      y:c.y-c.h/2,
-      w:c.w,
-      h:c.h
-    };
+    if(e.dead)continue;
 
-    const pbox={
+    const d=dist(player,e);
 
-      x:player.x-player.w/2,
-      y:player.y-player.h/2,
-      w:player.w,
-      h:player.h
-    };
+    if(d<range+e.r){
 
-    if(
-      collision(box,pbox) &&
-      player.invincible<=0
-    ){
-
-      damage(1);
-
-      player.speed*=0.4;
-
-      player.invincible=50;
+      e.hp--;
+      hit=true;
 
       burst(
-        player.x,
-        player.y,
-        "#ff9c3b",
-        15
+        e.x,
+        e.y,
+        "#ff5265",
+        10
       );
+
+      if(e.hp<=0){
+
+        e.dead=true;
+
+        game.score+=e.type==="big"?250:100;
+
+        if(Math.random()<0.7){
+
+          coins.push({
+            x:e.x,
+            y:e.y,
+            r:8
+          });
+        }
+      }
     }
   }
+
+  if(hit)
+    game.score+=25;
 }
 
 
-/* =====================================================
-   POLÍCIA
-===================================================== */
+/* =========================
+   INIMIGOS
+========================= */
 
-function spawnPolice(){
+function spawnEnemy(){
 
-  const side=
-    Math.floor(rand(0,4));
+  const side=Math.floor(Math.random()*4);
 
-  let x,y;
+  let x;
+  let y;
 
   if(side===0){
-    x=player.x+rand(-600,600);
-    y=player.y-650;
+    x=-40;
+    y=rand(80,H);
   }
 
   if(side===1){
-    x=player.x+650;
-    y=player.y+rand(-600,600);
+    x=W+40;
+    y=rand(80,H);
   }
 
   if(side===2){
-    x=player.x+rand(-600,600);
-    y=player.y+650;
+    x=rand(0,W);
+    y=50;
   }
 
   if(side===3){
-    x=player.x-650;
-    y=player.y+rand(-600,600);
+    x=rand(0,W);
+    y=H+40;
   }
 
-  x=clamp(x,50,game.worldW-50);
-  y=clamp(y,50,game.worldH-50);
+  const big=
+    Math.random()<Math.min(
+      0.1+game.difficulty*0.015,
+      0.35
+    );
 
-  police.push({
+  enemies.push({
 
     x,
     y,
 
-    w:45,
-    h:75,
-
-    angle:0,
+    r:big?28:18,
 
     speed:
-      2.1+
-      game.wanted*0.25,
+      big
+        ?1.15+game.difficulty*.05
+        :1.5+game.difficulty*.09,
 
-    hitTimer:0
+    hp:big?3:1,
+
+    maxHp:big?3:1,
+
+    type:big?"big":"normal",
+
+    dead:false
   });
 }
 
 
-function updatePolice(){
+function updateEnemies(){
 
-  game.policeTimer-=1/60;
+  game.spawnTimer--;
 
-  if(game.policeTimer<=0){
+  if(game.spawnTimer<=0){
 
-    game.wanted++;
+    spawnEnemy();
 
-    game.policeTimer=100;
+    if(game.difficulty>=4&&Math.random()<0.25)
+      spawnEnemy();
 
-    showMessage(
-      "🚨 MAIS POLÍCIA!",
-      150
+    game.spawnTimer=Math.max(
+      12,
+      48-game.difficulty*2
     );
-
-    for(
-      let i=0;
-      i<Math.min(2,game.wanted);
-      i++
-    )
-      spawnPolice();
-
-    if(game.wanted>=4)
-      game.helicopter=true;
   }
 
-  const desired=
-    Math.min(
-      10,
-      2+game.wanted
-    );
+  for(const e of enemies){
 
-  while(police.length<desired)
-    spawnPolice();
+    if(e.dead)continue;
 
-  for(const p of police){
+    const dx=player.x-e.x;
+    const dy=player.y-e.y;
 
-    const dx=player.x-p.x;
-    const dy=player.y-p.y;
+    const d=Math.hypot(dx,dy)||1;
 
-    const targetAngle=
-      Math.atan2(dx,-dy);
-
-    let diff=
-      targetAngle-p.angle;
-
-    while(diff>Math.PI)
-      diff-=Math.PI*2;
-
-    while(diff<-Math.PI)
-      diff+=Math.PI*2;
-
-    p.angle+=
-      clamp(diff,-0.045,0.045);
-
-    p.x+=
-      Math.sin(p.angle)*
-      p.speed;
-
-    p.y+=
-      -Math.cos(p.angle)*
-      p.speed;
-
-    p.x=clamp(p.x,30,game.worldW-30);
-    p.y=clamp(p.y,30,game.worldH-30);
-
-    p.hitTimer--;
-
-    const d=
-      Math.hypot(
-        player.x-p.x,
-        player.y-p.y
-      );
+    e.x+=(dx/d)*e.speed;
+    e.y+=(dy/d)*e.speed;
 
     if(
-      d<55 &&
-      p.hitTimer<=0
+      player.invincible<=0 &&
+      d<player.r+e.r
     ){
 
-      p.hitTimer=70;
+      damage(8);
 
-      damage(1);
-
-      player.speed*=0.5;
-
-      showMessage(
-        "🚓 A POLÍCIA BATEU!",
-        45
-      );
+      e.x-=dx/d*30;
+      e.y-=dy/d*30;
     }
   }
+
+  enemies=enemies.filter(e=>!e.dead);
 }
 
 
-/* =====================================================
-   HELICÓPTERO
-===================================================== */
-
-const helicopter={
-
-  x:0,
-  y:0,
-  angle:0,
-  shoot:60
-};
-
-
-function updateHelicopter(){
-
-  if(!game.helicopter)
-    return;
-
-  helicopter.angle+=0.01;
-
-  helicopter.x=
-    player.x+
-    Math.cos(helicopter.angle)*
-    430;
-
-  helicopter.y=
-    player.y+
-    Math.sin(helicopter.angle)*
-    430;
-
-  helicopter.shoot--;
-
-  if(helicopter.shoot<=0){
-
-    helicopter.shoot=
-      Math.max(
-        30,
-        75-game.wanted*5
-      );
-
-    bullets.push({
-
-      x:helicopter.x,
-      y:helicopter.y,
-
-      vx:
-        (player.x-helicopter.x)/
-        70,
-
-      vy:
-        (player.y-helicopter.y)/
-        70,
-
-      life:100
-    });
-  }
-
-  for(let i=bullets.length-1;i>=0;i--){
-
-    const b=bullets[i];
-
-    b.x+=b.vx;
-    b.y+=b.vy;
-    b.life--;
-
-    if(
-      Math.hypot(
-        player.x-b.x,
-        player.y-b.y
-      )<28 &&
-      player.invincible<=0
-    ){
-
-      damage(1);
-
-      bullets.splice(i,1);
-
-      continue;
-    }
-
-    if(b.life<=0)
-      bullets.splice(i,1);
-  }
-}
-
-
-/* =====================================================
+/* =========================
    DANO
-===================================================== */
+========================= */
 
 function damage(amount){
 
   if(player.invincible>0)
     return;
 
-  player.health-=amount;
+  game.hp-=amount;
 
-  player.invincible=65;
-
-  game.shake=12;
+  player.invincible=70;
+  game.shake=10;
 
   burst(
     player.x,
     player.y,
-    "#ff3448",
+    "#ff334d",
     18
   );
 
-  if(player.health<=0){
+  if(game.hp<=0){
 
-    player.health=0;
-
+    game.hp=0;
     gameOver();
   }
 }
 
 
-/* =====================================================
+/* =========================
    MOEDAS
-===================================================== */
+========================= */
 
 function updateCoins(){
 
-  for(const c of coins){
+  for(let i=coins.length-1;i>=0;i--){
 
-    if(c.taken)
-      continue;
+    const c=coins[i];
 
     if(
       Math.hypot(
         player.x-c.x,
         player.y-c.y
-      )<35
+      )<
+      player.r+c.r
     ){
 
-      c.taken=true;
-
-      game.score+=250;
+      game.coins++;
+      game.score+=150;
 
       burst(
         c.x,
@@ -1127,29 +699,30 @@ function updateCoins(){
         "#ffd52e",
         12
       );
-    }
-  }
 
-  if(
-    coins.filter(c=>!c.taken).length<20
-  ){
-
-    for(let i=0;i<30;i++){
-
-      coins.push({
-
-        x:rand(100,game.worldW-100),
-        y:rand(100,game.worldH-100),
-        taken:false
-      });
+      coins.splice(i,1);
     }
   }
 }
 
 
-/* =====================================================
+/* =========================
+   TEMPO / DIFICULDADE
+========================= */
+
+function updateDifficulty(){
+
+  game.time+=1/60;
+
+  game.difficulty=
+    1+
+    Math.floor(game.time/15);
+}
+
+
+/* =========================
    PARTÍCULAS
-===================================================== */
+========================= */
 
 function burst(x,y,color,n){
 
@@ -1172,14 +745,9 @@ function burst(x,y,color,n){
   }
 }
 
-
 function updateParticles(){
 
-  for(
-    let i=particles.length-1;
-    i>=0;
-    i--
-  ){
+  for(let i=particles.length-1;i>=0;i--){
 
     const p=particles[i];
 
@@ -1197,546 +765,108 @@ function updateParticles(){
 }
 
 
-/* =====================================================
-   CÂMERA
-===================================================== */
+/* =========================
+   HUD
+========================= */
 
-function updateCamera(){
+function updateHUD(){
 
-  const targetX=
-    player.x-W/2;
+  hpEl.textContent=Math.max(
+    0,
+    Math.ceil(game.hp)
+  );
 
-  const targetY=
-    player.y-H/2;
-
-  game.cameraX+=
-    (targetX-game.cameraX)*0.08;
-
-  game.cameraY+=
-    (targetY-game.cameraY)*0.08;
-
-  game.cameraX=
-    clamp(
-      game.cameraX,
-      0,
-      game.worldW-W
-    );
-
-  game.cameraY=
-    clamp(
-      game.cameraY,
-      0,
-      game.worldH-H
-    );
+  scoreEl.textContent=game.score;
+  coinsEl.textContent=game.coins;
+  timeEl.textContent=Math.floor(game.time);
 }
 
 
-/* =====================================================
-   DESENHAR CIDADE
-===================================================== */
+/* =========================
+   FUNDO
+========================= */
 
-function drawCity(){
+function drawBackground(){
 
-  ctx.fillStyle="#3c9348";
-
-  ctx.fillRect(
-    0,
-    0,
-    W,
-    H
+  const g=ctx.createLinearGradient(
+    0,0,0,H
   );
 
-  /* ruas principais */
+  g.addColorStop(0,"#121b38");
+  g.addColorStop(1,"#05070d");
 
-  ctx.fillStyle="#303338";
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,W,H);
+
+  /* estrelas */
+
+  ctx.fillStyle="#ffffff55";
+
+  for(let i=0;i<70;i++){
+
+    const x=(i*137)%W;
+    const y=(i*83)%H;
+
+    ctx.fillRect(
+      x,
+      y,
+      2,
+      2
+    );
+  }
+
+  /* arena */
+
+  ctx.strokeStyle="#1e3150";
+  ctx.lineWidth=2;
 
   for(
     let x=0;
-    x<game.worldW;
-    x+=900
+    x<W;
+    x+=80
   ){
-
-    ctx.fillRect(
-      x-game.cameraX,
-      0,
-      180,
-      H
-    );
-  }
-
-  for(
-    let y=0;
-    y<game.worldH;
-    y+=900
-  ){
-
-    ctx.fillRect(
-      0,
-      y-game.cameraY,
-      W,
-      180
-    );
-  }
-
-  /* ruas secundárias */
-
-  ctx.fillStyle="#45474b";
-
-  for(
-    let x=450;
-    x<game.worldW;
-    x+=900
-  ){
-
-    ctx.fillRect(
-      x-game.cameraX,
-      0,
-      80,
-      H
-    );
-  }
-
-  for(
-    let y=450;
-    y<game.worldH;
-    y+=900
-  ){
-
-    ctx.fillRect(
-      0,
-      y-game.cameraY,
-      W,
-      80
-    );
-  }
-
-  /* linhas das ruas */
-
-  ctx.fillStyle="#d7cf69";
-
-  for(
-    let x=90;
-    x<game.worldW;
-    x+=900
-  ){
-
-    for(
-      let y=-50;
-      y<game.worldH;
-      y+=90
-    ){
-
-      ctx.fillRect(
-        x-game.cameraX,
-        y-game.cameraY,
-        6,
-        45
-      );
-    }
-  }
-
-  for(
-    let y=90;
-    y<game.worldH;
-    y+=900
-  ){
-
-    for(
-      let x=-50;
-      x<game.worldW;
-      x+=90
-    ){
-
-      ctx.fillRect(
-        x-game.cameraX,
-        y-game.cameraY,
-        45,
-        6
-      );
-    }
-  }
-}
-
-
-/* =====================================================
-   PRÉDIOS
-===================================================== */
-
-function drawBuildings(){
-
-  for(const b of buildings){
-
-    const x=b.x-game.cameraX;
-    const y=b.y-game.cameraY;
-
-    if(
-      x+b.w<0 ||
-      x>W ||
-      y+b.h<0 ||
-      y>H
-    )
-      continue;
-
-    ctx.fillStyle="#0005";
-
-    ctx.fillRect(
-      x+8,
-      y+10,
-      b.w,
-      b.h
-    );
-
-    ctx.fillStyle=b.color;
-
-    ctx.fillRect(
-      x,
-      y,
-      b.w,
-      b.h
-    );
-
-    /* telhado */
-
-    ctx.fillStyle="#25282c";
-
-    ctx.fillRect(
-      x,
-      y,
-      b.w,
-      12
-    );
-
-    /* janelas */
-
-    ctx.fillStyle="#b9e8f0";
-
-    for(
-      let wx=x+20;
-      wx<x+b.w-15;
-      wx+=42
-    ){
-
-      for(
-        let wy=y+30;
-        wy<y+b.h-15;
-        wy+=45
-      ){
-
-        ctx.fillRect(
-          wx,
-          wy,
-          18,
-          24
-        );
-      }
-    }
-  }
-}
-
-
-/* =====================================================
-   ÁRVORES
-===================================================== */
-
-function drawTrees(){
-
-  for(const t of trees){
-
-    const x=t.x-game.cameraX;
-    const y=t.y-game.cameraY;
-
-    if(x<-40||x>W+40||y<-40||y>H+40)
-      continue;
-
-    ctx.fillStyle="#65422d";
-
-    ctx.fillRect(
-      x-4,
-      y,
-      8,
-      24
-    );
-
-    ctx.fillStyle="#176d38";
 
     ctx.beginPath();
+    ctx.moveTo(x,70);
+    ctx.lineTo(x,H);
+    ctx.stroke();
+  }
 
-    ctx.arc(
-      x,
-      y-8,
-      t.r,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle="#238b45";
+  for(
+    let y=80;
+    y<H;
+    y+=80
+  ){
 
     ctx.beginPath();
-
-    ctx.arc(
-      x-7,
-      y-14,
-      t.r*.65,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
+    ctx.moveTo(0,y);
+    ctx.lineTo(W,y);
+    ctx.stroke();
   }
 }
 
 
-/* =====================================================
-   CARROS
-===================================================== */
-
-function drawVehicle(c,policeCar=false){
-
-  const x=c.x-game.cameraX;
-  const y=c.y-game.cameraY;
-
-  ctx.save();
-
-  ctx.translate(x,y);
-  ctx.rotate(c.angle);
-
-  ctx.fillStyle="#0007";
-
-  ctx.fillRect(
-    -c.w/2+5,
-    -c.h/2+5,
-    c.w,
-    c.h
-  );
-
-  ctx.fillStyle=
-    policeCar
-      ?"#eeeeee"
-      :c.color;
-
-  ctx.fillRect(
-    -c.w/2,
-    -c.h/2,
-    c.w,
-    c.h
-  );
-
-  ctx.fillStyle="#182a38";
-
-  ctx.fillRect(
-    -15,
-    -24,
-    30,
-    24
-  );
-
-  ctx.fillStyle="#111";
-
-  ctx.fillRect(
-    -25,
-    -28,
-    7,
-    20
-  );
-
-  ctx.fillRect(
-    18,
-    -28,
-    7,
-    20
-  );
-
-  ctx.fillRect(
-    -25,
-    8,
-    7,
-    20
-  );
-
-  ctx.fillRect(
-    18,
-    8,
-    7,
-    20
-  );
-
-  if(policeCar){
-
-    ctx.fillStyle="#1477ff";
-
-    ctx.fillRect(
-      -9,
-      -37,
-      18,
-      7
-    );
-
-    ctx.fillStyle="#ff2438";
-
-    ctx.fillRect(
-      -8,
-      -37,
-      8,
-      7
-    );
-  }
-
-  ctx.restore();
-}
-
-
-/* =====================================================
-   JOGADOR
-===================================================== */
+/* =========================
+   PLAYER
+========================= */
 
 function drawPlayer(){
 
-  const x=player.x-game.cameraX;
-  const y=player.y-game.cameraY;
-
   if(
     player.invincible>0 &&
-    Math.floor(player.invincible/6)%2===0
-  )
+    Math.floor(player.invincible/5)%2===0
+  ){
     return;
-
-  drawVehicle({
-
-    x,
-    y,
-
-    w:player.w,
-    h:player.h,
-
-    angle:player.angle,
-
-    color:player.color
-
-  });
-
-  /* esconder diferença de câmera */
+  }
 
   ctx.save();
 
   ctx.translate(
-    x,
-    y
+    player.x,
+    player.y
   );
 
-  ctx.rotate(player.angle);
-
-  ctx.fillStyle="#fff";
-
-  ctx.fillRect(
-    -4,
-    -35,
-    8,
-    70
-  );
-
-  ctx.restore();
-}
-
-
-/* =====================================================
-   POLÍCIA
-===================================================== */
-
-function drawPolice(){
-
-  for(const p of police){
-
-    drawVehicle({
-
-      x:p.x,
-      y:p.y,
-
-      w:p.w,
-      h:p.h,
-
-      angle:p.angle,
-
-      color:"#eee"
-
-    },true);
-  }
-}
-
-
-/* =====================================================
-   MOEDAS
-===================================================== */
-
-function drawCoins(){
-
-  for(const c of coins){
-
-    if(c.taken)
-      continue;
-
-    const x=c.x-game.cameraX;
-    const y=c.y-game.cameraY;
-
-    ctx.fillStyle="#ffd52e";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      x,
-      y,
-      10,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.strokeStyle="#fff3a0";
-    ctx.lineWidth=2;
-    ctx.stroke();
-
-    ctx.fillStyle="#fff";
-
-    ctx.font="bold 12px Arial";
-    ctx.textAlign="center";
-
-    ctx.fillText(
-      "$",
-      x,
-      y+4
-    );
-  }
-}
-
-
-/* =====================================================
-   HELICÓPTERO
-===================================================== */
-
-function drawHelicopter(){
-
-  if(!game.helicopter)
-    return;
-
-  const x=
-    helicopter.x-game.cameraX;
-
-  const y=
-    helicopter.y-game.cameraY;
-
-  if(
-    x<-100||
-    x>W+100||
-    y<-100||
-    y>H+100
-  )
-    return;
-
-  ctx.save();
-
-  ctx.translate(x,y);
+  /* sombra */
 
   ctx.fillStyle="#0008";
 
@@ -1744,9 +874,9 @@ function drawHelicopter(){
 
   ctx.ellipse(
     0,
-    0,
-    45,
-    18,
+    25,
+    25,
+    8,
     0,
     0,
     Math.PI*2
@@ -1754,75 +884,214 @@ function drawHelicopter(){
 
   ctx.fill();
 
-  ctx.fillStyle="#252a30";
+  /* corpo */
 
-  ctx.fillRect(
-    -28,
-    -13,
-    56,
-    26
-  );
-
-  ctx.fillStyle="#273c50";
-
-  ctx.fillRect(
-    -12,
-    -9,
-    24,
-    12
-  );
-
-  ctx.strokeStyle="#222";
-  ctx.lineWidth=5;
+  ctx.fillStyle="#3e6cff";
 
   ctx.beginPath();
 
-  ctx.moveTo(-55,0);
-  ctx.lineTo(55,0);
+  ctx.arc(
+    0,
+    0,
+    player.r,
+    0,
+    Math.PI*2
+  );
 
+  ctx.fill();
+
+  ctx.strokeStyle="#9db4ff";
+  ctx.lineWidth=3;
   ctx.stroke();
 
-  ctx.fillStyle="#ff354b";
+  /* visor */
 
-  ctx.fillRect(
-    -5,
-    8,
-    10,
-    5
+  ctx.fillStyle="#071225";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.facingX*7,
+    player.facingY*7-3,
+    9,
+    0,
+    Math.PI*2
   );
+
+  ctx.fill();
+
+  /* ataque */
+
+  if(game.attackTimer>0){
+
+    ctx.strokeStyle="#7cf6ff";
+    ctx.lineWidth=7;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      0,
+      0,
+      58,
+      -1.1,
+      1.1
+    );
+
+    ctx.stroke();
+  }
 
   ctx.restore();
 }
 
 
-/* =====================================================
-   TIROS
-===================================================== */
+/* =========================
+   INIMIGOS
+========================= */
 
-function drawBullets(){
+function drawEnemies(){
 
-  for(const b of bullets){
+  for(const e of enemies){
 
-    ctx.fillStyle="#ff4d38";
+    ctx.save();
+
+    ctx.translate(
+      e.x,
+      e.y
+    );
+
+    if(e.type==="big"){
+
+      ctx.fillStyle="#8c2eff";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        0,
+        0,
+        e.r,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+      ctx.strokeStyle="#e2b4ff";
+      ctx.lineWidth=3;
+      ctx.stroke();
+
+      ctx.fillStyle="#ff304f";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        0,
+        0,
+        8,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+    }else{
+
+      ctx.fillStyle="#e63251";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        0,
+        0,
+        e.r,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+      ctx.fillStyle="#ffb3bd";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        -5,
+        -4,
+        3,
+        0,
+        Math.PI*2
+      );
+
+      ctx.arc(
+        5,
+        -4,
+        3,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+    }
+
+    /* barra de vida */
+
+    if(e.maxHp>1){
+
+      ctx.fillStyle="#26060c";
+
+      ctx.fillRect(
+        -25,
+        -40,
+        50,
+        5
+      );
+
+      ctx.fillStyle="#ff4055";
+
+      ctx.fillRect(
+        -25,
+        -40,
+        50*(e.hp/e.maxHp),
+        5
+      );
+    }
+
+    ctx.restore();
+  }
+}
+
+
+/* =========================
+   MOEDAS
+========================= */
+
+function drawCoins(){
+
+  for(const c of coins){
+
+    ctx.fillStyle="#ffd52e";
 
     ctx.beginPath();
 
     ctx.arc(
-      b.x-game.cameraX,
-      b.y-game.cameraY,
-      5,
+      c.x,
+      c.y,
+      c.r,
       0,
       Math.PI*2
     );
 
     ctx.fill();
+
+    ctx.strokeStyle="#fff4a0";
+    ctx.lineWidth=2;
+    ctx.stroke();
   }
 }
 
 
-/* =====================================================
+/* =========================
    PARTÍCULAS
-===================================================== */
+========================= */
 
 function drawParticles(){
 
@@ -1835,8 +1104,8 @@ function drawParticles(){
     ctx.beginPath();
 
     ctx.arc(
-      p.x-game.cameraX,
-      p.y-game.cameraY,
+      p.x,
+      p.y,
       p.size,
       0,
       Math.PI*2
@@ -1849,75 +1118,76 @@ function drawParticles(){
 }
 
 
-/* =====================================================
-   HUD
-===================================================== */
+/* =========================
+   RENDER
+========================= */
 
-function updateHUD(){
+function render(){
 
-  lifeText.textContent=player.health;
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
 
-  timeText.textContent=
-    Math.floor(game.time);
-
-  scoreText.textContent=
-    game.score;
-
-  wantedText.textContent=
-    Math.min(game.wanted,6);
-
-  lifeFill.style.width=
-    (player.health/12*100)+"%";
+  drawBackground();
+  drawCoins();
+  drawEnemies();
+  drawPlayer();
+  drawParticles();
 }
 
 
-/* =====================================================
-   MENSAGEM
-===================================================== */
+/* =========================
+   GAME OVER
+========================= */
 
-function showMessage(text,time){
+function gameOver(){
 
-  message.textContent=text;
-  game.messageTimer=time;
+  game.running=false;
+
+  endText.textContent=
+    "Você sobreviveu por "+
+    Math.floor(game.time)+
+    " segundos! "+
+    "Pontuação: "+
+    game.score+
+    " | Moedas: "+
+    game.coins;
+
+  end.classList.remove("hidden");
 }
 
 
-/* =====================================================
+/* =========================
+   BOTÕES
+========================= */
+
+document.getElementById("startBtn")
+.addEventListener("click",startGame);
+
+document.getElementById("restartBtn")
+.addEventListener("click",startGame);
+
+
+/* =========================
    LOOP
-===================================================== */
+========================= */
 
-let last=performance.now();
-
-function loop(now){
-
-  const dt=
-    Math.min(
-      0.033,
-      (now-last)/1000
-    );
-
-  last=now;
+function loop(){
 
   if(game.running){
 
-    game.time+=dt;
-
     updatePlayer();
-    updateCars();
-    updatePolice();
-    updateHelicopter();
+
+    if(keys.attack)
+      attack();
+
+    updateEnemies();
     updateCoins();
+    updateDifficulty();
     updateParticles();
-    updateCamera();
-
-    if(game.messageTimer>0){
-
-      game.messageTimer--;
-
-      if(game.messageTimer<=0)
-        message.textContent="";
-    }
-
     updateHUD();
 
     if(game.shake>0)
@@ -1942,93 +1212,9 @@ function loop(now){
 }
 
 
-/* =====================================================
-   RENDER
-===================================================== */
-
-function render(){
-
-  ctx.clearRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-  drawCity();
-  drawTrees();
-  drawBuildings();
-  drawCoins();
-
-  for(const c of cars)
-    drawVehicle(c,false);
-
-  drawPolice();
-  drawBullets();
-  drawHelicopter();
-  drawPlayer();
-  drawParticles();
-
-  /* borda da cidade */
-
-  ctx.strokeStyle="#111";
-  ctx.lineWidth=20;
-
-  ctx.strokeRect(
-    -game.cameraX,
-    -game.cameraY,
-    game.worldW,
-    game.worldH
-  );
-}
-
-
-/* =====================================================
-   GAME OVER
-===================================================== */
-
-function gameOver(){
-
-  game.running=false;
-
-  document
-    .getElementById("endTitle")
-    .textContent="💥 CARRO DESTRUÍDO!";
-
-  document
-    .getElementById("endText")
-    .textContent=
-      "A polícia acabou com a sua fuga! "+
-      "Você sobreviveu por "+
-      Math.floor(game.time)+
-      " segundos e fez "+
-      game.score+
-      " pontos.";
-
-  document
-    .getElementById("end")
-    .classList.remove("hidden");
-}
-
-
-/* =====================================================
-   BOTÕES
-===================================================== */
-
-document
-  .getElementById("startBtn")
-  .addEventListener("click",startGame);
-
-document
-  .getElementById("restartBtn")
-  .addEventListener("click",startGame);
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
-
-createCity();
+/* =========================
+   INÍCIO
+========================= */
 
 updateHUD();
 
