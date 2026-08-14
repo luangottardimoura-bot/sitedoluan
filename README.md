@@ -3,95 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>A CASA CAIU!</title>
+<title>A CASA CAIU</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;height:100%;overflow:hidden;
-  background:#111;font-family:Arial,sans-serif;
-  touch-action:none;user-select:none
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
-canvas{display:block;width:100%;height:100%}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  font-family:Arial,sans-serif;
+  touch-action:none;
+  user-select:none;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+}
 
 #hud{
-  position:fixed;z-index:20;top:10px;left:50%;
+  position:fixed;
+  z-index:20;
+  top:10px;
+  left:50%;
   transform:translateX(-50%);
-  display:flex;gap:12px;align-items:center;
-  padding:9px 13px;color:#fff;
-  background:#000c;border:1px solid #ffffff33;
-  border-radius:14px;font-weight:bold;
-  white-space:nowrap;font-size:14px
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:9px 14px;
+  color:white;
+  background:#000d;
+  border:1px solid #ffffff33;
+  border-radius:14px;
+  font-weight:bold;
+  white-space:nowrap;
+  font-size:14px;
 }
-.life{color:#ff4b55}
-.time{color:#5eeaff}
-.score{color:#ffd83d}
-.police{color:#ff5570}
 
-#wanted{
-  position:fixed;z-index:20;top:55px;left:50%;
+.life{
+  color:#ff5665;
+}
+
+.time{
+  color:#5eeaff;
+}
+
+.score{
+  color:#ffd83d;
+}
+
+.wanted{
+  color:#ff4858;
+}
+
+#lifeBar{
+  position:fixed;
+  z-index:20;
+  top:52px;
+  left:50%;
   transform:translateX(-50%);
-  color:#fff;background:#000b;
-  padding:5px 12px;border-radius:12px;
-  font-weight:bold;font-size:13px
+  width:220px;
+  height:13px;
+  border-radius:20px;
+  background:#160609;
+  border:1px solid #ffffff55;
+  overflow:hidden;
+}
+
+#lifeFill{
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,#ff283d,#ff9b35);
+  transition:width .15s;
 }
 
 .screen{
-  position:fixed;inset:0;z-index:100;
-  display:flex;align-items:center;justify-content:center;
-  background:#000d
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000d;
 }
-.hidden{display:none!important}
+
+.hidden{
+  display:none!important;
+}
 
 .panel{
-  width:min(600px,92vw);
-  padding:32px 24px;text-align:center;color:white;
+  width:min(620px,92vw);
+  padding:32px 25px;
+  text-align:center;
+  color:white;
   border-radius:25px;
-  background:linear-gradient(145deg,#55202a,#09131c);
+  background:linear-gradient(145deg,#253e52,#080e14);
   border:2px solid #ffffff22;
-  box-shadow:0 20px 80px #000
+  box-shadow:0 20px 80px #000;
 }
+
 h1{
-  font-size:clamp(42px,12vw,78px);
+  font-size:clamp(42px,11vw,78px);
   font-style:italic;
-  text-shadow:0 5px #170609
+  color:#fff;
+  text-shadow:0 5px #8b1724;
 }
-h2{color:#ffd83d;margin:8px 0 18px}
-p{color:#dce8ee;line-height:1.6;margin:15px 0}
+
+h2{
+  color:#ff4858;
+  margin:5px 0 18px;
+}
+
+p{
+  color:#dce8ee;
+  line-height:1.6;
+  margin:13px 0;
+}
 
 button{
-  border:0;border-radius:15px;
-  padding:16px 28px;color:#fff;
-  background:linear-gradient(#ff5d69,#b91f35);
-  box-shadow:0 5px #681523;
-  font-size:18px;font-weight:bold;
-  cursor:pointer
+  border:0;
+  cursor:pointer;
+  color:white;
+  font-size:19px;
+  font-weight:bold;
+  border-radius:15px;
+  padding:15px 28px;
+  background:linear-gradient(#ff5968,#b51f35);
+  box-shadow:0 5px #651321;
 }
+
 button:active{
   transform:translateY(3px);
-  box-shadow:0 2px #681523
 }
 
 #mobile{
-  position:fixed;z-index:30;
-  left:0;right:0;bottom:15px;
-  display:none;justify-content:space-between;
-  padding:0 15px
+  position:fixed;
+  z-index:30;
+  left:0;
+  right:0;
+  bottom:14px;
+  display:none;
+  justify-content:space-between;
+  padding:0 15px;
 }
-.group{display:flex;gap:10px}
+
+.group{
+  display:flex;
+  gap:9px;
+}
+
 .mob{
-  width:68px;height:68px;padding:0;
+  width:65px;
+  height:65px;
+  padding:0;
   border-radius:50%;
   background:#07121ddd;
   border:2px solid #ffffff55;
-  color:#fff;font-size:25px;
-  box-shadow:0 5px 15px #0008
+  box-shadow:0 5px 15px #0008;
+  font-size:25px;
+}
+
+#message{
+  position:fixed;
+  z-index:25;
+  top:85px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:22px;
+  font-weight:bold;
+  text-shadow:0 3px 8px #000;
+  pointer-events:none;
 }
 
 @media(max-width:800px){
-  #mobile{display:flex}
-  #hud{font-size:10px;gap:5px;padding:7px 8px}
-  #wanted{top:52px;font-size:11px}
+
+  #mobile{
+    display:flex;
+  }
+
+  #hud{
+    font-size:10px;
+    gap:6px;
+    padding:7px 8px;
+  }
+
+  #lifeBar{
+    width:180px;
+    top:47px;
+  }
 }
 </style>
 </head>
@@ -101,50 +209,74 @@ button:active{
 <canvas id="game"></canvas>
 
 <div id="hud">
-  ❤️ <span class="life" id="life">12</span>
-  ⏱️ <span class="time" id="time">0</span>s
-  ⭐ <span class="score" id="score">0</span>
-  🚓 <span class="police" id="police">1</span>
+  ❤️ <span class="life" id="lifeText">12</span>
+  ⏱️ <span class="time" id="timeText">0</span>s
+  ⭐ <span class="score" id="scoreText">0</span>
+  🚨 <span class="wanted" id="wantedText">1</span>
 </div>
 
-<div id="wanted">🚨 PROCURADO</div>
+<div id="lifeBar">
+  <div id="lifeFill"></div>
+</div>
+
+<div id="message"></div>
+
+<!-- INÍCIO -->
 
 <div id="start" class="screen">
+
   <div class="panel">
-    <h1>A CASA CAIU!</h1>
-    <h2>🚓 FUGA URBANA</h2>
+
+    <h1>A CASA<br>CAIU</h1>
+
+    <h2>🚨 FUGA URBANA</h2>
 
     <p>
-      Entre na cidade, faça o máximo de pontos
-      e fuja da polícia pelo maior tempo possível.
+      Entre na cidade, dirija para onde quiser,
+      fuja da polícia e tente bater o recorde!
     </p>
 
     <p>
-      ❤️ Você aguenta 12 batidas.<br>
-      🚓 A polícia persegue você.<br>
-      ⏱️ A cada 100 segundos chegam mais policiais.<br>
-      🚁 Depois de ser cercado, o helicóptero entra na perseguição.
+      ⌨️ <b>WASD / Setas</b> = dirigir<br>
+      📱 Use os controles na tela no celular
     </p>
 
     <p>
-      ⌨️ A/D ou ←/→ = dirigir<br>
-      ⬆️ W / ↑ = acelerar<br>
-      ⬇️ S / ↓ = frear
+      ❤️ Você tem 12 pontos de vida.<br>
+      🚨 A polícia fica cada vez mais forte.<br>
+      🚁 Em perseguições extremas aparece um helicóptero.
     </p>
 
-    <button id="startBtn">🚨 COMEÇAR FUGA</button>
+    <button id="startBtn">
+      🚨 COMEÇAR
+    </button>
+
   </div>
+
 </div>
+
+<!-- FIM -->
 
 <div id="end" class="screen hidden">
+
   <div class="panel">
+
     <h1 id="endTitle">FIM</h1>
+
     <p id="endText"></p>
-    <button id="restartBtn">🔄 JOGAR NOVAMENTE</button>
+
+    <button id="restartBtn">
+      🔄 JOGAR NOVAMENTE
+    </button>
+
   </div>
+
 </div>
 
+<!-- CONTROLES -->
+
 <div id="mobile">
+
   <div class="group">
     <button class="mob" id="left">◀</button>
     <button class="mob" id="right">▶</button>
@@ -154,1073 +286,1642 @@ button:active{
     <button class="mob" id="brake">▼</button>
     <button class="mob" id="gas">▲</button>
   </div>
+
 </div>
 
 <script>
 "use strict";
 
-/* =========================
+/* =====================================================
    CANVAS
-========================= */
+===================================================== */
 
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
-let W=innerWidth,H=innerHeight;
+let W=innerWidth;
+let H=innerHeight;
 
 function resize(){
+
   W=innerWidth;
   H=innerHeight;
+
   canvas.width=W;
   canvas.height=H;
 }
+
 addEventListener("resize",resize);
 resize();
 
-/* =========================
+
+/* =====================================================
    HUD
-========================= */
+===================================================== */
 
-const lifeEl=document.getElementById("life");
-const timeEl=document.getElementById("time");
-const scoreEl=document.getElementById("score");
-const policeEl=document.getElementById("police");
+const lifeText=document.getElementById("lifeText");
+const timeText=document.getElementById("timeText");
+const scoreText=document.getElementById("scoreText");
+const wantedText=document.getElementById("wantedText");
+const lifeFill=document.getElementById("lifeFill");
+const message=document.getElementById("message");
 
-/* =========================
+
+/* =====================================================
    CONTROLES
-========================= */
+===================================================== */
 
 const keys={
+  up:false,
+  down:false,
   left:false,
-  right:false,
-  gas:false,
-  brake:false
+  right:false
 };
 
 addEventListener("keydown",e=>{
+
   const k=e.key.toLowerCase();
 
-  if(k==="a"||k==="arrowleft")keys.left=true;
-  if(k==="d"||k==="arrowright")keys.right=true;
-  if(k==="w"||k==="arrowup")keys.gas=true;
-  if(k==="s"||k==="arrowdown")keys.brake=true;
+  if(k==="w"||k==="arrowup")
+    keys.up=true;
 
-  if(["a","d","w","s","arrowleft","arrowright","arrowup","arrowdown"]
-    .includes(k))e.preventDefault();
+  if(k==="s"||k==="arrowdown")
+    keys.down=true;
+
+  if(k==="a"||k==="arrowleft")
+    keys.left=true;
+
+  if(k==="d"||k==="arrowright")
+    keys.right=true;
+
+  if([
+    "w","s","a","d",
+    "arrowup","arrowdown",
+    "arrowleft","arrowright"
+  ].includes(k))
+    e.preventDefault();
 });
 
 addEventListener("keyup",e=>{
+
   const k=e.key.toLowerCase();
 
-  if(k==="a"||k==="arrowleft")keys.left=false;
-  if(k==="d"||k==="arrowright")keys.right=false;
-  if(k==="w"||k==="arrowup")keys.gas=false;
-  if(k==="s"||k==="arrowdown")keys.brake=false;
+  if(k==="w"||k==="arrowup")
+    keys.up=false;
+
+  if(k==="s"||k==="arrowdown")
+    keys.down=false;
+
+  if(k==="a"||k==="arrowleft")
+    keys.left=false;
+
+  if(k==="d"||k==="arrowright")
+    keys.right=false;
 });
 
+
+/* =====================================================
+   CONTROLES MOBILE
+===================================================== */
+
 function hold(id,key){
+
   const b=document.getElementById(id);
 
   b.addEventListener("pointerdown",e=>{
+
     e.preventDefault();
+
     keys[key]=true;
-    try{b.setPointerCapture(e.pointerId)}catch(_){}
+
+    try{
+      b.setPointerCapture(e.pointerId);
+    }catch(_){}
   });
 
-  const stop=e=>{
-    if(e)e.preventDefault();
+  const release=e=>{
+
+    if(e)
+      e.preventDefault();
+
     keys[key]=false;
   };
 
-  b.addEventListener("pointerup",stop);
-  b.addEventListener("pointercancel",stop);
-  b.addEventListener("lostpointercapture",stop);
+  b.addEventListener("pointerup",release);
+  b.addEventListener("pointercancel",release);
+  b.addEventListener("lostpointercapture",release);
 }
 
 hold("left","left");
 hold("right","right");
-hold("gas","gas");
-hold("brake","brake");
+hold("gas","up");
+hold("brake","down");
 
-/* =========================
+
+/* =====================================================
    JOGO
-========================= */
+===================================================== */
 
 const game={
+
   running:false,
-  speed:0,
-  distance:0,
-  score:0,
+
+  worldW:6000,
+  worldH:6000,
+
+  cameraX:0,
+  cameraY:0,
+
   time:0,
-  hits:0,
-  maxHits:12,
-  police:1,
-  spawn:0,
-  obstacleSpawn:0,
-  coinSpawn:0,
-  policeSpawn:0,
-  helicopter:false,
-  helicopterTimer:0,
+  score:0,
+
+  wanted:1,
+
+  policeTimer:100,
+
   shake:0,
-  roadMove:0
+
+  helicopter:false,
+
+  helicopterTimer:0,
+
+  messageTimer:0
 };
+
+
+/* =====================================================
+   PLAYER
+===================================================== */
 
 const player={
-  x:0,
-  y:0,
-  w:56,
-  h:94,
-  vx:0,
-  invincible:0
+
+  x:3000,
+  y:3000,
+
+  w:42,
+  h:72,
+
+  angle:0,
+
+  speed:0,
+
+  maxSpeed:7,
+
+  health:12,
+
+  invincible:0,
+
+  color:"#e63145"
 };
 
-let traffic=[];
+
+/* =====================================================
+   OBJETOS
+===================================================== */
+
+let buildings=[];
+let trees=[];
+let cars=[];
 let police=[];
-let obstacles=[];
+let bullets=[];
 let coins=[];
 let particles=[];
 
-/* =========================
-   UTIL
-========================= */
+
+/* =====================================================
+   UTILIDADES
+===================================================== */
 
 function clamp(v,a,b){
+
   return Math.max(a,Math.min(b,v));
 }
 
 function rand(a,b){
+
   return Math.random()*(b-a)+a;
 }
 
-function hit(a,b){
-  return a.x<b.x+b.w &&
-         a.x+a.w>b.x &&
-         a.y<b.y+b.h &&
-         a.y+a.h>b.y;
+function dist(a,b){
+
+  return Math.hypot(
+    a.x-b.x,
+    a.y-b.y
+  );
 }
 
-/* =========================
-   CIDADE
-========================= */
+function collision(a,b){
 
-function roadWidth(){
-  return Math.min(W*.78,760);
+  return(
+    a.x<b.x+b.w &&
+    a.x+a.w>b.x &&
+    a.y<b.y+b.h &&
+    a.y+a.h>b.y
+  );
 }
 
-function roadLeft(){
-  return W/2-roadWidth()/2;
+
+/* =====================================================
+   CRIAR CIDADE
+===================================================== */
+
+function createCity(){
+
+  buildings=[];
+  trees=[];
+  cars=[];
+  police=[];
+  bullets=[];
+  coins=[];
+  particles=[];
+
+  /* prédios */
+
+  for(let x=150;x<game.worldW-150;x+=380){
+
+    for(let y=150;y<game.worldH-150;y+=380){
+
+      const roadX=
+        Math.abs(
+          (x%900)-450
+        );
+
+      const roadY=
+        Math.abs(
+          (y%900)-450
+        );
+
+      if(
+        roadX<170 ||
+        roadY<170
+      )
+        continue;
+
+      buildings.push({
+
+        x:x+rand(-50,50),
+        y:y+rand(-50,50),
+        w:rand(180,280),
+        h:rand(180,280),
+
+        color:[
+          "#555c67",
+          "#725d51",
+          "#3f5967",
+          "#685b72",
+          "#4f684f"
+        ][Math.floor(rand(0,5))]
+      });
+    }
+  }
+
+  /* árvores */
+
+  for(let i=0;i<280;i++){
+
+    trees.push({
+
+      x:rand(80,game.worldW-80),
+      y:rand(80,game.worldH-80),
+      r:rand(10,19)
+    });
+  }
+
+  /* carros */
+
+  for(let i=0;i<70;i++){
+
+    const horizontal=Math.random()>0.5;
+
+    const road=900*
+      Math.floor(
+        rand(0,game.worldW/900)
+      );
+
+    cars.push({
+
+      x:horizontal
+        ?rand(100,game.worldW-100)
+        :road+rand(-100,100),
+
+      y:horizontal
+        ?road+rand(-100,100)
+        :rand(100,game.worldH-100),
+
+      w:38,
+      h:65,
+
+      angle:horizontal
+        ?0
+        :Math.PI/2,
+
+      speed:rand(1.2,2.5),
+
+      color:[
+        "#2776c8",
+        "#f0bf32",
+        "#35a45d",
+        "#c33cc4",
+        "#e8752d",
+        "#e9e9e9"
+      ][Math.floor(rand(0,6))],
+
+      police:false
+    });
+  }
+
+  /* moedas */
+
+  for(let i=0;i<100;i++){
+
+    coins.push({
+
+      x:rand(150,game.worldW-150),
+      y:rand(150,game.worldH-150),
+      taken:false
+    });
+  }
 }
 
-/* =========================
-   INICIAR
-========================= */
+
+/* =====================================================
+   INÍCIO
+===================================================== */
 
 function startGame(){
 
   game.running=true;
-  game.speed=0;
-  game.distance=0;
-  game.score=0;
+
   game.time=0;
-  game.hits=0;
-  game.police=1;
-  game.spawn=30;
-  game.obstacleSpawn=70;
-  game.coinSpawn=40;
-  game.policeSpawn=100;
+  game.score=0;
+  game.wanted=1;
+  game.policeTimer=100;
   game.helicopter=false;
   game.helicopterTimer=0;
   game.shake=0;
 
-  traffic=[];
-  police=[];
-  obstacles=[];
-  coins=[];
-  particles=[];
+  player.x=game.worldW/2;
+  player.y=game.worldH/2;
+  player.angle=0;
+  player.speed=0;
+  player.health=12;
+  player.invincible=100;
 
-  player.x=W/2-player.w/2;
-  player.y=H*.72;
-  player.vx=0;
-  player.invincible=80;
+  createCity();
 
-  document.getElementById("start").classList.add("hidden");
-  document.getElementById("end").classList.add("hidden");
+  document
+    .getElementById("start")
+    .classList.add("hidden");
+
+  document
+    .getElementById("end")
+    .classList.add("hidden");
 
   updateHUD();
 }
 
-/* =========================
+
+/* =====================================================
    PLAYER
-========================= */
+===================================================== */
 
 function updatePlayer(){
 
-  if(keys.gas)
-    game.speed+=.16;
+  if(keys.up)
+    player.speed+=0.12;
   else
-    game.speed-=.045;
+    player.speed-=0.035;
 
-  if(keys.brake)
-    game.speed-=.25;
+  if(keys.down)
+    player.speed-=0.16;
 
-  game.speed=clamp(game.speed,0,16);
+  player.speed=
+    clamp(
+      player.speed,
+      -2.5,
+      player.maxSpeed
+    );
 
-  if(keys.left)player.vx-=.6;
-  if(keys.right)player.vx+=.6;
+  if(keys.left){
 
-  if(!keys.left&&!keys.right)
-    player.vx*=.84;
-
-  player.vx=clamp(player.vx,-7,7);
-  player.x+=player.vx;
-
-  const left=roadLeft()+12;
-  const right=roadLeft()+roadWidth()-player.w-12;
-
-  if(player.x<left){
-    player.x=left;
-    player.vx*=-.3;
+    player.angle-=
+      0.045*
+      (Math.abs(player.speed)+0.5);
   }
 
-  if(player.x>right){
-    player.x=right;
-    player.vx*=-.3;
+  if(keys.right){
+
+    player.angle+=
+      0.045*
+      (Math.abs(player.speed)+0.5);
   }
 
-  game.distance+=game.speed*.65;
-  game.score+=Math.floor(game.speed*.07);
+  player.x+=
+    Math.sin(player.angle)*
+    player.speed;
+
+  player.y+=
+    -Math.cos(player.angle)*
+    player.speed;
+
+  player.x=
+    clamp(
+      player.x,
+      40,
+      game.worldW-40
+    );
+
+  player.y=
+    clamp(
+      player.y,
+      40,
+      game.worldH-40
+    );
 
   if(player.invincible>0)
     player.invincible--;
+
+  /* colisão com prédios */
+
+  const box={
+    x:player.x-player.w/2,
+    y:player.y-player.h/2,
+    w:player.w,
+    h:player.h
+  };
+
+  for(const b of buildings){
+
+    if(collision(box,b)){
+
+      player.x-=
+        Math.sin(player.angle)*
+        player.speed;
+
+      player.y+=
+        Math.cos(player.angle)*
+        player.speed;
+
+      player.speed*=0.45;
+
+      damage(1);
+
+      break;
+    }
+  }
+
+  game.score+=
+    Math.max(
+      0,
+      Math.floor(Math.abs(player.speed)*0.03)
+    );
 }
 
-/* =========================
+
+/* =====================================================
    TRÂNSITO
-========================= */
+===================================================== */
 
-function spawnTraffic(){
+function updateCars(){
 
-  const lanes=4;
-  const lw=roadWidth()/lanes;
-  const lane=Math.floor(Math.random()*lanes);
+  for(const c of cars){
 
-  traffic.push({
-    x:roadLeft()+lane*lw+lw/2-25,
-    y:-120,
-    w:50,
-    h:88,
-    speed:rand(3,8),
-    color:["#2980d8","#f1c52e","#39a85b",
-           "#c83fd1","#ed6d29","#ddd"][Math.floor(Math.random()*6)]
-  });
-}
+    if(c.angle===0)
+      c.x+=c.speed;
+    else
+      c.y+=c.speed;
 
-function updateTraffic(){
+    if(c.x>game.worldW+100)
+      c.x=-100;
 
-  game.spawn--;
-
-  if(game.spawn<=0){
-    spawnTraffic();
-    game.spawn=Math.max(18,48-Math.min(25,game.time/10));
-  }
-
-  for(let i=traffic.length-1;i>=0;i--){
-
-    const c=traffic[i];
-
-    c.y+=game.speed-c.speed*.35;
-
-    if(hit(player,c)&&player.invincible<=0){
-      crash("trânsito");
-      traffic.splice(i,1);
-      continue;
-    }
-
-    if(c.y>H+150||c.y<-300)
-      traffic.splice(i,1);
-  }
-}
-
-/* =========================
-   OBSTÁCULOS
-========================= */
-
-function spawnObstacle(){
-
-  const lw=roadWidth()/4;
-  const lane=Math.floor(Math.random()*4);
-
-  obstacles.push({
-    x:roadLeft()+lane*lw+lw/2-24,
-    y:-70,
-    w:48,
-    h:48,
-    type:Math.random()<.5?"barrier":"cone"
-  });
-}
-
-function updateObstacles(){
-
-  game.obstacleSpawn--;
-
-  if(game.obstacleSpawn<=0){
-    spawnObstacle();
-    game.obstacleSpawn=Math.max(30,75-game.time/8);
-  }
-
-  for(let i=obstacles.length-1;i>=0;i--){
-
-    const o=obstacles[i];
-
-    o.y+=game.speed+1;
-
-    if(hit(player,o)&&player.invincible<=0){
-      crash("obstáculo");
-      obstacles.splice(i,1);
-      continue;
-    }
-
-    if(o.y>H+100)
-      obstacles.splice(i,1);
-  }
-}
-
-/* =========================
-   MOEDAS
-========================= */
-
-function spawnCoin(){
-
-  const lw=roadWidth()/4;
-  const lane=Math.floor(Math.random()*4);
-
-  coins.push({
-    x:roadLeft()+lane*lw+lw/2,
-    y:-30,
-    r:10,
-    rot:0
-  });
-}
-
-function updateCoins(){
-
-  game.coinSpawn--;
-
-  if(game.coinSpawn<=0){
-    spawnCoin();
-    game.coinSpawn=30;
-  }
-
-  for(let i=coins.length-1;i>=0;i--){
-
-    const c=coins[i];
-
-    c.y+=game.speed+1;
-    c.rot+=.12;
+    if(c.y>game.worldH+100)
+      c.y=-100;
 
     const box={
-      x:c.x-c.r,
-      y:c.y-c.r,
-      w:c.r*2,
-      h:c.r*2
+
+      x:c.x-c.w/2,
+      y:c.y-c.h/2,
+      w:c.w,
+      h:c.h
     };
 
-    if(hit(player,box)){
-      game.score+=250;
-      burst(c.x,c.y,"#ffd52e",12);
-      coins.splice(i,1);
-      continue;
-    }
+    const pbox={
 
-    if(c.y>H+50)
-      coins.splice(i,1);
+      x:player.x-player.w/2,
+      y:player.y-player.h/2,
+      w:player.w,
+      h:player.h
+    };
+
+    if(
+      collision(box,pbox) &&
+      player.invincible<=0
+    ){
+
+      damage(1);
+
+      player.speed*=0.4;
+
+      player.invincible=50;
+
+      burst(
+        player.x,
+        player.y,
+        "#ff9c3b",
+        15
+      );
+    }
   }
 }
 
-/* =========================
+
+/* =====================================================
    POLÍCIA
-========================= */
+===================================================== */
 
 function spawnPolice(){
 
-  const side=Math.random()<.5?-1:1;
+  const side=
+    Math.floor(rand(0,4));
+
+  let x,y;
+
+  if(side===0){
+    x=player.x+rand(-600,600);
+    y=player.y-650;
+  }
+
+  if(side===1){
+    x=player.x+650;
+    y=player.y+rand(-600,600);
+  }
+
+  if(side===2){
+    x=player.x+rand(-600,600);
+    y=player.y+650;
+  }
+
+  if(side===3){
+    x=player.x-650;
+    y=player.y+rand(-600,600);
+  }
+
+  x=clamp(x,50,game.worldW-50);
+  y=clamp(y,50,game.worldH-50);
 
   police.push({
-    x:side<0
-      ?roadLeft()-90
-      :roadLeft()+roadWidth()+40,
-    y:rand(H*.15,H*.55),
-    w:55,
-    h:92,
-    speed:rand(1.5,3.2),
-    siren:0
+
+    x,
+    y,
+
+    w:45,
+    h:75,
+
+    angle:0,
+
+    speed:
+      2.1+
+      game.wanted*0.25,
+
+    hitTimer:0
   });
 }
 
+
 function updatePolice(){
 
-  game.policeSpawn--;
+  game.policeTimer-=1/60;
 
-  if(game.policeSpawn<=0){
+  if(game.policeTimer<=0){
 
-    if(police.length<game.police){
+    game.wanted++;
+
+    game.policeTimer=100;
+
+    showMessage(
+      "🚨 MAIS POLÍCIA!",
+      150
+    );
+
+    for(
+      let i=0;
+      i<Math.min(2,game.wanted);
+      i++
+    )
       spawnPolice();
-    }
 
-    game.policeSpawn=100;
+    if(game.wanted>=4)
+      game.helicopter=true;
   }
+
+  const desired=
+    Math.min(
+      10,
+      2+game.wanted
+    );
+
+  while(police.length<desired)
+    spawnPolice();
 
   for(const p of police){
 
-    p.siren+=.2;
+    const dx=player.x-p.x;
+    const dy=player.y-p.y;
 
-    const targetX=player.x;
+    const targetAngle=
+      Math.atan2(dx,-dy);
 
-    p.x+=(targetX-p.x)*.012;
+    let diff=
+      targetAngle-p.angle;
 
-    p.y+=(player.y-p.y)*.006;
+    while(diff>Math.PI)
+      diff-=Math.PI*2;
 
-    p.y+=game.speed*.35;
+    while(diff<-Math.PI)
+      diff+=Math.PI*2;
 
-    if(hit(player,p)&&player.invincible<=0){
+    p.angle+=
+      clamp(diff,-0.045,0.045);
 
-      crash("polícia");
+    p.x+=
+      Math.sin(p.angle)*
+      p.speed;
 
-      p.x+=Math.random()<.5?-100:100;
-    }
-  }
+    p.y+=
+      -Math.cos(p.angle)*
+      p.speed;
 
-  /* helicóptero */
+    p.x=clamp(p.x,30,game.worldW-30);
+    p.y=clamp(p.y,30,game.worldH-30);
 
-  if(game.time>=200&&!game.helicopter){
+    p.hitTimer--;
 
-    game.helicopter=true;
-    game.helicopterTimer=0;
-  }
-
-  if(game.helicopter){
-
-    game.helicopterTimer++;
-
-    if(game.helicopterTimer%100===0){
-
-      burst(
-        player.x+player.w/2,
-        player.y-20,
-        "#ff3344",
-        8
+    const d=
+      Math.hypot(
+        player.x-p.x,
+        player.y-p.y
       );
 
-      if(player.invincible<=0){
-        game.hits++;
-        game.score=Math.max(0,game.score-150);
-        game.shake=8;
-        player.invincible=35;
+    if(
+      d<55 &&
+      p.hitTimer<=0
+    ){
 
-        if(game.hits>=game.maxHits)
-          explode();
-      }
+      p.hitTimer=70;
+
+      damage(1);
+
+      player.speed*=0.5;
+
+      showMessage(
+        "🚓 A POLÍCIA BATEU!",
+        45
+      );
     }
   }
 }
 
-/* =========================
-   BATIDA
-========================= */
 
-function crash(reason){
+/* =====================================================
+   HELICÓPTERO
+===================================================== */
 
-  if(player.invincible>0)return;
+const helicopter={
 
-  game.hits++;
-  game.speed*=.45;
-  game.score=Math.max(0,game.score-100);
+  x:0,
+  y:0,
+  angle:0,
+  shoot:60
+};
 
-  player.invincible=75;
-  game.shake=14;
 
-  burst(
-    player.x+player.w/2,
-    player.y+player.h/2,
-    "#ff4938",
-    20
-  );
+function updateHelicopter(){
 
-  if(game.hits>=game.maxHits)
-    explode();
-}
+  if(!game.helicopter)
+    return;
 
-/* =========================
-   EXPLOSÃO
-========================= */
+  helicopter.angle+=0.01;
 
-function explode(){
+  helicopter.x=
+    player.x+
+    Math.cos(helicopter.angle)*
+    430;
 
-  game.running=false;
+  helicopter.y=
+    player.y+
+    Math.sin(helicopter.angle)*
+    430;
 
-  for(let i=0;i<50;i++)
-    burst(
-      player.x+player.w/2,
-      player.y+player.h/2,
-      Math.random()<.5?"#ff3b20":"#ffd52e",
-      1
-    );
+  helicopter.shoot--;
 
-  document.getElementById("endTitle").textContent="💥 CARRO DESTRUIDO!";
+  if(helicopter.shoot<=0){
 
-  document.getElementById("endText").textContent=
-    "Você sofreu 12 batidas. "+
-    "Pontuação: "+game.score+
-    " | Tempo: "+Math.floor(game.time)+" segundos.";
+    helicopter.shoot=
+      Math.max(
+        30,
+        75-game.wanted*5
+      );
 
-  document.getElementById("end").classList.remove("hidden");
-}
+    bullets.push({
 
-/* =========================
-   TEMPO
-========================= */
+      x:helicopter.x,
+      y:helicopter.y,
 
-let lastTime=performance.now();
+      vx:
+        (player.x-helicopter.x)/
+        70,
 
-function updateTime(now){
+      vy:
+        (player.y-helicopter.y)/
+        70,
 
-  const dt=Math.min(.05,(now-lastTime)/1000);
-  lastTime=now;
+      life:100
+    });
+  }
 
-  if(game.running){
+  for(let i=bullets.length-1;i>=0;i--){
 
-    game.time+=dt;
+    const b=bullets[i];
 
-    /*
-      A cada 100 segundos:
-      aumenta o número de policiais.
-    */
-    const wantedLevel=
-      Math.floor(game.time/100)+1;
+    b.x+=b.vx;
+    b.y+=b.vy;
+    b.life--;
 
-    game.police=
-      Math.min(8,wantedLevel);
+    if(
+      Math.hypot(
+        player.x-b.x,
+        player.y-b.y
+      )<28 &&
+      player.invincible<=0
+    ){
+
+      damage(1);
+
+      bullets.splice(i,1);
+
+      continue;
+    }
+
+    if(b.life<=0)
+      bullets.splice(i,1);
   }
 }
 
-/* =========================
+
+/* =====================================================
+   DANO
+===================================================== */
+
+function damage(amount){
+
+  if(player.invincible>0)
+    return;
+
+  player.health-=amount;
+
+  player.invincible=65;
+
+  game.shake=12;
+
+  burst(
+    player.x,
+    player.y,
+    "#ff3448",
+    18
+  );
+
+  if(player.health<=0){
+
+    player.health=0;
+
+    gameOver();
+  }
+}
+
+
+/* =====================================================
+   MOEDAS
+===================================================== */
+
+function updateCoins(){
+
+  for(const c of coins){
+
+    if(c.taken)
+      continue;
+
+    if(
+      Math.hypot(
+        player.x-c.x,
+        player.y-c.y
+      )<35
+    ){
+
+      c.taken=true;
+
+      game.score+=250;
+
+      burst(
+        c.x,
+        c.y,
+        "#ffd52e",
+        12
+      );
+    }
+  }
+
+  if(
+    coins.filter(c=>!c.taken).length<20
+  ){
+
+    for(let i=0;i<30;i++){
+
+      coins.push({
+
+        x:rand(100,game.worldW-100),
+        y:rand(100,game.worldH-100),
+        taken:false
+      });
+    }
+  }
+}
+
+
+/* =====================================================
    PARTÍCULAS
-========================= */
+===================================================== */
 
 function burst(x,y,color,n){
 
   for(let i=0;i<n;i++){
 
     particles.push({
-      x:x,
-      y:y,
-      vx:rand(-5,5),
-      vy:rand(-5,5),
+
+      x,
+      y,
+
+      vx:rand(-4,4),
+      vy:rand(-4,4),
+
       life:1,
-      color:color,
+
+      color,
+
       size:rand(2,6)
     });
   }
 }
 
+
 function updateParticles(){
 
-  for(let i=particles.length-1;i>=0;i--){
+  for(
+    let i=particles.length-1;
+    i>=0;
+    i--
+  ){
 
     const p=particles[i];
 
     p.x+=p.vx;
     p.y+=p.vy;
-    p.vy+=.12;
-    p.life-=.035;
+
+    p.vx*=0.98;
+    p.vy*=0.98;
+
+    p.life-=0.035;
 
     if(p.life<=0)
       particles.splice(i,1);
   }
 }
 
-/* =========================
-   HUD
-========================= */
 
-function updateHUD(){
+/* =====================================================
+   CÂMERA
+===================================================== */
 
-  lifeEl.textContent=
-    Math.max(0,game.maxHits-game.hits);
+function updateCamera(){
 
-  timeEl.textContent=
-    Math.floor(game.time);
+  const targetX=
+    player.x-W/2;
 
-  scoreEl.textContent=
-    game.score;
+  const targetY=
+    player.y-H/2;
 
-  policeEl.textContent=
-    game.police;
-}
+  game.cameraX+=
+    (targetX-game.cameraX)*0.08;
 
-/* =========================
-   FUNDO
-========================= */
+  game.cameraY+=
+    (targetY-game.cameraY)*0.08;
 
-function drawBackground(){
-
-  const sky=ctx.createLinearGradient(0,0,0,H);
-
-  sky.addColorStop(0,"#151d38");
-  sky.addColorStop(.5,"#303c54");
-  sky.addColorStop(1,"#111820");
-
-  ctx.fillStyle=sky;
-  ctx.fillRect(0,0,W,H);
-
-  /* prédios */
-
-  const offset=
-    (game.distance*.12)%180;
-
-  for(let x=-180;x<W+180;x+=120){
-
-    const h=rand(100,280);
-    const xx=x-offset;
-
-    ctx.fillStyle=
-      x%240===0?"#202838":"#283344";
-
-    ctx.fillRect(
-      xx,
-      H*.48-h,
-      100,
-      h
+  game.cameraX=
+    clamp(
+      game.cameraX,
+      0,
+      game.worldW-W
     );
 
-    ctx.fillStyle="#ffd95a";
+  game.cameraY=
+    clamp(
+      game.cameraY,
+      0,
+      game.worldH-H
+    );
+}
 
-    for(let wy=0;wy<5;wy++){
-      for(let wx=0;wx<3;wx++){
 
-        if(Math.random()<.7){
+/* =====================================================
+   DESENHAR CIDADE
+===================================================== */
 
-          ctx.fillRect(
-            xx+15+wx*25,
-            H*.48-h+20+wy*35,
-            9,
-            13
-          );
-        }
+function drawCity(){
+
+  ctx.fillStyle="#3c9348";
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+  /* ruas principais */
+
+  ctx.fillStyle="#303338";
+
+  for(
+    let x=0;
+    x<game.worldW;
+    x+=900
+  ){
+
+    ctx.fillRect(
+      x-game.cameraX,
+      0,
+      180,
+      H
+    );
+  }
+
+  for(
+    let y=0;
+    y<game.worldH;
+    y+=900
+  ){
+
+    ctx.fillRect(
+      0,
+      y-game.cameraY,
+      W,
+      180
+    );
+  }
+
+  /* ruas secundárias */
+
+  ctx.fillStyle="#45474b";
+
+  for(
+    let x=450;
+    x<game.worldW;
+    x+=900
+  ){
+
+    ctx.fillRect(
+      x-game.cameraX,
+      0,
+      80,
+      H
+    );
+  }
+
+  for(
+    let y=450;
+    y<game.worldH;
+    y+=900
+  ){
+
+    ctx.fillRect(
+      0,
+      y-game.cameraY,
+      W,
+      80
+    );
+  }
+
+  /* linhas das ruas */
+
+  ctx.fillStyle="#d7cf69";
+
+  for(
+    let x=90;
+    x<game.worldW;
+    x+=900
+  ){
+
+    for(
+      let y=-50;
+      y<game.worldH;
+      y+=90
+    ){
+
+      ctx.fillRect(
+        x-game.cameraX,
+        y-game.cameraY,
+        6,
+        45
+      );
+    }
+  }
+
+  for(
+    let y=90;
+    y<game.worldH;
+    y+=900
+  ){
+
+    for(
+      let x=-50;
+      x<game.worldW;
+      x+=90
+    ){
+
+      ctx.fillRect(
+        x-game.cameraX,
+        y-game.cameraY,
+        45,
+        6
+      );
+    }
+  }
+}
+
+
+/* =====================================================
+   PRÉDIOS
+===================================================== */
+
+function drawBuildings(){
+
+  for(const b of buildings){
+
+    const x=b.x-game.cameraX;
+    const y=b.y-game.cameraY;
+
+    if(
+      x+b.w<0 ||
+      x>W ||
+      y+b.h<0 ||
+      y>H
+    )
+      continue;
+
+    ctx.fillStyle="#0005";
+
+    ctx.fillRect(
+      x+8,
+      y+10,
+      b.w,
+      b.h
+    );
+
+    ctx.fillStyle=b.color;
+
+    ctx.fillRect(
+      x,
+      y,
+      b.w,
+      b.h
+    );
+
+    /* telhado */
+
+    ctx.fillStyle="#25282c";
+
+    ctx.fillRect(
+      x,
+      y,
+      b.w,
+      12
+    );
+
+    /* janelas */
+
+    ctx.fillStyle="#b9e8f0";
+
+    for(
+      let wx=x+20;
+      wx<x+b.w-15;
+      wx+=42
+    ){
+
+      for(
+        let wy=y+30;
+        wy<y+b.h-15;
+        wy+=45
+      ){
+
+        ctx.fillRect(
+          wx,
+          wy,
+          18,
+          24
+        );
       }
     }
   }
-
-  /* grama/calçada */
-
-  ctx.fillStyle="#1c4d32";
-  ctx.fillRect(0,H*.48,W,H);
-
-  ctx.fillStyle="#777";
-  ctx.fillRect(0,H*.55,roadLeft(),H);
-  ctx.fillRect(
-    roadLeft()+roadWidth(),
-    H*.55,
-    W-roadLeft()-roadWidth(),
-    H
-  );
 }
 
-/* =========================
-   ESTRADA
-========================= */
 
-function drawRoad(){
+/* =====================================================
+   ÁRVORES
+===================================================== */
 
-  const left=roadLeft();
-  const width=roadWidth();
+function drawTrees(){
 
-  ctx.fillStyle="#555";
-  ctx.fillRect(left-18,0,width+36,H);
+  for(const t of trees){
 
-  ctx.fillStyle="#292d32";
-  ctx.fillRect(left,0,width,H);
+    const x=t.x-game.cameraX;
+    const y=t.y-game.cameraY;
 
-  const laneW=width/4;
-  const offset=(game.distance*2)%120;
+    if(x<-40||x>W+40||y<-40||y>H+40)
+      continue;
 
-  ctx.fillStyle="#e8e8d2";
+    ctx.fillStyle="#65422d";
 
-  for(let lane=1;lane<4;lane++){
+    ctx.fillRect(
+      x-4,
+      y,
+      8,
+      24
+    );
 
-    const x=left+lane*laneW-3;
+    ctx.fillStyle="#176d38";
 
-    for(let y=-100+offset;y<H;y+=120){
+    ctx.beginPath();
 
-      ctx.fillRect(x,y,6,65);
-    }
+    ctx.arc(
+      x,
+      y-8,
+      t.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#238b45";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      x-7,
+      y-14,
+      t.r*.65,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
   }
-
-  ctx.fillStyle="#fff";
-  ctx.fillRect(left,0,6,H);
-  ctx.fillRect(left+width-6,0,6,H);
 }
 
-/* =========================
-   CARRO DO JOGADOR
-========================= */
 
-function drawPlayer(){
+/* =====================================================
+   CARROS
+===================================================== */
 
-  if(
-    player.invincible>0 &&
-    Math.floor(player.invincible/6)%2===0
-  )return;
+function drawVehicle(c,policeCar=false){
+
+  const x=c.x-game.cameraX;
+  const y=c.y-game.cameraY;
 
   ctx.save();
 
-  ctx.translate(
-    player.x+player.w/2,
-    player.y+player.h/2
+  ctx.translate(x,y);
+  ctx.rotate(c.angle);
+
+  ctx.fillStyle="#0007";
+
+  ctx.fillRect(
+    -c.w/2+5,
+    -c.h/2+5,
+    c.w,
+    c.h
   );
 
-  ctx.rotate(player.vx*.025);
+  ctx.fillStyle=
+    policeCar
+      ?"#eeeeee"
+      :c.color;
 
-  /* sombra */
+  ctx.fillRect(
+    -c.w/2,
+    -c.h/2,
+    c.w,
+    c.h
+  );
 
-  ctx.fillStyle="#0009";
-  ctx.beginPath();
-  ctx.ellipse(0,48,35,8,0,0,Math.PI*2);
-  ctx.fill();
+  ctx.fillStyle="#182a38";
 
-  /* rodas */
+  ctx.fillRect(
+    -15,
+    -24,
+    30,
+    24
+  );
 
-  ctx.fillStyle="#080808";
+  ctx.fillStyle="#111";
 
-  ctx.fillRect(-33,-32,10,25);
-  ctx.fillRect(23,-32,10,25);
-  ctx.fillRect(-33,8,10,25);
-  ctx.fillRect(23,8,10,25);
+  ctx.fillRect(
+    -25,
+    -28,
+    7,
+    20
+  );
 
-  /* carroceria */
+  ctx.fillRect(
+    18,
+    -28,
+    7,
+    20
+  );
 
-  ctx.fillStyle="#e52c3f";
-  ctx.beginPath();
-  ctx.roundRect(-28,-47,56,94,12);
-  ctx.fill();
+  ctx.fillRect(
+    -25,
+    8,
+    7,
+    20
+  );
 
-  /* vidro */
+  ctx.fillRect(
+    18,
+    8,
+    7,
+    20
+  );
 
-  ctx.fillStyle="#142b3c";
-  ctx.beginPath();
-  ctx.roundRect(-19,-33,38,27,7);
-  ctx.fill();
+  if(policeCar){
 
-  /* faixa */
+    ctx.fillStyle="#1477ff";
 
-  ctx.fillStyle="#ffffff99";
-  ctx.fillRect(-4,-47,8,94);
+    ctx.fillRect(
+      -9,
+      -37,
+      18,
+      7
+    );
 
-  /* faróis */
+    ctx.fillStyle="#ff2438";
 
-  ctx.fillStyle="#fff3a3";
-  ctx.fillRect(-20,-44,11,6);
-  ctx.fillRect(9,-44,11,6);
-
-  /* lanternas */
-
-  ctx.fillStyle="#ff2038";
-  ctx.fillRect(-20,38,11,6);
-  ctx.fillRect(9,38,11,6);
+    ctx.fillRect(
+      -8,
+      -37,
+      8,
+      7
+    );
+  }
 
   ctx.restore();
 }
 
-/* =========================
-   TRÂNSITO
-========================= */
 
-function drawTraffic(){
+/* =====================================================
+   JOGADOR
+===================================================== */
 
-  for(const c of traffic){
+function drawPlayer(){
 
-    ctx.save();
+  const x=player.x-game.cameraX;
+  const y=player.y-game.cameraY;
 
-    ctx.translate(
-      c.x+c.w/2,
-      c.y+c.h/2
-    );
+  if(
+    player.invincible>0 &&
+    Math.floor(player.invincible/6)%2===0
+  )
+    return;
 
-    ctx.fillStyle="#111";
-    ctx.fillRect(-29,-30,9,24);
-    ctx.fillRect(20,-30,9,24);
-    ctx.fillRect(-29,7,9,24);
-    ctx.fillRect(20,7,9,24);
+  drawVehicle({
 
-    ctx.fillStyle=c.color;
-    ctx.beginPath();
-    ctx.roundRect(-25,-44,50,88,10);
-    ctx.fill();
+    x,
+    y,
 
-    ctx.fillStyle="#172e3d";
-    ctx.beginPath();
-    ctx.roundRect(-17,-30,34,27,6);
-    ctx.fill();
+    w:player.w,
+    h:player.h,
 
-    ctx.fillStyle="#fff0a0";
-    ctx.fillRect(-18,-42,10,5);
-    ctx.fillRect(8,-42,10,5);
+    angle:player.angle,
 
-    ctx.restore();
-  }
+    color:player.color
+
+  });
+
+  /* esconder diferença de câmera */
+
+  ctx.save();
+
+  ctx.translate(
+    x,
+    y
+  );
+
+  ctx.rotate(player.angle);
+
+  ctx.fillStyle="#fff";
+
+  ctx.fillRect(
+    -4,
+    -35,
+    8,
+    70
+  );
+
+  ctx.restore();
 }
 
-/* =========================
+
+/* =====================================================
    POLÍCIA
-========================= */
+===================================================== */
 
 function drawPolice(){
 
   for(const p of police){
 
-    ctx.save();
+    drawVehicle({
 
-    ctx.translate(
-      p.x+p.w/2,
-      p.y+p.h/2
-    );
+      x:p.x,
+      y:p.y,
 
-    ctx.fillStyle="#111";
-    ctx.fillRect(-30,-30,10,24);
-    ctx.fillRect(20,-30,10,24);
-    ctx.fillRect(-30,7,10,24);
-    ctx.fillRect(20,7,10,24);
+      w:p.w,
+      h:p.h,
 
-    ctx.fillStyle="#e8e8e8";
-    ctx.beginPath();
-    ctx.roundRect(-27,-46,54,92,10);
-    ctx.fill();
+      angle:p.angle,
 
-    ctx.fillStyle="#17283c";
-    ctx.fillRect(-27,-5,54,12);
+      color:"#eee"
 
-    ctx.fillStyle="#111";
-    ctx.beginPath();
-    ctx.roundRect(-18,-31,36,25,6);
-    ctx.fill();
-
-    /* sirene */
-
-    ctx.fillStyle=
-      Math.sin(p.siren)>0
-        ?"red":"#238cff";
-
-    ctx.fillRect(-13,-52,12,7);
-
-    ctx.fillStyle=
-      Math.sin(p.siren)>0
-        ?"#238cff":"red";
-
-    ctx.fillRect(1,-52,12,7);
-
-    ctx.restore();
+    },true);
   }
 }
 
-/* =========================
-   OBSTÁCULOS
-========================= */
 
-function drawObstacles(){
-
-  for(const o of obstacles){
-
-    if(o.type==="cone"){
-
-      ctx.fillStyle="#ff711c";
-
-      ctx.beginPath();
-      ctx.moveTo(o.x+o.w/2,o.y);
-      ctx.lineTo(o.x+o.w,o.y+o.h);
-      ctx.lineTo(o.x,o.y+o.h);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle="#fff";
-      ctx.fillRect(o.x+10,o.y+25,o.w-20,8);
-
-    }else{
-
-      ctx.fillStyle="#ff9f25";
-      ctx.fillRect(o.x,o.y,o.w,o.h);
-
-      ctx.fillStyle="#fff";
-      ctx.fillRect(o.x,o.y+10,o.w,8);
-      ctx.fillRect(o.x,o.y+30,o.w,8);
-    }
-  }
-}
-
-/* =========================
+/* =====================================================
    MOEDAS
-========================= */
+===================================================== */
 
 function drawCoins(){
 
   for(const c of coins){
 
-    ctx.save();
-    ctx.translate(c.x,c.y);
-    ctx.rotate(c.rot);
+    if(c.taken)
+      continue;
+
+    const x=c.x-game.cameraX;
+    const y=c.y-game.cameraY;
 
     ctx.fillStyle="#ffd52e";
 
     ctx.beginPath();
-    ctx.ellipse(0,0,7,12,0,0,Math.PI*2);
+
+    ctx.arc(
+      x,
+      y,
+      10,
+      0,
+      Math.PI*2
+    );
+
     ctx.fill();
 
     ctx.strokeStyle="#fff3a0";
     ctx.lineWidth=2;
     ctx.stroke();
 
-    ctx.restore();
+    ctx.fillStyle="#fff";
+
+    ctx.font="bold 12px Arial";
+    ctx.textAlign="center";
+
+    ctx.fillText(
+      "$",
+      x,
+      y+4
+    );
   }
 }
 
-/* =========================
+
+/* =====================================================
    HELICÓPTERO
-========================= */
+===================================================== */
 
 function drawHelicopter(){
 
-  if(!game.helicopter)return;
+  if(!game.helicopter)
+    return;
 
   const x=
-    player.x+
-    player.w/2+
-    Math.sin(game.time*2)*100;
+    helicopter.x-game.cameraX;
 
   const y=
-    player.y-150+
-    Math.sin(game.time*3)*15;
+    helicopter.y-game.cameraY;
+
+  if(
+    x<-100||
+    x>W+100||
+    y<-100||
+    y>H+100
+  )
+    return;
 
   ctx.save();
+
   ctx.translate(x,y);
 
-  ctx.fillStyle="#20242b";
-  ctx.fillRect(-35,-15,70,30);
+  ctx.fillStyle="#0008";
 
-  ctx.fillStyle="#111";
   ctx.beginPath();
-  ctx.ellipse(0,-17,65,5,0,0,Math.PI*2);
+
+  ctx.ellipse(
+    0,
+    0,
+    45,
+    18,
+    0,
+    0,
+    Math.PI*2
+  );
+
   ctx.fill();
 
-  ctx.fillStyle="#ff374c";
-  ctx.fillRect(-18,-8,36,6);
+  ctx.fillStyle="#252a30";
 
-  ctx.fillStyle="#8deaff";
-  ctx.fillRect(-22,-4,44,12);
+  ctx.fillRect(
+    -28,
+    -13,
+    56,
+    26
+  );
 
-  /* tiros */
+  ctx.fillStyle="#273c50";
 
-  if(Math.floor(game.helicopterTimer/15)%2===0){
+  ctx.fillRect(
+    -12,
+    -9,
+    24,
+    12
+  );
 
-    ctx.strokeStyle="#ff3845";
-    ctx.lineWidth=3;
+  ctx.strokeStyle="#222";
+  ctx.lineWidth=5;
 
-    ctx.beginPath();
-    ctx.moveTo(0,15);
-    ctx.lineTo(
-      player.x+player.w/2-x,
-      player.y-y
-    );
-    ctx.stroke();
-  }
+  ctx.beginPath();
+
+  ctx.moveTo(-55,0);
+  ctx.lineTo(55,0);
+
+  ctx.stroke();
+
+  ctx.fillStyle="#ff354b";
+
+  ctx.fillRect(
+    -5,
+    8,
+    10,
+    5
+  );
 
   ctx.restore();
 }
 
-/* =========================
+
+/* =====================================================
+   TIROS
+===================================================== */
+
+function drawBullets(){
+
+  for(const b of bullets){
+
+    ctx.fillStyle="#ff4d38";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      b.x-game.cameraX,
+      b.y-game.cameraY,
+      5,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+  }
+}
+
+
+/* =====================================================
    PARTÍCULAS
-========================= */
+===================================================== */
 
 function drawParticles(){
 
   for(const p of particles){
 
     ctx.globalAlpha=p.life;
+
     ctx.fillStyle=p.color;
 
     ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+
+    ctx.arc(
+      p.x-game.cameraX,
+      p.y-game.cameraY,
+      p.size,
+      0,
+      Math.PI*2
+    );
+
     ctx.fill();
   }
 
   ctx.globalAlpha=1;
 }
 
-/* =========================
-   RENDER
-========================= */
 
-function render(){
+/* =====================================================
+   HUD
+===================================================== */
 
-  ctx.clearRect(0,0,W,H);
+function updateHUD(){
 
-  drawBackground();
-  drawRoad();
-  drawCoins();
-  drawObstacles();
-  drawTraffic();
-  drawPolice();
-  drawHelicopter();
-  drawPlayer();
-  drawParticles();
+  lifeText.textContent=player.health;
 
-  /* texto de perigo */
+  timeText.textContent=
+    Math.floor(game.time);
 
-  if(game.police>=3){
+  scoreText.textContent=
+    game.score;
 
-    ctx.textAlign="center";
-    ctx.font="bold 22px Arial";
-    ctx.fillStyle="#ff4050";
-    ctx.fillText(
-      "🚨 PERSEGUIÇÃO INTENSA!",
-      W/2,
-      H*.18
-    );
-  }
+  wantedText.textContent=
+    Math.min(game.wanted,6);
 
-  if(game.helicopter){
-
-    ctx.font="bold 18px Arial";
-    ctx.fillStyle="#ff3045";
-    ctx.fillText(
-      "🚁 HELICÓPTERO!",
-      W/2,
-      H*.22
-    );
-  }
+  lifeFill.style.width=
+    (player.health/12*100)+"%";
 }
 
-/* =========================
+
+/* =====================================================
+   MENSAGEM
+===================================================== */
+
+function showMessage(text,time){
+
+  message.textContent=text;
+  game.messageTimer=time;
+}
+
+
+/* =====================================================
    LOOP
-========================= */
+===================================================== */
+
+let last=performance.now();
 
 function loop(now){
 
-  updateTime(now);
+  const dt=
+    Math.min(
+      0.033,
+      (now-last)/1000
+    );
+
+  last=now;
 
   if(game.running){
 
-    updatePlayer();
-    updateTraffic();
-    updateObstacles();
-    updateCoins();
-    updatePolice();
-    updateParticles();
+    game.time+=dt;
 
-    game.roadMove+=game.speed;
+    updatePlayer();
+    updateCars();
+    updatePolice();
+    updateHelicopter();
+    updateCoins();
+    updateParticles();
+    updateCamera();
+
+    if(game.messageTimer>0){
+
+      game.messageTimer--;
+
+      if(game.messageTimer<=0)
+        message.textContent="";
+    }
 
     updateHUD();
 
     if(game.shake>0)
-      game.shake*=.88;
+      game.shake*=0.88;
   }
 
   ctx.save();
@@ -1240,25 +1941,100 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-/* =========================
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+  drawCity();
+  drawTrees();
+  drawBuildings();
+  drawCoins();
+
+  for(const c of cars)
+    drawVehicle(c,false);
+
+  drawPolice();
+  drawBullets();
+  drawHelicopter();
+  drawPlayer();
+  drawParticles();
+
+  /* borda da cidade */
+
+  ctx.strokeStyle="#111";
+  ctx.lineWidth=20;
+
+  ctx.strokeRect(
+    -game.cameraX,
+    -game.cameraY,
+    game.worldW,
+    game.worldH
+  );
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function gameOver(){
+
+  game.running=false;
+
+  document
+    .getElementById("endTitle")
+    .textContent="💥 CARRO DESTRUÍDO!";
+
+  document
+    .getElementById("endText")
+    .textContent=
+      "A polícia acabou com a sua fuga! "+
+      "Você sobreviveu por "+
+      Math.floor(game.time)+
+      " segundos e fez "+
+      game.score+
+      " pontos.";
+
+  document
+    .getElementById("end")
+    .classList.remove("hidden");
+}
+
+
+/* =====================================================
    BOTÕES
-========================= */
+===================================================== */
 
-document.getElementById("startBtn").addEventListener("click",()=>{
-  startGame();
-});
+document
+  .getElementById("startBtn")
+  .addEventListener("click",startGame);
 
-document.getElementById("restartBtn").addEventListener("click",()=>{
-  startGame();
-});
+document
+  .getElementById("restartBtn")
+  .addEventListener("click",startGame);
 
-/* =========================
-   INÍCIO
-========================= */
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+createCity();
 
 updateHUD();
+
 requestAnimationFrame(loop);
 
 </script>
+
 </body>
 </html>
