@@ -2,4787 +2,2300 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-
-<title>Nico: Zombie Assault</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Hero Quest - 10 Fases</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#080d12;
-    font-family:Arial,Helvetica,sans-serif;
-    touch-action:none;
-}
-
-body{
-    user-select:none;
-    -webkit-user-select:none;
-}
-
-button{
-    -webkit-tap-highlight-color:transparent;
-    touch-action:none;
-}
-
-#game{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  font-family:Arial,sans-serif;
+  touch-action:none;
+  user-select:none;
 }
 
 canvas{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    display:block;
+  display:block;
+  width:100%;
+  height:100%;
 }
-
-/* =========================
-   HUD
-========================= */
 
 #hud{
-    position:fixed;
-    z-index:20;
-    top:14px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:14px;
-    align-items:center;
-    padding:10px 16px;
-    color:white;
-    background:rgba(5,10,15,.82);
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:16px;
-    box-shadow:
-        0 8px 30px rgba(0,0,0,.4),
-        inset 0 1px rgba(255,255,255,.08);
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    font-size:14px;
-    font-weight:900;
-    white-space:nowrap;
+  position:fixed;
+  z-index:10;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:14px;
+  padding:9px 15px;
+  color:white;
+  background:#000b;
+  border:1px solid #ffffff33;
+  border-radius:15px;
+  font-weight:bold;
+  white-space:nowrap;
 }
 
-.hudItem{
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
-
-#ammo{color:#ffd84a}
-#health{color:#ff5364}
-#score{color:#63d8ff}
-#wave{color:#a8ff70}
-#kills{color:#e8edf0}
-
-/* =========================
-   TELAS
-========================= */
+#hud .hp{color:#ff6872}
+#hud .coin{color:#ffd83d}
+#hud .score{color:#65d9ff}
+#hud .stage{color:#9cff70}
 
 .screen{
-    position:fixed;
-    inset:0;
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(30,65,80,.35),
-            rgba(2,6,10,.94)
-        );
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000c;
 }
 
 .panel{
-    width:min(700px,94vw);
-    max-height:94vh;
-    overflow:auto;
-    padding:38px 28px;
-    text-align:center;
-    color:white;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(24,38,48,.98),
-            rgba(8,14,20,.98)
-        );
-    border:2px solid rgba(255,255,255,.12);
-    border-radius:28px;
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.65),
-        inset 0 1px rgba(255,255,255,.08);
+  width:min(620px,92vw);
+  padding:35px 25px;
+  text-align:center;
+  color:#fff;
+  border-radius:25px;
+  background:linear-gradient(145deg,#28495d,#09131c);
+  border:2px solid #ffffff22;
+  box-shadow:0 20px 80px #000;
 }
 
-.logo{
-    font-size:clamp(38px,8vw,72px);
-    font-weight:1000;
-    letter-spacing:-3px;
-    color:#fff;
-    text-shadow:
-        0 4px 0 #b3202d,
-        0 10px 30px rgba(0,0,0,.6);
+h1{
+  font-size:clamp(40px,10vw,72px);
+  text-shadow:0 5px #174c6b;
 }
 
-.subtitle{
-    margin-top:4px;
-    margin-bottom:22px;
-    color:#ff5b69;
-    font-size:20px;
-    font-weight:900;
-    text-transform:uppercase;
+h2{
+  color:#ffd83d;
+  margin:10px;
 }
 
-.panel p{
-    color:#d3dce2;
-    line-height:1.65;
-    margin-top:10px;
+p{
+  margin:15px 0;
+  line-height:1.6;
+  color:#dce8ee;
 }
 
-.instructions{
-    margin:20px auto 0;
-    padding:15px;
-    max-width:550px;
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:15px;
-    color:#e7edf1;
-    line-height:1.5;
+button{
+  border:0;
+  border-radius:14px;
+  padding:15px 28px;
+  color:white;
+  background:linear-gradient(#ff626c,#bd2536);
+  font-size:18px;
+  font-weight:bold;
+  box-shadow:0 5px #701723;
+  cursor:pointer;
 }
 
-.gameButton{
-    margin-top:26px;
-    padding:15px 34px;
-    border:0;
-    border-radius:13px;
-    background:
-        linear-gradient(
-            #ff5b69,
-            #c92838
-        );
-    color:white;
-    font-size:19px;
-    font-weight:1000;
-    cursor:pointer;
-    box-shadow:
-        0 5px 0 #761b26,
-        0 12px 30px rgba(0,0,0,.35);
-    transition:.12s;
-}
-
-.gameButton:hover{
-    filter:brightness(1.1);
-    transform:translateY(-2px);
-}
-
-.gameButton:active{
-    transform:translateY(4px);
-    box-shadow:0 1px 0 #761b26;
+button:active{
+  transform:translateY(3px);
+  box-shadow:0 2px #701723;
 }
 
 .hidden{
-    display:none!important;
+  display:none!important;
 }
 
-/* =========================
-   CONTROLES MOBILE
-========================= */
-
-#mobileControls{
-    position:fixed;
-    z-index:30;
-    inset:auto 0 15px 0;
-    display:none;
-    justify-content:space-between;
-    align-items:flex-end;
-    padding:0 16px;
-    pointer-events:none;
+#mobile{
+  position:fixed;
+  z-index:20;
+  left:0;
+  right:0;
+  bottom:15px;
+  display:none;
+  justify-content:space-between;
+  padding:0 18px;
+  pointer-events:none;
 }
 
-.controlGroup{
-    display:flex;
-    gap:10px;
+.group{
+  display:flex;
+  gap:10px;
 }
 
-.mobileButton{
-    width:66px;
-    height:66px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.6);
-    background:rgba(5,12,18,.68);
-    color:white;
-    font-size:25px;
-    font-weight:1000;
-    pointer-events:auto;
-    box-shadow:0 7px 20px rgba(0,0,0,.35);
+.mob{
+  width:64px;
+  height:64px;
+  padding:0;
+  border-radius:50%;
+  background:#07121ddd;
+  border:2px solid #ffffff66;
+  color:#fff;
+  font-size:24px;
+  pointer-events:auto;
+  box-shadow:0 5px 15px #0008;
 }
 
-.mobileButton:active{
-    transform:scale(.9);
-    background:rgba(255,70,80,.35);
-}
-
-#fireButton{
-    position:fixed;
-    z-index:31;
-    right:22px;
-    bottom:94px;
-    width:72px;
-    height:72px;
-    border-radius:50%;
-    border:2px solid rgba(255,100,100,.8);
-    background:rgba(110,15,25,.78);
-    color:white;
-    font-size:28px;
-    font-weight:bold;
-    display:none;
-    pointer-events:auto;
-}
-
-#reloadButton{
-    position:fixed;
-    z-index:31;
-    right:22px;
-    bottom:178px;
-    width:58px;
-    height:58px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.55);
-    background:rgba(5,12,18,.75);
-    color:#ffd84a;
-    font-size:23px;
-    font-weight:bold;
-    display:none;
-    pointer-events:auto;
-}
-
-#mobileHint{
-    position:fixed;
-    z-index:25;
-    left:50%;
-    bottom:12px;
-    transform:translateX(-50%);
-    color:rgba(255,255,255,.6);
-    font-size:10px;
-    font-weight:bold;
-    pointer-events:none;
-    white-space:nowrap;
+#attack{
+  position:fixed;
+  right:20px;
+  bottom:100px;
+  width:72px;
+  height:72px;
+  z-index:21;
+  display:none;
+  padding:0;
+  border-radius:50%;
+  background:#a7192b;
+  pointer-events:auto;
 }
 
 @media(max-width:800px){
+  #mobile{display:flex}
 
-    #mobileControls{
-        display:flex;
-    }
+  #attack{display:block}
 
-    #fireButton,
-    #reloadButton{
-        display:block;
-    }
-
-    #hud{
-        top:8px;
-        gap:7px;
-        padding:8px 10px;
-        font-size:11px;
-        max-width:96vw;
-        overflow:hidden;
-    }
-
-    .panel{
-        padding:28px 18px;
-        border-radius:22px;
-    }
-
-    .instructions{
-        font-size:13px;
-    }
-
-    #mobileHint{
-        display:block;
-    }
-}
-
-@media(min-width:801px){
-    #mobileHint{
-        display:none;
-    }
+  #hud{
+    font-size:11px;
+    gap:7px;
+    padding:7px 9px;
+    max-width:96vw;
+    overflow:hidden;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
-
-<canvas id="canvas"></canvas>
+<canvas id="game"></canvas>
 
 <div id="hud">
-
-    <div class="hudItem">
-        ❤️ <span id="health">100</span>
-    </div>
-
-    <div class="hudItem">
-        🔫 <span id="ammo">12 / 60</span>
-    </div>
-
-    <div class="hudItem">
-        🧟 <span id="kills">0</span>
-    </div>
-
-    <div class="hudItem">
-        ⭐ <span id="score">0</span>
-    </div>
-
-    <div class="hudItem">
-        🌊 <span id="wave">1</span>
-    </div>
-
+  ❤️ <span class="hp" id="hp">100</span>
+  🪙 <span class="coin" id="coins">0</span>
+  ⭐ <span class="score" id="score">0</span>
+  🏆 <span class="stage">Fase <span id="level">1</span>/10</span>
 </div>
 
-<!-- =========================
-     TELA INICIAL
-========================= -->
+<div id="start" class="screen">
+  <div class="panel">
+    <h1>HERO QUEST</h1>
+    <h2>10 FASES</h2>
 
-<div id="startScreen" class="screen">
+    <p>
+      Explore, pule, pegue moedas, enfrente criaturas
+      e chegue ao final de cada fase.
+    </p>
 
-    <div class="panel">
+    <p>
+      ⌨️ A/D ou ←/→ = andar<br>
+      ⬆️ W / ↑ / Espaço = pular<br>
+      ⚔️ X / Z = atacar
+    </p>
 
-        <div class="logo">NICO</div>
-
-        <div class="subtitle">
-            Zombie Assault
-        </div>
-
-        <p>
-            Uma aventura perigosa começou.
-            Sobreviva às ondas de zumbis,
-            proteja Nico e elimine todos os inimigos.
-        </p>
-
-        <div class="instructions">
-
-            <b>🖥️ PC</b><br>
-
-            A / D ou ← / → = mover<br>
-            W / ↑ / Espaço = pular<br>
-            Mouse = mirar e atirar<br>
-            R = recarregar
-
-            <br><br>
-
-            <b>📱 Celular</b><br>
-
-            ◀ ▶ = andar<br>
-            ▲ = pular<br>
-            🔥 = atirar automaticamente no zumbi mais próximo<br>
-            ↻ = recarregar
-
-        </div>
-
-        <button
-            id="startButton"
-            class="gameButton"
-            type="button"
-        >
-            COMEÇAR MISSÃO
-        </button>
-
-    </div>
-
+    <button id="startBtn">COMEÇAR</button>
+  </div>
 </div>
 
-<!-- =========================
-     TELA FINAL
-========================= -->
-
-<div id="endScreen" class="screen hidden">
-
-    <div class="panel">
-
-        <div
-            class="logo"
-            id="endTitle"
-        >
-            MISSÃO CONCLUÍDA
-        </div>
-
-        <p id="endText">
-            Nico conseguiu sobreviver!
-        </p>
-
-        <button
-            id="restartButton"
-            class="gameButton"
-            type="button"
-        >
-            JOGAR NOVAMENTE
-        </button>
-
-    </div>
-
+<div id="end" class="screen hidden">
+  <div class="panel">
+    <h1 id="endTitle">FIM</h1>
+    <p id="endText"></p>
+    <button id="restartBtn">JOGAR NOVAMENTE</button>
+  </div>
 </div>
 
-<!-- =========================
-     CONTROLES MOBILE
-========================= -->
+<div id="mobile">
+  <div class="group">
+    <button class="mob" id="left">◀</button>
+    <button class="mob" id="right">▶</button>
+  </div>
 
-<div id="mobileControls">
-
-    <div class="controlGroup">
-
-        <button
-            class="mobileButton"
-            id="leftButton"
-            type="button"
-        >
-            ◀
-        </button>
-
-        <button
-            class="mobileButton"
-            id="rightButton"
-            type="button"
-        >
-            ▶
-        </button>
-
-    </div>
-
-    <button
-        class="mobileButton"
-        id="jumpButton"
-        type="button"
-    >
-        ▲
-    </button>
-
+  <button class="mob" id="jump">▲</button>
 </div>
 
-<button
-    id="fireButton"
-    type="button"
->
-    🔥
-</button>
-
-<button
-    id="reloadButton"
-    type="button"
->
-    ↻
-</button>
-
-<div id="mobileHint">
-    🔥 mira automaticamente no inimigo mais próximo
-</div>
-
-</div>
+<button id="attack">⚔️</button>
 
 <script>
 "use strict";
 
-/* =========================================================
+/* =====================================================
    CANVAS
-========================================================= */
+===================================================== */
 
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 let W = window.innerWidth;
 let H = window.innerHeight;
-let dpr = 1;
 
 function resize(){
-
-    W = window.innerWidth;
-    H = window.innerHeight;
-
-    dpr = Math.min(
-        window.devicePixelRatio || 1,
-        2
-    );
-
-    canvas.width = Math.floor(W*dpr);
-    canvas.height = Math.floor(H*dpr);
-
-    canvas.style.width = W+"px";
-    canvas.style.height = H+"px";
-
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
-}
-
-resize();
-
-/* =========================================================
-   ELEMENTOS
-========================================================= */
-
-const healthEl =
-    document.getElementById("health");
-
-const ammoEl =
-    document.getElementById("ammo");
-
-const killsEl =
-    document.getElementById("kills");
-
-const scoreEl =
-    document.getElementById("score");
-
-const waveEl =
-    document.getElementById("wave");
-
-const startScreen =
-    document.getElementById("startScreen");
-
-const endScreen =
-    document.getElementById("endScreen");
-
-const startButton =
-    document.getElementById("startButton");
-
-const restartButton =
-    document.getElementById("restartButton");
-
-const endTitle =
-    document.getElementById("endTitle");
-
-const endText =
-    document.getElementById("endText");
-
-const fireButton =
-    document.getElementById("fireButton");
-
-const reloadButton =
-    document.getElementById("reloadButton");
-
-/* =========================================================
-   CONFIGURAÇÃO
-========================================================= */
-
-const WORLD_WIDTH = 6000;
-
-const GROUND_HEIGHT = 200;
-const GROUND_OFFSET = 95;
-
-const GRAVITY = .72;
-const MOVE_SPEED = 4.8;
-const JUMP = 13;
-
-const BULLET_SPEED = 15;
-
-const MAX_ZOMBIES = 18;
-
-/* =========================================================
-   ESTADO
-========================================================= */
-
-const state = {
-
-    running:false,
-
-    score:0,
-    kills:0,
-
-    wave:1,
-    waveKills:0,
-
-    health:100,
-    maxHealth:100,
-
-    ammo:12,
-    maxAmmo:12,
-    reserve:60,
-
-    cameraX:0,
-
-    shake:0,
-
-    time:0,
-
-    spawnTimer:0,
-    waveTimer:0,
-
-    gameWon:false
-
-};
-
-/* =========================================================
-   OBJETOS DO MUNDO
-========================================================= */
-
-let platforms = [];
-let zombies = [];
-let bullets = [];
-let particles = [];
-let pickups = [];
-let trees = [];
-let rocks = [];
-let blood = [];
-
-/* =========================================================
-   CONTROLES
-========================================================= */
-
-const keys = {
-
-    left:false,
-    right:false,
-    up:false
-
-};
-
-const mouse = {
-
-    x:W/2,
-    y:H/2,
-    down:false
-
-};
-
-let mobileFire = false;
-let jumpLock = false;
-
-/* =========================================================
-   UTILIDADES
-========================================================= */
-
-function clamp(
-    value,
-    min,
-    max
-){
-
-    return Math.max(
-        min,
-        Math.min(max,value)
-    );
-}
-
-function random(
-    min,
-    max
-){
-
-    return Math.random() *
-        (max-min) +
-        min;
-}
-
-function rectsOverlap(a,b){
-
-    return (
-        a.x < b.x+b.w &&
-        a.x+a.w > b.x &&
-        a.y < b.y+b.h &&
-        a.y+a.h > b.y
-    );
-}
-
-function isMobile(){
-
-    return window.matchMedia(
-        "(max-width:800px)"
-    ).matches;
-}
-
-function getGroundY(){
-
-    return H-GROUND_OFFSET;
-}
-
-/* =========================================================
-   SOM
-========================================================= */
-
-let audioContext = null;
-
-function sound(type){
-
-    try{
-
-        if(!audioContext){
-
-            audioContext =
-                new (
-                    window.AudioContext ||
-                    window.webkitAudioContext
-                )();
-
-        }
-
-        if(
-            audioContext.state ===
-            "suspended"
-        ){
-
-            audioContext.resume();
-
-        }
-
-        const osc =
-            audioContext.createOscillator();
-
-        const gain =
-            audioContext.createGain();
-
-        osc.connect(gain);
-        gain.connect(
-            audioContext.destination
-        );
-
-        const now =
-            audioContext.currentTime;
-
-        if(type === "shot"){
-
-            osc.type = "square";
-
-            osc.frequency.setValueAtTime(
-                180,
-                now
-            );
-
-            osc.frequency.exponentialRampToValueAtTime(
-                70,
-                now+.07
-            );
-
-            gain.gain.setValueAtTime(
-                .06,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                .001,
-                now+.08
-            );
-
-            osc.start(now);
-            osc.stop(now+.08);
-        }
-
-        else if(type === "hit"){
-
-            osc.type = "sawtooth";
-
-            osc.frequency.setValueAtTime(
-                100,
-                now
-            );
-
-            osc.frequency.exponentialRampToValueAtTime(
-                40,
-                now+.12
-            );
-
-            gain.gain.setValueAtTime(
-                .08,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                .001,
-                now+.12
-            );
-
-            osc.start(now);
-            osc.stop(now+.12);
-        }
-
-        else if(type === "reload"){
-
-            osc.type = "sine";
-
-            osc.frequency.setValueAtTime(
-                400,
-                now
-            );
-
-            osc.frequency.exponentialRampToValueAtTime(
-                800,
-                now+.16
-            );
-
-            gain.gain.setValueAtTime(
-                .04,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                .001,
-                now+.18
-            );
-
-            osc.start(now);
-            osc.stop(now+.18);
-        }
-
-        else if(type === "jump"){
-
-            osc.type = "sine";
-
-            osc.frequency.setValueAtTime(
-                220,
-                now
-            );
-
-            osc.frequency.exponentialRampToValueAtTime(
-                400,
-                now+.1
-            );
-
-            gain.gain.setValueAtTime(
-                .025,
-                now
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                .001,
-                now+.12
-            );
-
-            osc.start(now);
-            osc.stop(now+.12);
-        }
-
-    }catch(_){}
-}
-
-/* =========================================================
-   MUNDO
-========================================================= */
-
-function createWorld(){
-
-    platforms = [];
-    zombies = [];
-    bullets = [];
-    particles = [];
-    pickups = [];
-    trees = [];
-    rocks = [];
-    blood = [];
-
-    const groundY =
-        getGroundY();
-
-    /* CHÃO */
-
-    platforms.push({
-
-        x:0,
-        y:groundY,
-        w:WORLD_WIDTH,
-        h:GROUND_HEIGHT
-
-    });
-
-    /* PLATAFORMAS */
-
-    const p = [
-
-        [550,120,220],
-        [950,200,180],
-        [1300,130,250],
-        [1720,220,210],
-        [2100,130,300],
-        [2550,230,230],
-        [3000,140,280],
-        [3450,240,220],
-        [3900,150,300],
-        [4400,230,220],
-        [4800,130,280],
-        [5250,210,250]
-
-    ];
-
-    for(const item of p){
-
-        platforms.push({
-
-            x:item[0],
-
-            y:groundY-item[1],
-
-            w:item[2],
-
-            h:30
-
-        });
-
-    }
-
-    /* ÁRVORES */
-
-    for(let i=0;i<90;i++){
-
-        trees.push({
-
-            x:random(
-                50,
-                WORLD_WIDTH-50
-            ),
-
-            y:groundY,
-
-            scale:random(
-                .7,
-                1.25
-            )
-
-        });
-
-    }
-
-    /* PEDRAS */
-
-    for(let i=0;i<80;i++){
-
-        rocks.push({
-
-            x:random(
-                20,
-                WORLD_WIDTH-20
-            ),
-
-            y:
-                groundY-
-                random(2,9),
-
-            size:random(5,14)
-
-        });
-
-    }
-
-    /* PICKUPS */
-
-    for(let i=0;i<20;i++){
-
-        pickups.push({
-
-            x:
-                450+
-                i*270+
-                random(-50,50),
-
-            y:
-                groundY-30,
-
-            type:
-                i%3===0
-                ? "ammo"
-                : "medkit",
-
-            collected:false
-
-        });
-
-    }
-
-}
-
-/* =========================================================
-   AJUSTE AO REDIMENSIONAR
-========================================================= */
-
-function repositionWorldForResize(
-    oldH,
-    newH
-){
-
-    if(!platforms.length){
-        return;
-    }
-
-    const delta =
-        newH-oldH;
+  W = window.innerWidth;
+  H = window.innerHeight;
+
+  const oldGround = platforms.length
+    ? platforms[0].y
+    : H - 90;
+
+  canvas.width = W;
+  canvas.height = H;
+
+  /*
+    Corrige o problema de redimensionar a janela:
+    o chão e os objetos que dependem da altura
+    acompanham a nova resolução.
+  */
+  if(game.running && platforms.length){
+    const newGround = H - 90;
+    const delta = newGround - oldGround;
 
     for(const p of platforms){
-        p.y += delta;
+      p.y += delta;
     }
 
-    for(const t of trees){
-        t.y += delta;
+    for(const e of enemies){
+      e.y += delta;
     }
 
-    for(const r of rocks){
-        r.y += delta;
+    for(const c of coins){
+      c.y += delta;
     }
 
-    for(const item of pickups){
-        item.y += delta;
+    for(const p of powerups){
+      p.y += delta;
     }
 
-    for(const z of zombies){
-        z.y += delta;
-    }
-
-    for(const b of bullets){
-        b.y += delta;
-    }
-
-    for(const p of particles){
-        p.y += delta;
-    }
-
-    for(const b of blood){
-        b.y += delta;
+    if(goal){
+      goal.y += delta;
     }
 
     player.y += delta;
-
-    player.y =
-        Math.min(
-            player.y,
-            getGroundY()-player.h
-        );
+  }
 }
 
-/* =========================================================
-   RESIZE
-========================================================= */
+window.addEventListener("resize", resize);
 
-window.addEventListener(
-    "resize",
-    function(){
-
-        const oldH = H;
-
-        resize();
-
-        if(state.running){
-
-            repositionWorldForResize(
-                oldH,
-                H
-            );
-
-        }
-
-    }
-);
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function resetGame(){
-
-    state.running = true;
-
-    state.score = 0;
-    state.kills = 0;
-
-    state.wave = 1;
-    state.waveKills = 0;
-
-    state.health = 100;
-
-    state.ammo = 12;
-    state.reserve = 60;
-
-    state.cameraX = 0;
-
-    state.shake = 0;
-
-    state.time = 0;
-
-    state.spawnTimer = 50;
-    state.waveTimer = 0;
-
-    state.gameWon = false;
-
-    player.x = 250;
-
-    player.y =
-        getGroundY()-300;
-
-    player.vx = 0;
-    player.vy = 0;
-
-    player.grounded = false;
-
-    player.facing = 1;
-
-    player.shootCooldown = 0;
-    player.invincible = 0;
-    player.walk = 0;
-
-    mouse.x = W/2;
-    mouse.y = H/2;
-    mouse.down = false;
-
-    mobileFire = false;
-    jumpLock = false;
-
-    keys.left = false;
-    keys.right = false;
-    keys.up = false;
-
-    createWorld();
-
-    startScreen.classList.add(
-        "hidden"
-    );
-
-    endScreen.classList.add(
-        "hidden"
-    );
-
-    updateHUD();
-}
-
-/* =========================================================
+/* =====================================================
    HUD
-========================================================= */
-
-function updateHUD(){
-
-    healthEl.textContent =
-        Math.max(
-            0,
-            Math.ceil(state.health)
-        );
-
-    ammoEl.textContent =
-        state.ammo+
-        " / "+
-        state.reserve;
-
-    killsEl.textContent =
-        state.kills;
-
-    scoreEl.textContent =
-        state.score;
-
-    waveEl.textContent =
-        state.wave;
-
-}
-
-/* =========================================================
-   TECLADO
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function(e){
-
-        const k =
-            e.key.toLowerCase();
-
-        if(
-            k==="a" ||
-            k==="arrowleft"
-        ){
-
-            keys.left = true;
-            e.preventDefault();
-
-        }
-
-        if(
-            k==="d" ||
-            k==="arrowright"
-        ){
-
-            keys.right = true;
-            e.preventDefault();
-
-        }
-
-        if(
-            k==="w" ||
-            k==="arrowup" ||
-            k===" "
-        ){
-
-            keys.up = true;
-            e.preventDefault();
-
-        }
-
-        if(k==="r"){
-
-            reload();
-
-        }
-
-    }
-);
-
-document.addEventListener(
-    "keyup",
-    function(e){
-
-        const k =
-            e.key.toLowerCase();
-
-        if(
-            k==="a" ||
-            k==="arrowleft"
-        ){
-
-            keys.left = false;
-
-        }
-
-        if(
-            k==="d" ||
-            k==="arrowright"
-        ){
-
-            keys.right = false;
-
-        }
-
-        if(
-            k==="w" ||
-            k==="arrowup" ||
-            k===" "
-        ){
-
-            keys.up = false;
-
-        }
-
-    }
-);
-
-/* =========================================================
-   MOUSE
-========================================================= */
-
-canvas.addEventListener(
-    "mousemove",
-    function(e){
-
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-
-    }
-);
-
-canvas.addEventListener(
-    "mousedown",
-    function(e){
-
-        if(e.button===0){
-
-            mouse.down = true;
-
-        }
-
-    }
-);
-
-window.addEventListener(
-    "mouseup",
-    function(e){
-
-        if(e.button===0){
-
-            mouse.down = false;
-
-        }
-
-    }
-);
-
-/* =========================================================
-   CONTROLES TOUCH
-========================================================= */
-
-function holdButton(
-    id,
-    property
-){
-
-    const button =
-        document.getElementById(id);
-
-    button.addEventListener(
-        "pointerdown",
-        function(e){
-
-            e.preventDefault();
-
-            keys[property] = true;
-
-            try{
-
-                button.setPointerCapture(
-                    e.pointerId
-                );
-
-            }catch(_){}
-
-        }
-    );
-
-    function release(e){
-
-        if(e){
-            e.preventDefault();
-        }
-
-        keys[property] = false;
-
-    }
-
-    button.addEventListener(
-        "pointerup",
-        release
-    );
-
-    button.addEventListener(
-        "pointercancel",
-        release
-    );
-
-    button.addEventListener(
-        "lostpointercapture",
-        release
-    );
-}
-
-holdButton(
-    "leftButton",
-    "left"
-);
-
-holdButton(
-    "rightButton",
-    "right"
-);
-
-/* =========================
-   PULO
-========================= */
-
-const jumpButton =
-    document.getElementById(
-        "jumpButton"
-    );
-
-jumpButton.addEventListener(
-    "pointerdown",
-    function(e){
-
-        e.preventDefault();
-
-        if(!jumpLock){
-
-            keys.up = true;
-            jumpLock = true;
-
-        }
-
-        try{
-
-            jumpButton.setPointerCapture(
-                e.pointerId
-            );
-
-        }catch(_){}
-
-    }
-);
-
-function releaseJump(e){
-
-    if(e){
-        e.preventDefault();
-    }
-
-    keys.up = false;
-    jumpLock = false;
-
-}
-
-jumpButton.addEventListener(
-    "pointerup",
-    releaseJump
-);
-
-jumpButton.addEventListener(
-    "pointercancel",
-    releaseJump
-);
-
-jumpButton.addEventListener(
-    "lostpointercapture",
-    releaseJump
-);
-
-/* =========================
-   TIRO
-========================= */
-
-fireButton.addEventListener(
-    "pointerdown",
-    function(e){
-
-        e.preventDefault();
-
-        mobileFire = true;
-
-        try{
-
-            fireButton.setPointerCapture(
-                e.pointerId
-            );
-
-        }catch(_){}
-
-    }
-);
-
-function stopMobileFire(){
-
-    mobileFire = false;
-
-}
-
-fireButton.addEventListener(
-    "pointerup",
-    stopMobileFire
-);
-
-fireButton.addEventListener(
-    "pointercancel",
-    stopMobileFire
-);
-
-fireButton.addEventListener(
-    "lostpointercapture",
-    stopMobileFire
-);
-
-/* =========================
-   RECARGA
-========================= */
-
-reloadButton.addEventListener(
-    "pointerdown",
-    function(e){
-
-        e.preventDefault();
-
-        reload();
-
-    }
-);
-
-/* =========================================================
-   LIBERAR CONTROLES AO PERDER FOCO
-========================================================= */
-
-window.addEventListener(
-    "blur",
-    function(){
-
-        mouse.down = false;
-        mobileFire = false;
-
-        keys.left = false;
-        keys.right = false;
-        keys.up = false;
-
-        jumpLock = false;
-
-    }
-);
-
-/* =========================================================
-   JOGADOR
-========================================================= */
-
-const player = {
-
-    x:250,
-    y:200,
-
-    w:42,
-    h:64,
-
-    vx:0,
-    vy:0,
-
-    grounded:false,
-
-    facing:1,
-
-    shootCooldown:0,
-
-    invincible:0,
-
-    walk:0
-
+===================================================== */
+
+const hpEl = document.getElementById("hp");
+const coinsEl = document.getElementById("coins");
+const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+
+/* =====================================================
+   CONTROLES
+===================================================== */
+
+const keys = {
+  left:false,
+  right:false,
+  jump:false,
+  attack:false
 };
 
-/* =========================================================
-   COLISÃO VERTICAL DO JOGADOR
-========================================================= */
+let attackPressed = false;
 
-function resolvePlayerVertical(
-    oldY
-){
+window.addEventListener("keydown", e => {
 
-    player.grounded = false;
+  const k = e.key.toLowerCase();
 
-    for(const p of platforms){
+  if(k === "a" || k === "arrowleft"){
+    keys.left = true;
+    e.preventDefault();
+  }
 
-        if(
-            player.x+player.w <= p.x ||
-            player.x >= p.x+p.w
-        ){
-            continue;
-        }
+  if(k === "d" || k === "arrowright"){
+    keys.right = true;
+    e.preventDefault();
+  }
 
-        /* CAINDO */
+  if(k === "w" || k === "arrowup" || k === " "){
+    keys.jump = true;
+    e.preventDefault();
+  }
 
-        if(
-            player.vy>=0 &&
-            oldY+player.h<=p.y &&
-            player.y+player.h>=p.y
-        ){
-
-            player.y =
-                p.y-player.h;
-
-            player.vy = 0;
-            player.grounded = true;
-
-            return;
-
-        }
-
-        /* SUBINDO */
-
-        if(
-            player.vy<0 &&
-            oldY>=p.y+p.h &&
-            player.y<=p.y+p.h
-        ){
-
-            player.y =
-                p.y+p.h;
-
-            player.vy = 0;
-
-        }
-
+  if(k === "x" || k === "z"){
+    /*
+      Ataque passa a ser disparado uma vez
+      por pressionamento, evitando spam acidental.
+    */
+    if(!keys.attack){
+      attackPressed = true;
     }
 
+    keys.attack = true;
+    e.preventDefault();
+  }
+});
+
+window.addEventListener("keyup", e => {
+
+  const k = e.key.toLowerCase();
+
+  if(k === "a" || k === "arrowleft")
+    keys.left = false;
+
+  if(k === "d" || k === "arrowright")
+    keys.right = false;
+
+  if(k === "w" || k === "arrowup" || k === " ")
+    keys.jump = false;
+
+  if(k === "x" || k === "z")
+    keys.attack = false;
+});
+
+/* =====================================================
+   CONTROLES MOBILE
+===================================================== */
+
+function hold(id,key){
+
+  const button = document.getElementById(id);
+
+  button.addEventListener("pointerdown", e => {
+
+    e.preventDefault();
+
+    keys[key] = true;
+
+    if(key === "attack"){
+      attackPressed = true;
+    }
+
+    try{
+      button.setPointerCapture(e.pointerId);
+    }catch(_){}
+  });
+
+  const stop = e => {
+
+    if(e)
+      e.preventDefault();
+
+    keys[key] = false;
+  };
+
+  button.addEventListener("pointerup", stop);
+  button.addEventListener("pointercancel", stop);
+  button.addEventListener("lostpointercapture", stop);
 }
 
-/* =========================================================
-   ATUALIZA JOGADOR
-========================================================= */
+hold("left","left");
+hold("right","right");
+hold("jump","jump");
+hold("attack","attack");
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+const game = {
+  running:false,
+  level:1,
+  score:0,
+  coins:0,
+  hp:100,
+  maxHp:100,
+  camera:0,
+  world:6000,
+  finishX:5600,
+  message:"",
+  messageTime:0,
+  shake:0,
+  levelChanging:false
+};
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+const player = {
+  x:150,
+  y:100,
+  w:42,
+  h:62,
+  vx:0,
+  vy:0,
+  speed:5,
+  jump:13,
+  grounded:false,
+  facing:1,
+  attackTimer:0,
+  invincible:0
+};
+
+let platforms = [];
+let enemies = [];
+let coins = [];
+let powerups = [];
+let particles = [];
+let goal = null;
+
+/* =====================================================
+   UTILIDADES
+===================================================== */
+
+function clamp(v,a,b){
+  return Math.max(a,Math.min(b,v));
+}
+
+function rand(a,b){
+  return Math.random() * (b-a) + a;
+}
+
+function overlap(a,b){
+  return (
+    a.x < b.x+b.w &&
+    a.x+a.w > b.x &&
+    a.y < b.y+b.h &&
+    a.y+a.h > b.y
+  );
+}
+
+/*
+  Verifica se um retângulo está dentro de uma plataforma
+  no eixo X.
+*/
+function horizontalOverlap(a,b){
+  return (
+    a.x + a.w > b.x &&
+    a.x < b.x + b.w
+  );
+}
+
+/* =====================================================
+   CRIAÇÃO DA FASE
+===================================================== */
+
+function createLevel(){
+
+  platforms = [];
+  enemies = [];
+  coins = [];
+  powerups = [];
+  particles = [];
+  goal = null;
+
+  game.world = 6000;
+  game.finishX = 5600;
+  game.levelChanging = false;
+
+  const ground = H - 90;
+  const difficulty = game.level;
+
+  /* CHÃO */
+
+  platforms.push({
+    x:0,
+    y:ground,
+    w:game.world,
+    h:200
+  });
+
+  /* PLATAFORMAS */
+
+  for(let i=0;i<10+difficulty;i++){
+
+    const x = 350 + i*450 + rand(-70,70);
+    const y = ground - rand(100,250);
+    const w = rand(130,250);
+
+    /*
+      Não deixa plataformas ultrapassarem
+      o limite do mundo.
+    */
+    if(x+w > game.world-150)
+      continue;
+
+    platforms.push({
+      x,
+      y,
+      w,
+      h:28
+    });
+  }
+
+  /* MOEDAS */
+
+  for(let i=0;i<35+difficulty*4;i++){
+
+    const x = 250 + i*145 + rand(-30,30);
+
+    if(x > game.finishX-100)
+      continue;
+
+    const y = ground - rand(70,240);
+
+    coins.push({
+      x,
+      y,
+      r:9,
+      collected:false
+    });
+  }
+
+  /* INIMIGOS */
+
+  const enemyCount = 5 + difficulty*2;
+
+  for(let i=0;i<enemyCount;i++){
+
+    const x = 650 + i*480 + rand(-100,100);
+
+    if(x > game.finishX-250)
+      continue;
+
+    enemies.push({
+      x,
+      y:ground-48,
+      w:42,
+      h:48,
+      vx:0,
+      vy:0,
+      speed:.7+difficulty*.12,
+      hp:difficulty>=5?2:1,
+      maxHp:difficulty>=5?2:1,
+      alive:true,
+      type:"normal",
+      direction:1
+    });
+  }
+
+  /* TANQUES */
+
+  if(difficulty >= 3){
+
+    for(let i=0;i<difficulty-1;i++){
+
+      const x = 1200+i*650;
+
+      if(x > game.finishX-500)
+        continue;
+
+      enemies.push({
+        x,
+        y:ground-60,
+        w:55,
+        h:60,
+        vx:0,
+        vy:0,
+        speed:.45+difficulty*.08,
+        hp:3,
+        maxHp:3,
+        alive:true,
+        type:"tank",
+        direction:1
+      });
+    }
+  }
+
+  /* CHEFE FINAL */
+
+  if(game.level === 10){
+
+    enemies.push({
+      x:4600,
+      y:ground-110,
+      w:90,
+      h:110,
+      vx:0,
+      vy:0,
+      speed:.9,
+      hp:30,
+      maxHp:30,
+      alive:true,
+      type:"boss",
+      direction:1
+    });
+  }
+
+  /* VIDA */
+
+  powerups.push({
+    x:900,
+    y:ground-150,
+    w:28,
+    h:28,
+    type:"health",
+    collected:false
+  });
+
+  /* PODER */
+
+  if(game.level >= 4){
+
+    powerups.push({
+      x:2800,
+      y:ground-170,
+      w:28,
+      h:28,
+      type:"power",
+      collected:false
+    });
+  }
+
+  /* OBJETIVO */
+
+  goal = {
+    x:game.finishX,
+    y:ground-110,
+    w:35,
+    h:110
+  };
+
+  /* PLAYER */
+
+  player.x = 150;
+  player.y = ground-player.h-20;
+  player.vx = 0;
+  player.vy = 0;
+  player.speed = 5;
+  player.jump = 13;
+  player.grounded = false;
+  player.attackTimer = 0;
+  player.invincible = 80;
+
+  game.camera = 0;
+
+  game.message = "FASE " + game.level;
+  game.messageTime = 120;
+}
+
+/* =====================================================
+   INÍCIO
+===================================================== */
+
+function startGame(){
+
+  game.running = true;
+  game.level = 1;
+  game.score = 0;
+  game.coins = 0;
+  game.hp = 100;
+  game.camera = 0;
+
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
+  keys.attack = false;
+  attackPressed = false;
+
+  createLevel();
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("end").classList.add("hidden");
+
+  updateHUD();
+}
+
+/* =====================================================
+   PRÓXIMA FASE
+===================================================== */
+
+function nextLevel(){
+
+  /*
+    Impede a função de criar várias fases
+    no mesmo frame.
+  */
+  if(game.levelChanging)
+    return;
+
+  game.levelChanging = true;
+
+  if(game.level >= 10){
+    winGame();
+    return;
+  }
+
+  game.level++;
+
+  /*
+    Pequena recompensa entre fases.
+  */
+  game.hp = Math.min(
+    game.maxHp,
+    game.hp + 15
+  );
+
+  createLevel();
+
+  game.message = "FASE " + game.level;
+  game.messageTime = 150;
+
+  updateHUD();
+}
+
+/* =====================================================
+   PLAYER
+===================================================== */
 
 function updatePlayer(){
 
-    /* MOVIMENTO */
+  /* MOVIMENTO */
 
-    if(keys.left){
+  if(keys.left){
+    player.vx -= .7;
+    player.facing = -1;
+  }
 
-        player.vx -= .65;
-        player.facing = -1;
+  if(keys.right){
+    player.vx += .7;
+    player.facing = 1;
+  }
 
-    }
+  if(!keys.left && !keys.right){
+    player.vx *= .82;
+  }
 
-    if(keys.right){
+  if(Math.abs(player.vx) < .05)
+    player.vx = 0;
 
-        player.vx += .65;
-        player.facing = 1;
+  player.vx = clamp(
+    player.vx,
+    -player.speed,
+    player.speed
+  );
 
+  /* PULO */
+
+  if(keys.jump && player.grounded){
+
+    player.vy = -player.jump;
+    player.grounded = false;
+
+    keys.jump = false;
+
+    particlesBurst(
+      player.x+player.w/2,
+      player.y+player.h,
+      "#fff",
+      8
+    );
+  }
+
+  /* GRAVIDADE */
+
+  player.vy += .7;
+
+  if(player.vy > 17)
+    player.vy = 17;
+
+  /* MOVIMENTO X */
+
+  const oldX = player.x;
+
+  player.x += player.vx;
+
+  player.x = clamp(
+    player.x,
+    0,
+    game.world-player.w
+  );
+
+  /* COLISÃO HORIZONTAL */
+
+  for(const p of platforms){
+
+    if(
+      player.y+player.h <= p.y ||
+      player.y >= p.y+p.h
+    )
+      continue;
+
+    if(
+      oldX+player.w <= p.x &&
+      player.x+player.w > p.x
+    ){
+      player.x = p.x-player.w;
+      player.vx = 0;
     }
 
     if(
-        !keys.left &&
-        !keys.right
+      oldX >= p.x+p.w &&
+      player.x < p.x+p.w
     ){
-
-        player.vx *= .82;
-
+      player.x = p.x+p.w;
+      player.vx = 0;
     }
+  }
 
-    player.vx =
-        clamp(
-            player.vx,
-            -MOVE_SPEED,
-            MOVE_SPEED
-        );
+  /* MOVIMENTO Y */
 
-    /* PULO */
+  const oldY = player.y;
+
+  player.y += player.vy;
+
+  player.grounded = false;
+
+  for(const p of platforms){
+
+    if(!horizontalOverlap(player,p))
+      continue;
+
+    /* CAINDO */
 
     if(
-        keys.up &&
-        player.grounded
+      player.vy >= 0 &&
+      oldY+player.h <= p.y &&
+      player.y+player.h >= p.y
     ){
 
-        player.vy = -JUMP;
-        player.grounded = false;
+      player.y = p.y-player.h;
+      player.vy = 0;
+      player.grounded = true;
+    }
 
-        spawnParticles(
-            player.x+player.w/2,
-            player.y+player.h,
-            "#c5d1d8",
-            7
+    /* BATENDO A CABEÇA */
+
+    if(
+      player.vy < 0 &&
+      oldY >= p.y+p.h &&
+      player.y <= p.y+p.h
+    ){
+
+      player.y = p.y+p.h;
+      player.vy = 0;
+    }
+  }
+
+  /* QUEDA */
+
+  if(player.y > H+250){
+
+    damagePlayer(25);
+
+    if(game.running){
+
+      player.x = Math.max(
+        100,
+        player.x-300
+      );
+
+      player.y = H-250;
+      player.vy = 0;
+    }
+  }
+
+  /* ATAQUE */
+
+  if(player.attackTimer > 0)
+    player.attackTimer--;
+
+  if(player.invincible > 0)
+    player.invincible--;
+}
+
+/* =====================================================
+   ATAQUE
+===================================================== */
+
+function attack(){
+
+  if(!game.running)
+    return;
+
+  if(player.attackTimer > 0)
+    return;
+
+  player.attackTimer = 22;
+
+  const hitbox = {
+    x:
+      player.facing > 0
+        ? player.x+player.w-5
+        : player.x-55,
+
+    y:player.y+10,
+    w:60,
+    h:45
+  };
+
+  let hit = false;
+
+  for(const e of enemies){
+
+    if(!e.alive)
+      continue;
+
+    if(overlap(hitbox,e)){
+
+      hit = true;
+
+      e.hp--;
+
+      game.score += 50;
+
+      particlesBurst(
+        e.x+e.w/2,
+        e.y+e.h/2,
+        "#ff5364",
+        12
+      );
+
+      /*
+        Recuo ao receber golpe.
+      */
+      e.x += player.facing * 12;
+
+      if(e.hp <= 0){
+
+        e.alive = false;
+
+        if(e.type === "boss")
+          game.score += 5000;
+
+        else if(e.type === "tank")
+          game.score += 500;
+
+        else
+          game.score += 100;
+
+        game.coins +=
+          e.type === "boss" ? 20 : 2;
+
+        particlesBurst(
+          e.x+e.w/2,
+          e.y+e.h/2,
+          e.type === "boss"
+            ? "#ffd83d"
+            : "#79ff78",
+          20
         );
+      }
+    }
+  }
 
-        sound("jump");
+  if(hit)
+    game.shake = 5;
+}
 
-        keys.up = false;
+/* =====================================================
+   INIMIGOS
+===================================================== */
 
+function updateEnemies(){
+
+  for(const e of enemies){
+
+    if(!e.alive)
+      continue;
+
+    /*
+      Chefes e inimigos perseguem o jogador,
+      mas com limite para não atravessarem o mundo.
+    */
+    const dx = player.x-e.x;
+
+    if(Math.abs(dx) > 20)
+      e.vx = Math.sign(dx)*e.speed;
+    else
+      e.vx = 0;
+
+    const oldX = e.x;
+
+    e.x += e.vx;
+
+    e.x = clamp(
+      e.x,
+      0,
+      game.world-e.w
+    );
+
+    /* COLISÃO HORIZONTAL */
+
+    for(const p of platforms){
+
+      if(
+        e.y+e.h <= p.y ||
+        e.y >= p.y+p.h
+      )
+        continue;
+
+      if(
+        oldX+e.w <= p.x &&
+        e.x+e.w > p.x
+      ){
+        e.x = p.x-e.w;
+        e.vx = 0;
+      }
+
+      if(
+        oldX >= p.x+p.w &&
+        e.x < p.x+p.w
+      ){
+        e.x = p.x+p.w;
+        e.vx = 0;
+      }
     }
 
     /* GRAVIDADE */
 
-    player.vy += GRAVITY;
+    const oldY = e.y;
 
-    player.vy =
-        Math.min(
-            player.vy,
-            17
-        );
+    e.vy += .7;
 
-    /* =========================
-       HORIZONTAL
-    ========================= */
+    if(e.vy > 17)
+      e.vy = 17;
 
-    const oldX =
-        player.x;
+    e.y += e.vy;
 
-    player.x += player.vx;
-
-    player.x =
-        clamp(
-            player.x,
-            0,
-            WORLD_WIDTH-player.w
-        );
+    /* COLISÃO VERTICAL */
 
     for(const p of platforms){
 
-        if(
-            player.y+player.h<=p.y ||
-            player.y>=p.y+p.h
-        ){
-            continue;
-        }
+      if(!horizontalOverlap(e,p))
+        continue;
 
-        if(
-            oldX+player.w<=p.x &&
-            player.x+player.w>p.x
-        ){
+      if(
+        e.vy >= 0 &&
+        oldY+e.h <= p.y &&
+        e.y+e.h >= p.y
+      ){
 
-            player.x =
-                p.x-player.w;
+        e.y = p.y-e.h;
+        e.vy = 0;
+      }
 
-            player.vx = 0;
+      if(
+        e.vy < 0 &&
+        oldY >= p.y+p.h &&
+        e.y <= p.y+p.h
+      ){
 
-        }
-
-        else if(
-            oldX>=p.x+p.w &&
-            player.x<p.x+p.w
-        ){
-
-            player.x =
-                p.x+p.w;
-
-            player.vx = 0;
-
-        }
-
+        e.y = p.y+p.h;
+        e.vy = 0;
+      }
     }
 
-    /* =========================
-       VERTICAL
-    ========================= */
+    /* ATAQUE DO INIMIGO */
 
-    const oldY =
-        player.y;
+    if(overlap(player,e)){
 
-    player.y += player.vy;
+      if(player.attackTimer <= 0){
 
-    resolvePlayerVertical(
-        oldY
-    );
-
-    /* CAIU DO MAPA */
-
-    if(
-        player.y >
-        H+250
-    ){
-
-        damagePlayer(25);
-
-        if(state.running){
-
-            player.x =
-                clamp(
-                    player.x-180,
-                    50,
-                    WORLD_WIDTH-player.w-50
-                );
-
-            player.y =
-                getGroundY()-300;
-
-            player.vy = 0;
-
-        }
-
-    }
-
-    player.walk +=
-        Math.abs(player.vx)*.18;
-
-    if(player.invincible>0){
-        player.invincible--;
-    }
-
-    if(player.shootCooldown>0){
-        player.shootCooldown--;
-    }
-
-}
-
-/* =========================================================
-   MIRA DO MOUSE
-========================================================= */
-
-function getWorldMouse(){
-
-    return {
-
-        x:
-            mouse.x+
-            state.cameraX,
-
-        y:
-            mouse.y
-
-    };
-
-}
-
-/* =========================================================
-   MIRA AUTOMÁTICA MOBILE
-========================================================= */
-
-function getMobileTarget(){
-
-    let closest = null;
-
-    let closestDistance =
-        Infinity;
-
-    const px =
-        player.x+
-        player.w/2;
-
-    const py =
-        player.y+
-        player.h/2;
-
-    for(const z of zombies){
-
-        if(!z.alive){
-            continue;
-        }
-
-        const zx =
-            z.x+
-            z.w/2;
-
-        const zy =
-            z.y+
-            z.h/2;
-
-        const dx =
-            zx-px;
-
-        const dy =
-            zy-py;
-
-        const distance =
-            Math.hypot(
-                dx,
-                dy
-            );
-
-        /*
-         * Evita mirar em inimigos absurdamente
-         * distantes do jogador.
-         */
-
-        if(
-            distance<
-            closestDistance &&
-            distance<1100
-        ){
-
-            closest = z;
-            closestDistance = distance;
-
-        }
-
-    }
-
-    if(closest){
-
-        return {
-
-            x:
-                closest.x+
-                closest.w/2,
-
-            y:
-                closest.y+
-                closest.h/2
-
-        };
-
-    }
-
-    /* Sem inimigo: mira para frente */
-
-    return {
-
-        x:
-            player.x+
-            player.w/2+
-            player.facing*600,
-
-        y:
-            player.y+30
-
-    };
-
-}
-
-/* =========================================================
-   TIRO
-========================================================= */
-
-function shoot(){
-
-    if(!state.running){
-        return;
-    }
-
-    if(player.shootCooldown>0){
-        return;
-    }
-
-    if(state.ammo<=0){
-
-        reload();
-        return;
-
-    }
-
-    const target =
-        mobileFire && isMobile()
-        ? getMobileTarget()
-        : getWorldMouse();
-
-    const gunX =
-        player.x+
-        player.w/2;
-
-    const gunY =
-        player.y+29;
-
-    let dx =
-        target.x-gunX;
-
-    let dy =
-        target.y-gunY;
-
-    const len =
-        Math.hypot(
-            dx,
-            dy
-        ) || 1;
-
-    dx /= len;
-    dy /= len;
-
-    bullets.push({
-
-        x:
-            gunX+
-            dx*27,
-
-        y:
-            gunY+
-            dy*27,
-
-        vx:
-            dx*BULLET_SPEED,
-
-        vy:
-            dy*BULLET_SPEED,
-
-        life:80,
-
-        damage:1
-
-    });
-
-    state.ammo--;
-
-    player.shootCooldown = 8;
-
-    state.shake =
-        Math.max(
-            state.shake,
-            2.5
+        damagePlayer(
+          e.type === "boss"
+            ? 20
+            : e.type === "tank"
+              ? 15
+              : 8
         );
+      }
+    }
+  }
 
-    spawnParticles(
-        gunX+dx*27,
-        gunY+dy*27,
-        "#ffd84a",
-        5
+  /*
+    Remove somente depois do processamento.
+  */
+  enemies = enemies.filter(e => e.alive);
+}
+
+/* =====================================================
+   DANO
+===================================================== */
+
+function damagePlayer(amount){
+
+  if(!game.running)
+    return;
+
+  if(player.invincible > 0)
+    return;
+
+  game.hp -= amount;
+
+  game.hp = Math.max(
+    0,
+    game.hp
+  );
+
+  player.invincible = 70;
+  game.shake = 12;
+
+  particlesBurst(
+    player.x+player.w/2,
+    player.y+player.h/2,
+    "#ff3045",
+    15
+  );
+
+  if(game.hp <= 0){
+
+    game.hp = 0;
+
+    endGame(
+      "DERROTA",
+      "Você perdeu todas as suas vidas."
     );
-
-    sound("shot");
-
+  }
 }
 
-/* =========================================================
-   RECARREGAR
-========================================================= */
-
-function reload(){
-
-    if(!state.running){
-        return;
-    }
-
-    if(
-        state.ammo>=state.maxAmmo ||
-        state.reserve<=0
-    ){
-
-        return;
-
-    }
-
-    const needed =
-        state.maxAmmo-
-        state.ammo;
-
-    const amount =
-        Math.min(
-            needed,
-            state.reserve
-        );
-
-    state.ammo += amount;
-    state.reserve -= amount;
-
-    sound("reload");
-
-    updateHUD();
-
-}
-
-/* =========================================================
-   BALAS
-========================================================= */
-
-function updateBullets(){
-
-    for(
-        let i=bullets.length-1;
-        i>=0;
-        i--
-    ){
-
-        const b =
-            bullets[i];
-
-        b.x += b.vx;
-        b.y += b.vy;
-
-        b.life--;
-
-        /* FORA DO MAPA */
-
-        if(
-            b.life<=0 ||
-            b.x<-100 ||
-            b.x>WORLD_WIDTH+100 ||
-            b.y<-100 ||
-            b.y>H+300
-        ){
-
-            bullets.splice(i,1);
-            continue;
-
-        }
-
-        /* COLISÃO COM PLATAFORMAS */
-
-        let wallHit = false;
-
-        for(const p of platforms){
-
-            if(
-                b.x>=p.x &&
-                b.x<=p.x+p.w &&
-                b.y>=p.y &&
-                b.y<=p.y+p.h
-            ){
-
-                wallHit = true;
-
-                spawnParticles(
-                    b.x,
-                    b.y,
-                    "#d4d4d4",
-                    4
-                );
-
-                break;
-
-            }
-
-        }
-
-        if(wallHit){
-
-            bullets.splice(i,1);
-            continue;
-
-        }
-
-        /* COLISÃO COM ZUMBIS */
-
-        let hit = false;
-
-        for(const z of zombies){
-
-            if(!z.alive){
-                continue;
-            }
-
-            const box = {
-
-                x:z.x,
-                y:z.y,
-                w:z.w,
-                h:z.h
-
-            };
-
-            if(
-                b.x>=box.x &&
-                b.x<=box.x+box.w &&
-                b.y>=box.y &&
-                b.y<=box.y+box.h
-            ){
-
-                damageZombie(
-                    z,
-                    b.damage
-                );
-
-                hit = true;
-
-                break;
-
-            }
-
-        }
-
-        if(hit){
-
-            bullets.splice(i,1);
-
-        }
-
-    }
-
-}
-
-/* =========================================================
-   SPAWN ZUMBI
-========================================================= */
-
-function spawnZombie(){
-
-    /*
-     * Nunca ultrapassa o limite absoluto.
-     */
-
-    if(
-        zombies.length>=
-        MAX_ZOMBIES
-    ){
-
-        return false;
-
-    }
-
-    /*
-     * Procura uma posição fora da tela,
-     * mas não exageradamente distante.
-     */
-
-    let x = player.x;
-
-    let attempts = 0;
-
-    while(
-        attempts<20
-    ){
-
-        const side =
-            Math.random()<.5
-            ? -1
-            : 1;
-
-        const distance =
-            random(
-                500,
-                900
-            );
-
-        x =
-            player.x+
-            side*distance;
-
-        x =
-            clamp(
-                x,
-                80,
-                WORLD_WIDTH-100
-            );
-
-        if(
-            Math.abs(
-                x-player.x
-            )>=350
-        ){
-
-            break;
-
-        }
-
-        attempts++;
-
-    }
-
-    const chance =
-        Math.random();
-
-    let type;
-
-    if(chance<.18){
-
-        type="fast";
-
-    }
-    else if(chance<.32){
-
-        type="tank";
-
-    }
-    else{
-
-        type="normal";
-
-    }
-
-    const groundY =
-        getGroundY();
-
-    const z = {
-
-        x:x,
-
-        y:
-            groundY-60,
-
-        w:44,
-        h:58,
-
-        vx:0,
-        vy:0,
-
-        alive:true,
-
-        type:type,
-
-        hp:1,
-        maxHp:1,
-
-        speed:1.15,
-
-        damage:8,
-
-        attackCooldown:0,
-
-        anim:
-            Math.random()*10,
-
-        grounded:false
-
+/* =====================================================
+   MOEDAS
+===================================================== */
+
+function updateCoins(){
+
+  const box = {
+    x:player.x,
+    y:player.y,
+    w:player.w,
+    h:player.h
+  };
+
+  for(const c of coins){
+
+    if(c.collected)
+      continue;
+
+    const b = {
+      x:c.x-c.r,
+      y:c.y-c.r,
+      w:c.r*2,
+      h:c.r*2
     };
 
-    if(type==="fast"){
+    if(overlap(box,b)){
 
-        z.w=36;
-        z.h=50;
+      c.collected = true;
 
-        z.hp=1;
-        z.maxHp=1;
+      game.coins++;
+      game.score += 25;
 
-        z.speed=2.1;
-        z.damage=6;
-
-    }
-
-    if(type==="tank"){
-
-        z.w=58;
-        z.h=70;
-
-        z.hp=3;
-        z.maxHp=3;
-
-        z.speed=.65;
-        z.damage=15;
-
-    }
-
-    z.y =
-        groundY-z.h;
-
-    zombies.push(z);
-
-    return true;
-
-}
-
-/* =========================================================
-   DANO NO ZUMBI
-========================================================= */
-
-function damageZombie(
-    z,
-    damage
-){
-
-    if(!z.alive){
-        return;
-    }
-
-    z.hp -= damage;
-
-    spawnParticles(
-        z.x+z.w/2,
-        z.y+z.h/2,
-        "#ff5364",
+      particlesBurst(
+        c.x,
+        c.y,
+        "#ffd83d",
         8
-    );
+      );
+    }
+  }
 
-    sound("hit");
+  coins = coins.filter(
+    c => !c.collected
+  );
+}
 
-    if(z.hp<=0){
+/* =====================================================
+   POWERUPS
+===================================================== */
 
-        z.alive = false;
+function updatePowerups(){
 
-        state.kills++;
-        state.waveKills++;
+  for(const p of powerups){
 
-        if(z.type==="tank"){
+    if(p.collected)
+      continue;
 
-            state.score += 500;
+    if(overlap(player,p)){
 
-        }
-        else if(z.type==="fast"){
+      p.collected = true;
 
-            state.score += 200;
+      if(p.type === "health"){
 
-        }
-        else{
-
-            state.score += 100;
-
-        }
-
-        state.shake = 5;
-
-        blood.push({
-
-            x:
-                z.x+
-                z.w/2,
-
-            y:
-                z.y+
-                z.h,
-
-            life:1
-
-        });
-
-        spawnParticles(
-            z.x+z.w/2,
-            z.y+z.h/2,
-            "#d52d3e",
-            18
+        game.hp = Math.min(
+          game.maxHp,
+          game.hp+30
         );
 
-        /*
-         * Chance de dropar item.
-         */
+        game.message = "+30 VIDA";
+      }
 
-        if(
-            Math.random()<.15
-        ){
+      if(p.type === "power"){
 
-            pickups.push({
+        player.speed = 7;
+        player.jump = 15;
 
-                x:
-                    z.x+
-                    z.w/2,
+        game.message = "SUPER PODER!";
+      }
 
-                y:
-                    z.y+
-                    z.h,
+      game.messageTime = 90;
+      game.score += 200;
 
-                type:
-                    Math.random()<.5
-                    ? "ammo"
-                    : "medkit",
-
-                collected:false
-
-            });
-
-        }
-
+      particlesBurst(
+        p.x+p.w/2,
+        p.y+p.h/2,
+        p.type === "health"
+          ? "#39e878"
+          : "#b65cff",
+        15
+      );
     }
+  }
 
+  powerups = powerups.filter(
+    p => !p.collected
+  );
 }
 
-/* =========================================================
-   FÍSICA DOS ZUMBIS
-========================================================= */
-
-function updateZombies(){
-
-    const pr = {
-
-        x:player.x,
-        y:player.y,
-        w:player.w,
-        h:player.h
-
-    };
-
-    for(const z of zombies){
-
-        if(!z.alive){
-            continue;
-        }
-
-        const dx =
-            player.x-z.x;
-
-        /*
-         * Perseguição.
-         */
-
-        if(
-            Math.abs(dx)>4
-        ){
-
-            z.vx =
-                Math.sign(dx)*
-                z.speed;
-
-        }
-        else{
-
-            z.vx=0;
-
-        }
-
-        const oldX =
-            z.x;
-
-        z.x += z.vx;
-
-        z.x =
-            clamp(
-                z.x,
-                0,
-                WORLD_WIDTH-z.w
-            );
-
-        /* COLISÃO HORIZONTAL */
-
-        for(const p of platforms){
-
-            if(
-                z.y+z.h<=p.y ||
-                z.y>=p.y+p.h
-            ){
-
-                continue;
-
-            }
-
-            if(
-                oldX+z.w<=p.x &&
-                z.x+z.w>p.x
-            ){
-
-                z.x =
-                    p.x-z.w;
-
-                z.vx=0;
-
-            }
-
-            else if(
-                oldX>=p.x+p.w &&
-                z.x<p.x+p.w
-            ){
-
-                z.x =
-                    p.x+p.w;
-
-                z.vx=0;
-
-            }
-
-        }
-
-        /* GRAVIDADE */
-
-        const oldY =
-            z.y;
-
-        z.vy += GRAVITY;
-
-        z.vy =
-            Math.min(
-                z.vy,
-                17
-            );
-
-        z.y += z.vy;
-
-        z.grounded = false;
-
-        for(const p of platforms){
-
-            if(
-                z.x+z.w<=p.x ||
-                z.x>=p.x+p.w
-            ){
-
-                continue;
-
-            }
-
-            if(
-                z.vy>=0 &&
-                oldY+z.h<=p.y &&
-                z.y+z.h>=p.y
-            ){
-
-                z.y =
-                    p.y-z.h;
-
-                z.vy=0;
-                z.grounded=true;
-
-                break;
-
-            }
-
-        }
-
-        /* EVITA QUEDA INFINITA */
-
-        if(
-            z.y>H+300
-        ){
-
-            z.y =
-                getGroundY()-z.h;
-
-            z.vy=0;
-
-        }
-
-        z.anim += .1;
-
-        if(
-            z.attackCooldown>0
-        ){
-
-            z.attackCooldown--;
-
-        }
-
-        /* ATAQUE */
-
-        if(
-            rectsOverlap(
-                pr,
-                z
-            )
-        ){
-
-            if(
-                z.attackCooldown<=0
-            ){
-
-                damagePlayer(
-                    z.damage
-                );
-
-                z.attackCooldown=55;
-
-                if(state.running){
-
-                    player.vx =
-                        player.x<z.x
-                        ? -5
-                        : 5;
-
-                    player.vy=-4;
-
-                }
-
-            }
-
-        }
-
-    }
-
-    zombies =
-        zombies.filter(
-            z=>z.alive
-        );
-
-}
-
-/* =========================================================
-   DANO JOGADOR
-========================================================= */
-
-function damagePlayer(
-    amount
-){
-
-    if(
-        player.invincible>0 ||
-        !state.running
-    ){
-
-        return;
-
-    }
-
-    state.health -= amount;
-
-    player.invincible = 50;
-
-    state.shake = 10;
-
-    spawnParticles(
-        player.x+player.w/2,
-        player.y+player.h/2,
-        "#ff3147",
-        16
-    );
-
-    if(
-        state.health<=0
-    ){
-
-        state.health=0;
-
-        endGame(
-            false,
-            "Nico foi derrotado pelos zumbis."
-        );
-
-    }
-
-}
-
-/* =========================================================
-   ONDAS
-========================================================= */
-
-function updateWaves(){
+/* =====================================================
+   OBJETIVO
+===================================================== */
+
+function checkGoal(){
+
+  if(!goal)
+    return;
+
+  /*
+    Só considera a chegada quando o jogador
+    realmente atravessa a bandeira.
+  */
+  if(
+    player.x+player.w < goal.x
+  )
+    return;
+
+  const bossAlive = enemies.some(
+    e => e.type === "boss" && e.alive
+  );
+
+  if(bossAlive){
+
+    game.message = "DERROTE O CHEFE!";
+    game.messageTime = 60;
 
     /*
-     * Quantidade total necessária
-     * na onda atual.
-     */
+      Recuo para impedir que o jogador
+      fique preso dentro da bandeira.
+    */
+    player.x = goal.x-player.w-5;
 
-    const needed =
-        5+
-        state.wave*3;
+    return;
+  }
 
-    /*
-     * A onda só termina quando:
-     *
-     * 1. todas as mortes necessárias
-     * foram feitas;
-     * 2. não existem zumbis vivos.
-     */
-
-    if(
-        state.waveKills>=needed &&
-        zombies.length===0
-    ){
-
-        if(
-            state.wave>=5
-        ){
-
-            endGame(
-                true,
-                "Nico sobreviveu às 5 ondas de zumbis e completou a missão!"
-            );
-
-            return;
-
-        }
-
-        state.wave++;
-
-        state.waveKills=0;
-
-        state.waveTimer=150;
-
-        state.spawnTimer=70;
-
-        state.score += 500;
-
-        return;
-
-    }
-
-    /*
-     * Intervalo entre ondas.
-     */
-
-    if(
-        state.waveTimer>0
-    ){
-
-        state.waveTimer--;
-
-        return;
-
-    }
-
-    /*
-     * NÃO cria inimigos além
-     * do necessário para completar
-     * a onda.
-     */
-
-    if(
-        state.waveKills+
-        zombies.length>=needed
-    ){
-
-        return;
-
-    }
-
-    state.spawnTimer--;
-
-    if(
-        state.spawnTimer<=0
-    ){
-
-        spawnZombie();
-
-        state.spawnTimer =
-            Math.max(
-                30,
-                100-
-                state.wave*10
-            );
-
-    }
-
+  nextLevel();
 }
 
-/* =========================================================
-   PICKUPS
-========================================================= */
-
-function updatePickups(){
-
-    const pr = {
-
-        x:player.x,
-        y:player.y,
-        w:player.w,
-        h:player.h
-
-    };
-
-    for(const item of pickups){
-
-        if(item.collected){
-            continue;
-        }
-
-        const box = {
-
-            x:item.x-14,
-            y:item.y-14,
-
-            w:28,
-            h:28
-
-        };
-
-        if(
-            rectsOverlap(
-                pr,
-                box
-            )
-        ){
-
-            item.collected=true;
-
-            if(
-                item.type==="ammo"
-            ){
-
-                state.reserve += 18;
-
-            }
-            else{
-
-                state.health =
-                    Math.min(
-                        state.maxHealth,
-                        state.health+25
-                    );
-
-            }
-
-            state.score += 50;
-
-            spawnParticles(
-                item.x,
-                item.y,
-                item.type==="ammo"
-                    ? "#ffd84a"
-                    : "#67ff82",
-                10
-            );
-
-        }
-
-    }
-
-    pickups =
-        pickups.filter(
-            item=>!item.collected
-        );
-
-}
-
-/* =========================================================
+/* =====================================================
    PARTÍCULAS
-========================================================= */
+===================================================== */
 
-function spawnParticles(
-    x,
-    y,
-    color,
-    amount=8
-){
+function particlesBurst(x,y,color,n){
 
-    color =
-        String(color).trim();
+  for(let i=0;i<n;i++){
 
-    for(
-        let i=0;
-        i<amount;
-        i++
-    ){
-
-        particles.push({
-
-            x:x,
-            y:y,
-
-            vx:random(-4,4),
-
-            vy:random(-5,-1),
-
-            life:1,
-
-            size:random(2,5),
-
-            color:color
-
-        });
-
-    }
-
+    particles.push({
+      x,
+      y,
+      vx:rand(-4,4),
+      vy:rand(-5,1),
+      life:1,
+      color,
+      size:rand(2,6)
+    });
+  }
 }
 
 function updateParticles(){
 
-    for(
-        let i=particles.length-1;
-        i>=0;
-        i--
-    ){
+  for(let i=particles.length-1;i>=0;i--){
 
-        const p =
-            particles[i];
+    const p = particles[i];
 
-        p.x += p.vx;
-        p.y += p.vy;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += .15;
+    p.life -= .03;
 
-        p.vy += .15;
-
-        p.life -= .035;
-
-        if(
-            p.life<=0
-        ){
-
-            particles.splice(i,1);
-
-        }
-
-    }
-
+    if(p.life <= 0)
+      particles.splice(i,1);
+  }
 }
 
-/* =========================================================
-   SANGUE
-========================================================= */
-
-function updateBlood(){
-
-    for(
-        let i=blood.length-1;
-        i>=0;
-        i--
-    ){
-
-        const b =
-            blood[i];
-
-        b.life -= .003;
-
-        if(
-            b.life<=0
-        ){
-
-            blood.splice(i,1);
-
-        }
-
-    }
-
-}
-
-/* =========================================================
+/* =====================================================
    CÂMERA
-========================================================= */
+===================================================== */
 
 function updateCamera(){
 
-    const target =
-        player.x-
-        W*.38;
+  const target =
+    player.x-W*.38;
 
-    state.cameraX +=
-        (
-            target-
-            state.cameraX
-        )*.1;
+  game.camera +=
+    (target-game.camera)*.1;
 
-    state.cameraX =
-        clamp(
-            state.cameraX,
-            0,
-            Math.max(
-                0,
-                WORLD_WIDTH-W
-            )
-        );
-
+  game.camera = clamp(
+    game.camera,
+    0,
+    Math.max(
+      0,
+      game.world-W
+    )
+  );
 }
 
-/* =========================================================
-   CÉU
-========================================================= */
+/* =====================================================
+   HUD
+===================================================== */
 
-function drawSky(){
+function updateHUD(){
 
-    const g =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            H
-        );
+  hpEl.textContent =
+    Math.ceil(Math.max(0,game.hp));
 
-    g.addColorStop(
-        0,
-        "#182c3a"
+  coinsEl.textContent =
+    game.coins;
+
+  scoreEl.textContent =
+    game.score;
+
+  levelEl.textContent =
+    game.level;
+}
+
+/* =====================================================
+   FUNDO
+===================================================== */
+
+function drawBackground(){
+
+  const hue =
+    215-game.level*8;
+
+  const g =
+    ctx.createLinearGradient(
+      0,0,0,H
     );
 
-    g.addColorStop(
-        .5,
-        "#284653"
-    );
+  g.addColorStop(
+    0,
+    `hsl(${hue},55%,27%)`
+  );
 
-    g.addColorStop(
-        1,
-        "#10181c"
-    );
+  g.addColorStop(
+    1,
+    `hsl(${hue},45%,8%)`
+  );
 
-    ctx.fillStyle=g;
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
 
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
+  /* LUA */
 
-    /* LUA */
+  ctx.fillStyle = "#fff4c4";
 
-    ctx.fillStyle =
-        "rgba(220,235,220,.9)";
+  ctx.beginPath();
+
+  ctx.arc(
+    W-110,
+    90,
+    42,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* MONTANHAS */
+
+  ctx.fillStyle = "#10232f";
+
+  for(let i=-1;i<10;i++){
+
+    const x =
+      i*500-game.camera*.15;
 
     ctx.beginPath();
 
-    ctx.arc(
-        W-120,
-        100,
-        38,
-        0,
-        Math.PI*2
-    );
+    ctx.moveTo(x,H-90);
+    ctx.lineTo(x+250,H-400);
+    ctx.lineTo(x+500,H-90);
 
     ctx.fill();
-
-    ctx.fillStyle =
-        "rgba(20,35,40,.5)";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        W-105,
-        91,
-        35,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* ESTRELAS */
-
-    for(
-        let i=0;
-        i<50;
-        i++
-    ){
-
-        const x =
-            (i*137)%W;
-
-        const y =
-            30+
-            (i*71)%250;
-
-        const alpha =
-            .35+
-            Math.sin(
-                state.time*2+i
-            )*.2;
-
-        ctx.fillStyle =
-            `rgba(255,255,255,${alpha})`;
-
-        ctx.fillRect(
-            x,
-            y,
-            2,
-            2
-        );
-
-    }
-
+  }
 }
 
-/* =========================================================
-   MONTANHAS
-========================================================= */
-
-function drawMountains(){
-
-    const offset =
-        state.cameraX*.12;
-
-    ctx.save();
-
-    ctx.translate(
-        -offset%700,
-        0
-    );
-
-    for(
-        let x=-700;
-        x<W+1400;
-        x+=700
-    ){
-
-        ctx.fillStyle =
-            "#172c35";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x,
-            getGroundY()
-        );
-
-        ctx.lineTo(
-            x+270,
-            H-410
-        );
-
-        ctx.lineTo(
-            x+500,
-            getGroundY()
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-
-        ctx.fillStyle =
-            "#213e48";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x+270,
-            H-410
-        );
-
-        ctx.lineTo(
-            x+225,
-            H-350
-        );
-
-        ctx.lineTo(
-            x+270,
-            H-370
-        );
-
-        ctx.lineTo(
-            x+315,
-            H-350
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-
-    }
-
-    ctx.restore();
-
-}
-
-/* =========================================================
-   ÁRVORES
-========================================================= */
-
-function drawTrees(){
-
-    for(const t of trees){
-
-        const x =
-            t.x-
-            state.cameraX;
-
-        if(
-            x<-80 ||
-            x>W+80
-        ){
-
-            continue;
-
-        }
-
-        const s=t.scale;
-        const groundY=t.y;
-
-        ctx.fillStyle =
-            "#4b3024";
-
-        ctx.fillRect(
-            x-7*s,
-            groundY-70*s,
-            14*s,
-            70*s
-        );
-
-        ctx.fillStyle =
-            "#173f2b";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            groundY-95*s,
-            34*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.arc(
-            x-24*s,
-            groundY-70*s,
-            27*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.arc(
-            x+25*s,
-            groundY-68*s,
-            29*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        ctx.fillStyle =
-            "#245c38";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x-8*s,
-            groundY-105*s,
-            21*s,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
-
-}
-
-/* =========================================================
-   PEDRAS
-========================================================= */
-
-function drawRocks(){
-
-    for(const r of rocks){
-
-        const x =
-            r.x-
-            state.cameraX;
-
-        if(
-            x<-30 ||
-            x>W+30
-        ){
-
-            continue;
-
-        }
-
-        ctx.fillStyle =
-            "#364149";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            x,
-            r.y,
-            r.size,
-            r.size*.65,
-            0,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
-
-}
-
-/* =========================================================
+/* =====================================================
    PLATAFORMAS
-========================================================= */
+===================================================== */
 
 function drawPlatforms(){
 
-    for(const p of platforms){
-
-        const x =
-            p.x-
-            state.cameraX;
-
-        if(
-            x+p.w<0 ||
-            x>W
-        ){
-
-            continue;
-
-        }
-
-        ctx.fillStyle =
-            "#24352b";
-
-        ctx.fillRect(
-            x,
-            p.y,
-            p.w,
-            Math.min(
-                15,
-                p.h
-            )
-        );
-
-        if(p.h>15){
-
-            ctx.fillStyle =
-                "#493629";
-
-            ctx.fillRect(
-                x,
-                p.y+15,
-                p.w,
-                p.h-15
-            );
-
-        }
-
-        ctx.fillStyle =
-            "rgba(0,0,0,.15)";
-
-        for(
-            let i=x;
-            i<x+p.w;
-            i+=55
-        ){
-
-            ctx.fillRect(
-                i+10,
-                p.y+30,
-                18,
-                5
-            );
-
-        }
-
-    }
-
-}
-
-/* =========================================================
-   PICKUPS
-========================================================= */
-
-function drawPickups(){
-
-    for(const item of pickups){
-
-        if(item.collected){
-            continue;
-        }
-
-        const x =
-            item.x-
-            state.cameraX;
-
-        if(
-            x<-40 ||
-            x>W+40
-        ){
-
-            continue;
-
-        }
-
-        const bob =
-            Math.sin(
-                state.time*4+
-                item.x
-            )*4;
-
-        ctx.save();
-
-        ctx.translate(
-            x,
-            item.y+bob
-        );
-
-        if(
-            item.type==="ammo"
-        ){
-
-            ctx.fillStyle =
-                "#d69b27";
-
-            ctx.fillRect(
-                -13,
-                -10,
-                26,
-                20
-            );
-
-            ctx.fillStyle =
-                "#ffe65b";
-
-            ctx.fillRect(
-                -8,
-                -6,
-                5,
-                12
-            );
-
-            ctx.fillRect(
-                2,
-                -6,
-                5,
-                12
-            );
-
-        }
-        else{
-
-            ctx.fillStyle =
-                "#f2f2f2";
-
-            ctx.fillRect(
-                -13,
-                -13,
-                26,
-                26
-            );
-
-            ctx.fillStyle =
-                "#e8394c";
-
-            ctx.fillRect(
-                -4,
-                -10,
-                8,
-                20
-            );
-
-            ctx.fillRect(
-                -10,
-                -4,
-                20,
-                8
-            );
-
-        }
-
-        ctx.restore();
-
-    }
-
-}
-
-/* =========================================================
-   ZUMBIS
-========================================================= */
-
-function drawZombies(){
-
-    for(const z of zombies){
-
-        if(!z.alive){
-            continue;
-        }
-
-        const x =
-            z.x-
-            state.cameraX;
-
-        const y=z.y;
-
-        if(
-            x<-100 ||
-            x>W+100
-        ){
-
-            continue;
-
-        }
-
-        const bob =
-            Math.sin(
-                z.anim
-            )*2;
-
-        ctx.save();
-
-        ctx.translate(
-            x+z.w/2,
-            y+z.h/2+bob
-        );
-
-        const scale =
-            z.type==="tank"
-            ? 1.18
-            : z.type==="fast"
-            ? .9
-            : 1;
-
-        ctx.scale(
-            scale,
-            scale
-        );
-
-        /* SOMBRA */
-
-        ctx.fillStyle =
-            "rgba(0,0,0,.35)";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            0,
-            z.h/2+4,
-            z.w*.45,
-            6,
-            0,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        /* BRAÇOS */
-
-        ctx.strokeStyle =
-            "#6f9b61";
-
-        ctx.lineWidth=9;
-        ctx.lineCap="round";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            -17,
-            -2
-        );
-
-        ctx.lineTo(
-            -30,
-            12
-        );
-
-        ctx.moveTo(
-            17,
-            -2
-        );
-
-        ctx.lineTo(
-            30,
-            12
-        );
-
-        ctx.stroke();
-
-        /* CORPO */
-
-        const body =
-            ctx.createLinearGradient(
-                0,
-                -25,
-                0,
-                30
-            );
-
-        body.addColorStop(
-            0,
-            z.type==="tank"
-                ? "#7eab63"
-                : "#5d984f"
-        );
-
-        body.addColorStop(
-            1,
-            "#294b32"
-        );
-
-        ctx.fillStyle=body;
-
-        ctx.beginPath();
-
-        drawRoundRect(
-            ctx,
-            -z.w/2,
-            -z.h/2+5,
-            z.w,
-            z.h-8,
-            13
-        );
-
-        ctx.fill();
-
-        ctx.strokeStyle =
-            "#17251b";
-
-        ctx.lineWidth=3;
-
-        ctx.stroke();
-
-        /* CABEÇA */
-
-        ctx.fillStyle =
-            "#83ad69";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            -z.h/2,
-            z.w*.38,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        ctx.stroke();
-
-        /* OLHOS */
-
-        ctx.fillStyle =
-            "#d9f2bd";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            -8,
-            -z.h/2-3,
-            5,
-            0,
-            Math.PI*2
-        );
-
-        ctx.arc(
-            8,
-            -z.h/2-3,
-            5,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        ctx.fillStyle =
-            "#101514";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            -8,
-            -z.h/2-3,
-            2,
-            0,
-            Math.PI*2
-        );
-
-        ctx.arc(
-            8,
-            -z.h/2-3,
-            2,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        /* BOCA */
-
-        ctx.strokeStyle =
-            "#2c1918";
-
-        ctx.lineWidth=3;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            -z.h/2+9,
-            9,
-            0,
-            Math.PI
-        );
-
-        ctx.stroke();
-
-        /* VIDA DO TANK */
-
-        if(
-            z.type==="tank"
-        ){
-
-            ctx.fillStyle =
-                "#210f12";
-
-            ctx.fillRect(
-                -24,
-                -45,
-                48,
-                5
-            );
-
-            ctx.fillStyle =
-                "#ff4656";
-
-            ctx.fillRect(
-                -24,
-                -45,
-                48*
-                (z.hp/z.maxHp),
-                5
-            );
-
-        }
-
-        ctx.restore();
-
-    }
-
-}
-
-/* =========================================================
-   RETÂNGULO ARREDONDADO
-========================================================= */
-
-function drawRoundRect(
-    context,
-    x,
-    y,
-    w,
-    h,
-    r
-){
-
-    r =
-        Math.min(
-            r,
-            w/2,
-            h/2
-        );
-
-    context.moveTo(
-        x+r,
-        y
-    );
-
-    context.lineTo(
-        x+w-r,
-        y
-    );
-
-    context.quadraticCurveTo(
-        x+w,
-        y,
-        x+w,
-        y+r
-    );
-
-    context.lineTo(
-        x+w,
-        y+h-r
-    );
-
-    context.quadraticCurveTo(
-        x+w,
-        y+h,
-        x+w-r,
-        y+h
-    );
-
-    context.lineTo(
-        x+r,
-        y+h
-    );
-
-    context.quadraticCurveTo(
-        x,
-        y+h,
-        x,
-        y+h-r
-    );
-
-    context.lineTo(
-        x,
-        y+r
-    );
-
-    context.quadraticCurveTo(
-        x,
-        y,
-        x+r,
-        y
-    );
-
-    context.closePath();
-
-}
-
-/* =========================================================
-   NICO
-========================================================= */
-
-function drawPlayer(){
-
-    if(
-        player.invincible>0 &&
-        Math.floor(
-            player.invincible/5
-        )%2===0
-    ){
-
-        return;
-
-    }
+  for(const p of platforms){
 
     const x =
-        player.x-
-        state.cameraX;
+      p.x-game.camera;
 
-    const y =
-        player.y;
+    if(x+p.w<0 || x>W)
+      continue;
 
-    const target =
-        mobileFire &&
-        isMobile()
-        ? getMobileTarget()
-        : getWorldMouse();
+    ctx.fillStyle = "#493727";
 
-    let angle =
-        Math.atan2(
-            target.y-
-            (player.y+30),
-            target.x-
-            (player.x+player.w/2)
-        );
+    ctx.fillRect(
+      x,
+      p.y,
+      p.w,
+      p.h
+    );
 
-    if(
-        Math.cos(angle)<0
-    ){
+    ctx.fillStyle = "#55a948";
 
-        player.facing=-1;
+    ctx.fillRect(
+      x,
+      p.y,
+      p.w,
+      9
+    );
 
+    ctx.fillStyle = "#33271e";
+
+    for(let i=0;i<p.w;i+=35){
+
+      ctx.fillRect(
+        x+i,
+        p.y+16,
+        18,
+        4
+      );
     }
-    else{
+  }
+}
 
-        player.facing=1;
+/* =====================================================
+   MOEDAS
+===================================================== */
 
-    }
+function drawCoins(){
+
+  for(const c of coins){
+
+    const x =
+      c.x-game.camera;
+
+    if(x<-20 || x>W+20)
+      continue;
+
+    ctx.fillStyle = "#ffd52e";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      x,
+      c.y,
+      c.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle = "#fff19a";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = "#fff3a3";
+
+    ctx.fillRect(
+      x-2,
+      c.y-6,
+      4,
+      12
+    );
+  }
+}
+
+/* =====================================================
+   POWERUPS
+===================================================== */
+
+function drawPowerups(){
+
+  for(const p of powerups){
+
+    const x =
+      p.x-game.camera;
+
+    ctx.fillStyle =
+      p.type === "health"
+        ? "#39e878"
+        : "#b65cff";
+
+    ctx.fillRect(
+      x,
+      p.y,
+      p.w,
+      p.h
+    );
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 19px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+      p.type === "health"
+        ? "❤"
+        : "★",
+      x+p.w/2,
+      p.y+21
+    );
+  }
+}
+
+/* =====================================================
+   INIMIGOS
+===================================================== */
+
+function drawEnemies(){
+
+  for(const e of enemies){
+
+    const x =
+      e.x-game.camera;
+
+    if(x<-100 || x>W+100)
+      continue;
 
     ctx.save();
 
     ctx.translate(
-        x+player.w/2,
-        y+player.h/2
+      x+e.w/2,
+      e.y+e.h/2
     );
 
-    ctx.scale(
-        player.facing,
-        1
-    );
-
-    /*
-     * Ajusta o ângulo da arma para o
-     * sistema de coordenadas espelhado.
-     */
-
-    let weaponAngle =
-        player.facing===1
-        ? angle
-        : Math.PI-angle;
-
-    const leg =
-        player.grounded
-        ? Math.sin(
-            player.walk
-        )*4
-        : 0;
-
-    /* SOMBRA */
-
-    ctx.fillStyle =
-        "rgba(0,0,0,.35)";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        0,
-        34,
-        23,
-        6,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* PERNAS */
-
-    ctx.fillStyle =
-        "#263d50";
-
-    ctx.fillRect(
-        -15,
-        15+leg,
-        11,
-        17
-    );
-
-    ctx.fillRect(
-        4,
-        15-leg,
-        11,
-        17
-    );
-
-    /* BOTAS */
-
-    ctx.fillStyle =
-        "#171c21";
-
-    ctx.beginPath();
-
-    drawRoundRect(
-        ctx,
-        -19,
-        27+leg,
-        20,
-        10,
-        5
-    );
-
-    drawRoundRect(
-        ctx,
-        0,
-        27-leg,
-        20,
-        10,
-        5
-    );
-
-    ctx.fill();
-
-    /* CORPO */
-
-    const shirt =
-        ctx.createLinearGradient(
-            -22,
-            -5,
-            22,
-            25
-        );
-
-    shirt.addColorStop(
-        0,
-        "#2e78a8"
-    );
-
-    shirt.addColorStop(
-        1,
-        "#16415f"
-    );
-
-    ctx.fillStyle=shirt;
-
-    ctx.beginPath();
-
-    drawRoundRect(
-        ctx,
-        -21,
-        -4,
-        42,
-        31,
-        9
-    );
-
-    ctx.fill();
-
-    ctx.strokeStyle =
-        "#102d40";
-
-    ctx.lineWidth=3;
-
-    ctx.stroke();
-
-    /* COLETE */
-
-    ctx.fillStyle =
-        "#29333a";
-
-    ctx.fillRect(
-        -17,
-        1,
-        7,
-        20
-    );
-
-    ctx.fillRect(
-        10,
-        1,
-        7,
-        20
-    );
-
-    /* BRAÇO */
-
-    ctx.strokeStyle =
-        "#d99e6e";
-
-    ctx.lineWidth=9;
-
-    ctx.lineCap="round";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        15,
-        3
-    );
-
-    ctx.lineTo(
-        24,
-        9
-    );
-
-    ctx.stroke();
-
-    /* CABEÇA */
-
-    ctx.fillStyle =
-        "#dca878";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        0,
-        -20,
-        20,
-        22,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.strokeStyle =
-        "#6e3d2d";
-
-    ctx.lineWidth=3;
-
-    ctx.stroke();
-
-    /* CABELO */
-
-    ctx.fillStyle =
-        "#182b3b";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        -12,
-        -35,
-        11,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        0,
-        -39,
-        13,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        12,
-        -35,
-        11,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* OLHOS */
-
-    ctx.fillStyle =
-        "#111";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        -7,
-        -21,
-        3,
-        5,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.ellipse(
-        7,
-        -21,
-        3,
-        5,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* ARMA */
-
-    ctx.save();
-
-    ctx.rotate(
-        clamp(
-            weaponAngle,
-            -Math.PI*.85,
-            Math.PI*.85
-        )
-    );
-
-    ctx.fillStyle =
-        "#20272c";
-
-    ctx.fillRect(
-        14,
-        1,
-        30,
-        8
-    );
-
-    ctx.fillStyle =
-        "#11171b";
-
-    ctx.fillRect(
-        37,
-        -2,
-        13,
-        6
-    );
-
-    ctx.fillStyle =
-        "#5b6870";
-
-    ctx.fillRect(
-        18,
-        9,
-        8,
-        12
-    );
+    if(e.type === "boss")
+      drawBoss(e);
+    else
+      drawEnemy(e);
 
     ctx.restore();
-
-    ctx.restore();
-
+  }
 }
 
-/* =========================================================
-   BALAS
-========================================================= */
+function drawEnemy(e){
 
-function drawBullets(){
+  const s =
+    e.type === "tank"
+      ? 1.15
+      : 1;
 
-    for(const b of bullets){
+  ctx.scale(s,s);
 
-        const x =
-            b.x-
-            state.cameraX;
+  ctx.fillStyle = "#0008";
 
-        ctx.fillStyle =
-            "#ffe75c";
+  ctx.beginPath();
 
-        ctx.shadowColor =
-            "#ffb000";
+  ctx.ellipse(
+    0,
+    e.h/2+5,
+    e.w*.45,
+    6,
+    0,
+    0,
+    Math.PI*2
+  );
 
-        ctx.shadowBlur=10;
+  ctx.fill();
 
-        ctx.beginPath();
+  ctx.fillStyle =
+    e.type === "tank"
+      ? "#704a37"
+      : "#3f8050";
 
-        ctx.arc(
-            x,
-            b.y,
-            3,
-            0,
-            Math.PI*2
-        );
+  ctx.fillRect(
+    -e.w/2,
+    -e.h/2+10,
+    e.w,
+    e.h-10
+  );
 
-        ctx.fill();
+  ctx.fillStyle = "#79ad68";
 
-        ctx.shadowBlur=0;
+  ctx.beginPath();
 
-    }
+  ctx.arc(
+    0,
+    -e.h/2,
+    e.w*.4,
+    0,
+    Math.PI*2
+  );
 
+  ctx.fill();
+
+  ctx.fillStyle = "#ff3e4d";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    -7,
+    -e.h/2-2,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  ctx.arc(
+    7,
+    -e.h/2-2,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  if(e.maxHp > 1){
+
+    ctx.fillStyle = "#240b0e";
+
+    ctx.fillRect(
+      -25,
+      -45,
+      50,
+      5
+    );
+
+    ctx.fillStyle = "#ff394b";
+
+    ctx.fillRect(
+      -25,
+      -45,
+      50*(e.hp/e.maxHp),
+      5
+    );
+  }
 }
 
-/* =========================================================
+/* =====================================================
+   CHEFE
+===================================================== */
+
+function drawBoss(e){
+
+  ctx.fillStyle = "#250d16";
+
+  ctx.fillRect(
+    -45,
+    -50,
+    90,
+    100
+  );
+
+  ctx.fillStyle = "#a52e42";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    0,
+    -52,
+    42,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle = "#ffd52e";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    -14,
+    -55,
+    7,
+    0,
+    Math.PI*2
+  );
+
+  ctx.arc(
+    14,
+    -55,
+    7,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  ctx.fillStyle = "#111";
+
+  ctx.fillRect(
+    -23,
+    -32,
+    46,
+    12
+  );
+
+  ctx.fillStyle = "#fff";
+
+  for(let i=-18;i<=18;i+=9){
+
+    ctx.fillRect(
+      i,
+      -31,
+      5,
+      8
+    );
+  }
+
+  /* COROA */
+
+  ctx.fillStyle = "#ffd329";
+
+  ctx.beginPath();
+
+  ctx.moveTo(-32,-88);
+  ctx.lineTo(-22,-110);
+  ctx.lineTo(-8,-92);
+  ctx.lineTo(5,-112);
+  ctx.lineTo(18,-91);
+  ctx.lineTo(32,-106);
+  ctx.lineTo(36,-80);
+  ctx.lineTo(-36,-80);
+
+  ctx.closePath();
+  ctx.fill();
+
+  /* VIDA */
+
+  ctx.fillStyle = "#22060b";
+
+  ctx.fillRect(
+    -50,
+    -125,
+    100,
+    9
+  );
+
+  ctx.fillStyle = "#ff354b";
+
+  ctx.fillRect(
+    -50,
+    -125,
+    100*Math.max(
+      0,
+      e.hp/e.maxHp
+    ),
+    9
+  );
+}
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+function drawPlayer(){
+
+  /*
+    Piscada de invulnerabilidade.
+  */
+  if(
+    player.invincible>0 &&
+    Math.floor(player.invincible/5)%2===0
+  )
+    return;
+
+  const x =
+    player.x-game.camera;
+
+  const y =
+    player.y;
+
+  ctx.save();
+
+  ctx.translate(
+    x+player.w/2,
+    y+player.h/2
+  );
+
+  ctx.scale(
+    player.facing,
+    1
+  );
+
+  /* SOMBRA */
+
+  ctx.fillStyle = "#0008";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    35,
+    24,
+    6,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* PERNAS */
+
+  ctx.fillStyle = "#243a55";
+
+  ctx.fillRect(
+    -15,
+    12,
+    11,
+    22
+  );
+
+  ctx.fillRect(
+    4,
+    12,
+    11,
+    22
+  );
+
+  /* BOTAS */
+
+  ctx.fillStyle = "#111820";
+
+  ctx.fillRect(
+    -19,
+    28,
+    20,
+    9
+  );
+
+  ctx.fillRect(
+    0,
+    28,
+    20,
+    9
+  );
+
+  /* CORPO */
+
+  ctx.fillStyle = "#2879ad";
+
+  ctx.fillRect(
+    -21,
+    -7,
+    42,
+    32
+  );
+
+  ctx.strokeStyle = "#0e3148";
+  ctx.lineWidth = 3;
+
+  ctx.strokeRect(
+    -21,
+    -7,
+    42,
+    32
+  );
+
+  /* BRAÇO */
+
+  ctx.strokeStyle = "#d59b6b";
+  ctx.lineWidth = 9;
+  ctx.lineCap = "round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(15,-1);
+  ctx.lineTo(27,8);
+
+  ctx.stroke();
+
+  /* CABEÇA */
+
+  ctx.fillStyle = "#dfa576";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    0,
+    -25,
+    20,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* CABELO */
+
+  ctx.fillStyle = "#16283a";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    -10,
+    -39,
+    12,
+    0,
+    Math.PI*2
+  );
+
+  ctx.arc(
+    2,
+    -42,
+    13,
+    0,
+    Math.PI*2
+  );
+
+  ctx.arc(
+    13,
+    -37,
+    10,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* OLHOS */
+
+  ctx.fillStyle = "#111";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    -7,
+    -24,
+    3,
+    0,
+    Math.PI*2
+  );
+
+  ctx.arc(
+    7,
+    -24,
+    3,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* ESPADA */
+
+  ctx.strokeStyle = "#dcecff";
+  ctx.lineWidth = 6;
+
+  ctx.beginPath();
+
+  if(player.attackTimer > 0){
+
+    ctx.moveTo(18,3);
+    ctx.lineTo(60,-30);
+
+  }else{
+
+    ctx.moveTo(18,5);
+    ctx.lineTo(48,-13);
+  }
+
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+/* =====================================================
+   BANDEIRA
+===================================================== */
+
+function drawGoal(){
+
+  if(!goal)
+    return;
+
+  const x =
+    goal.x-game.camera;
+
+  ctx.fillStyle = "#ddd";
+
+  ctx.fillRect(
+    x,
+    goal.y,
+    6,
+    goal.h
+  );
+
+  ctx.fillStyle = "#ff4355";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x+6,
+    goal.y
+  );
+
+  ctx.lineTo(
+    x+55,
+    goal.y+20
+  );
+
+  ctx.lineTo(
+    x+6,
+    goal.y+40
+  );
+
+  ctx.closePath();
+  ctx.fill();
+}
+
+/* =====================================================
    PARTÍCULAS
-========================================================= */
+===================================================== */
 
 function drawParticles(){
 
-    for(const p of particles){
+  for(const p of particles){
 
-        const x =
-            p.x-
-            state.cameraX;
-
-        ctx.globalAlpha =
-            Math.max(
-                0,
-                p.life
-            );
-
-        ctx.fillStyle =
-            p.color;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            p.y,
-            p.size,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
-
-    ctx.globalAlpha=1;
-
-}
-
-/* =========================================================
-   SANGUE
-========================================================= */
-
-function drawBlood(){
-
-    for(const b of blood){
-
-        const x =
-            b.x-
-            state.cameraX;
-
-        ctx.globalAlpha =
-            Math.max(
-                0,
-                b.life
-            );
-
-        ctx.fillStyle =
-            "#b4141e";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            x,
-            b.y,
-            22,
-            5,
-            0,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-    }
-
-    ctx.globalAlpha=1;
-
-}
-
-/* =========================================================
-   MIRA
-========================================================= */
-
-function drawCrosshair(){
-
-    if(isMobile()){
-        return;
-    }
-
-    ctx.save();
-
-    ctx.strokeStyle =
-        "rgba(255,255,255,.9)";
-
-    ctx.lineWidth=2;
-
-    const x=mouse.x;
-    const y=mouse.y;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x-12,
-        y
-    );
-
-    ctx.lineTo(
-        x-4,
-        y
-    );
-
-    ctx.moveTo(
-        x+4,
-        y
-    );
-
-    ctx.lineTo(
-        x+12,
-        y
-    );
-
-    ctx.moveTo(
-        x,
-        y-12
-    );
-
-    ctx.lineTo(
-        x,
-        y-4
-    );
-
-    ctx.moveTo(
-        x,
-        y+4
-    );
-
-    ctx.lineTo(
-        x,
-        y+12
-    );
-
-    ctx.stroke();
-
-    ctx.fillStyle =
-        "#ff5261";
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
 
     ctx.beginPath();
 
     ctx.arc(
-        x,
-        y,
-        2,
-        0,
-        Math.PI*2
+      p.x-game.camera,
+      p.y,
+      p.size,
+      0,
+      Math.PI*2
     );
 
     ctx.fill();
+  }
 
-    ctx.restore();
-
+  ctx.globalAlpha = 1;
 }
 
-/* =========================================================
-   INDICADOR DE MIRA MOBILE
-========================================================= */
+/* =====================================================
+   MENSAGEM
+===================================================== */
 
-function drawMobileTarget(){
+function drawMessage(){
 
-    if(
-        !isMobile() ||
-        !mobileFire
-    ){
+  if(game.messageTime <= 0)
+    return;
 
-        return;
+  ctx.textAlign = "center";
+  ctx.font = "900 38px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.shadowColor = "#000";
+  ctx.shadowBlur = 10;
 
-    }
+  ctx.fillText(
+    game.message,
+    W/2,
+    H*.23
+  );
 
-    const target =
-        getMobileTarget();
-
-    if(!target){
-        return;
-    }
-
-    const x =
-        target.x-
-        state.cameraX;
-
-    const y =
-        target.y;
-
-    if(
-        x<-30 ||
-        x>W+30 ||
-        y<-30 ||
-        y>H+30
-    ){
-
-        return;
-
-    }
-
-    ctx.save();
-
-    ctx.strokeStyle =
-        "rgba(255,70,80,.7)";
-
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        16,
-        0,
-        Math.PI*2
-    );
-
-    ctx.stroke();
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x-22,
-        y
-    );
-
-    ctx.lineTo(
-        x-10,
-        y
-    );
-
-    ctx.moveTo(
-        x+10,
-        y
-    );
-
-    ctx.lineTo(
-        x+22,
-        y
-    );
-
-    ctx.moveTo(
-        x,
-        y-22
-    );
-
-    ctx.lineTo(
-        x,
-        y-10
-    );
-
-    ctx.moveTo(
-        x,
-        y+10
-    );
-
-    ctx.lineTo(
-        x,
-        y+22
-    );
-
-    ctx.stroke();
-
-    ctx.restore();
-
+  ctx.shadowBlur = 0;
 }
 
-/* =========================================================
-   VINHETA
-========================================================= */
-
-function drawVignette(){
-
-    const g =
-        ctx.createRadialGradient(
-            W/2,
-            H/2,
-            H*.25,
-            W/2,
-            H/2,
-            H*.75
-        );
-
-    g.addColorStop(
-        0,
-        "rgba(0,0,0,0)"
-    );
-
-    g.addColorStop(
-        1,
-        "rgba(0,0,0,.55)"
-    );
-
-    ctx.fillStyle=g;
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-}
-
-/* =========================================================
-   TEXTO DA ONDA
-========================================================= */
-
-function drawWaveMessage(){
-
-    if(
-        !state.running ||
-        state.waveTimer<=0
-    ){
-
-        return;
-
-    }
-
-    ctx.save();
-
-    ctx.fillStyle =
-        "rgba(255,255,255,.9)";
-
-    ctx.font =
-        "900 26px Arial";
-
-    ctx.textAlign="center";
-
-    ctx.fillText(
-        "ONDA "+state.wave,
-        W/2,
-        H*.22
-    );
-
-    ctx.restore();
-
-}
-
-/* =========================================================
+/* =====================================================
    RENDER
-========================================================= */
+===================================================== */
 
 function render(){
 
-    ctx.clearRect(
-        0,
-        0,
-        W,
-        H
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+  drawBackground();
+  drawPlatforms();
+  drawCoins();
+  drawPowerups();
+  drawGoal();
+  drawEnemies();
+  drawPlayer();
+  drawParticles();
+  drawMessage();
+
+  /* VINHETA */
+
+  const v =
+    ctx.createRadialGradient(
+      W/2,
+      H/2,
+      100,
+      W/2,
+      H/2,
+      H*.8
     );
 
-    drawSky();
+  v.addColorStop(
+    0,
+    "transparent"
+  );
 
-    drawMountains();
+  v.addColorStop(
+    1,
+    "rgba(0,0,0,.45)"
+  );
 
-    drawTrees();
+  ctx.fillStyle = v;
 
-    drawRocks();
-
-    drawPlatforms();
-
-    drawBlood();
-
-    drawPickups();
-
-    drawZombies();
-
-    drawBullets();
-
-    drawPlayer();
-
-    drawParticles();
-
-    drawCrosshair();
-
-    drawMobileTarget();
-
-    drawWaveMessage();
-
-    drawVignette();
-
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
 }
 
-/* =========================================================
-   FIM DE JOGO
-========================================================= */
+/* =====================================================
+   LOOP
+===================================================== */
 
-function endGame(
-    win,
-    text
-){
+function loop(){
 
-    if(!state.running){
-        return;
-    }
-
-    state.running=false;
-
-    state.gameWon=win;
-
-    endTitle.textContent =
-        win
-        ? "MISSÃO CONCLUÍDA 🏆"
-        : "VOCÊ FOI DERROTADO 💀";
-
-    endText.textContent =
-        text+
-        " Pontuação: "+
-        state.score+
-        " | Zumbis derrotados: "+
-        state.kills+
-        ".";
-
-    endScreen.classList.remove(
-        "hidden"
-    );
-
-    mouse.down=false;
-    mobileFire=false;
-
-    keys.left=false;
-    keys.right=false;
-    keys.up=false;
-
-}
-
-/* =========================================================
-   ATUALIZAÇÃO
-========================================================= */
-
-function update(){
-
-    if(!state.running){
-        return;
-    }
-
-    state.time += .016;
+  if(game.running){
 
     updatePlayer();
 
-    if(
-        mouse.down ||
-        mobileFire
-    ){
+    /*
+      Ataque agora ocorre por pressionamento.
+    */
+    if(attackPressed){
 
-        shoot();
+      attackPressed = false;
+      attack();
 
     }
 
-    updateBullets();
-
-    updateZombies();
-
-    updatePickups();
-
+    updateEnemies();
+    updateCoins();
+    updatePowerups();
     updateParticles();
-
-    updateBlood();
-
-    updateWaves();
-
     updateCamera();
+    checkGoal();
+
+    if(game.messageTime > 0)
+      game.messageTime--;
 
     updateHUD();
 
-    if(state.shake>0){
+    if(game.shake > 0){
 
-        state.shake *= .84;
+      game.shake *= .85;
 
-        if(
-            state.shake<.2
-        ){
-
-            state.shake=0;
-
-        }
-
+      if(game.shake < .1)
+        game.shake = 0;
     }
+  }
 
-}
+  ctx.save();
 
-/* =========================================================
-   LOOP
-========================================================= */
+  if(game.shake > 0){
 
-let lastTime=0;
-
-function loop(time){
-
-    if(!lastTime){
-
-        lastTime=time;
-
-    }
-
-    const delta =
-        Math.min(
-            (time-lastTime)/16.67,
-            2
-        );
-
-    lastTime=time;
-
-    const steps =
-        Math.max(
-            1,
-            Math.round(delta)
-        );
-
-    for(
-        let i=0;
-        i<steps;
-        i++
-    ){
-
-        update();
-
-    }
-
-    ctx.save();
-
-    if(state.shake>0){
-
-        ctx.translate(
-            random(
-                -state.shake,
-                state.shake
-            ),
-            random(
-                -state.shake,
-                state.shake
-            )
-        );
-
-    }
-
-    render();
-
-    ctx.restore();
-
-    requestAnimationFrame(
-        loop
+    ctx.translate(
+      rand(-game.shake,game.shake),
+      rand(-game.shake,game.shake)
     );
+  }
 
+  render();
+
+  ctx.restore();
+
+  requestAnimationFrame(loop);
 }
 
-/* =========================================================
+/* =====================================================
+   FIM
+===================================================== */
+
+function endGame(title,text){
+
+  game.running = false;
+
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
+  keys.attack = false;
+  attackPressed = false;
+
+  document.getElementById(
+    "endTitle"
+  ).textContent = title;
+
+  document.getElementById(
+    "endText"
+  ).textContent =
+    text+
+    " Pontuação: "+
+    game.score+
+    " | Moedas: "+
+    game.coins+
+    " | Fase: "+
+    game.level+"/10";
+
+  document.getElementById(
+    "end"
+  ).classList.remove("hidden");
+}
+
+function winGame(){
+
+  game.running = false;
+
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
+  keys.attack = false;
+  attackPressed = false;
+
+  document.getElementById(
+    "endTitle"
+  ).textContent =
+    "🏆 VOCÊ VENCEU!";
+
+  document.getElementById(
+    "endText"
+  ).textContent =
+    "Você completou as 10 fases e derrotou o chefe final! "+
+    "Pontuação: "+
+    game.score+
+    " | Moedas: "+
+    game.coins;
+
+  document.getElementById(
+    "end"
+  ).classList.remove("hidden");
+}
+
+/* =====================================================
    BOTÕES
-========================================================= */
+===================================================== */
 
-startButton.addEventListener(
-    "click",
-    function(){
-
-        resetGame();
-
-    }
+document.getElementById(
+  "startBtn"
+).addEventListener(
+  "click",
+  startGame
 );
 
-restartButton.addEventListener(
-    "click",
-    function(){
-
-        resetGame();
-
-    }
+document.getElementById(
+  "restartBtn"
+).addEventListener(
+  "click",
+  startGame
 );
 
-/* =========================================================
+/* =====================================================
+   EVITA MENU DE CONTEXTO NO CELULAR
+===================================================== */
+
+document.addEventListener(
+  "contextmenu",
+  e => e.preventDefault()
+);
+
+/* =====================================================
    INICIALIZAÇÃO
-========================================================= */
+===================================================== */
 
-createWorld();
-
+resize();
+createLevel();
 updateHUD();
 
-requestAnimationFrame(
-    loop
-);
+requestAnimationFrame(loop);
 
 </script>
 
