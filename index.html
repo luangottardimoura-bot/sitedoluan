@@ -2,25 +2,22 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0,user-scalable=no">
-
-<title>Nico e a Aventura dos Bubus</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Nico: Zona Zumbi</title>
 
 <style>
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 html,body{
     width:100%;
     height:100%;
     overflow:hidden;
+    background:#07100d;
     font-family:Arial,Helvetica,sans-serif;
-    background:#10182d;
 }
 
 body{
@@ -35,200 +32,150 @@ body{
 }
 
 canvas{
-    position:absolute;
-    inset:0;
+    display:block;
     width:100%;
     height:100%;
-    display:block;
 }
 
-/* HUD */
+/* ================= HUD ================= */
 
 #hud{
-    position:absolute;
+    position:fixed;
     z-index:20;
-    top:18px;
-    left:18px;
-
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:10px 14px;
-
-    color:white;
-    background:rgba(15,25,48,.78);
-
-    border:2px solid rgba(255,255,255,.2);
-    border-radius:16px;
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.25),
-        inset 0 1px rgba(255,255,255,.15);
-
-    backdrop-filter:blur(8px);
-
-    font-weight:bold;
-    user-select:none;
-}
-
-.hud-item{
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
-#score{
-    color:#ffd83d;
-}
-
-#lives{
-    color:#ff6b78;
-}
-
-/* TÍTULO */
-
-#title{
-    position:absolute;
-    z-index:10;
-
-    top:18px;
+    top:14px;
     left:50%;
-
     transform:translateX(-50%);
 
+    display:flex;
+    gap:12px;
+    align-items:center;
+
+    padding:10px 16px;
+
     color:white;
+    background:rgba(5,12,10,.82);
 
-    font-size:20px;
+    border:2px solid rgba(255,255,255,.18);
+    border-radius:16px;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.4);
+
     font-weight:900;
+    font-size:15px;
 
-    text-shadow:
-        0 3px 0 #18335b,
-        0 5px 12px rgba(0,0,0,.3);
-
-    pointer-events:none;
+    white-space:nowrap;
 }
 
-/* TELA FINAL */
+.hudItem{
+    display:flex;
+    gap:5px;
+    align-items:center;
+}
 
-#overlay{
-    position:absolute;
+/* ================= TELA ================= */
+
+.screen{
+    position:fixed;
     inset:0;
-
     z-index:50;
 
-    display:none;
+    display:flex;
     align-items:center;
     justify-content:center;
+
+    padding:20px;
 
     background:
         radial-gradient(
             circle at center,
-            rgba(33,59,105,.7),
-            rgba(5,10,25,.94)
+            rgba(45,90,65,.5),
+            rgba(2,7,6,.96)
         );
-
-    backdrop-filter:blur(7px);
-}
-
-#overlay.show{
-    display:flex;
 }
 
 .panel{
-    width:min(520px,90vw);
+    width:min(680px,94vw);
 
-    padding:38px 30px;
-
-    text-align:center;
+    padding:38px 28px;
 
     color:white;
+    text-align:center;
 
     background:
         linear-gradient(
             145deg,
-            #253f72,
-            #162746
+            rgba(25,55,42,.97),
+            rgba(7,18,14,.98)
         );
 
-    border:3px solid rgba(255,255,255,.18);
-    border-radius:28px;
+    border:2px solid rgba(115,255,150,.25);
+    border-radius:25px;
 
     box-shadow:
-        0 30px 80px rgba(0,0,0,.5),
-        inset 0 1px rgba(255,255,255,.18);
-
-    animation:panelIn .45s ease;
+        0 30px 80px rgba(0,0,0,.65),
+        inset 0 1px rgba(255,255,255,.1);
 }
 
-@keyframes panelIn{
-    from{
-        opacity:0;
-        transform:translateY(25px) scale(.95);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
+.logo{
+    font-size:clamp(42px,9vw,78px);
+    font-weight:1000;
+    letter-spacing:-4px;
+
+    color:#d8ff55;
+
+    text-shadow:
+        0 5px 0 #427316,
+        0 10px 30px rgba(0,0,0,.7);
 }
 
-.panel-icon{
-    font-size:65px;
-    margin-bottom:8px;
-}
-
-.panel h1{
-    font-size:clamp(32px,7vw,55px);
-    margin-bottom:12px;
+.subtitle{
+    margin:5px 0 25px;
+    color:#a7dcb5;
+    font-size:21px;
+    font-weight:bold;
 }
 
 .panel p{
-    font-size:19px;
-    color:#dce7ff;
-    margin-bottom:25px;
+    color:#dceee2;
+    line-height:1.6;
 }
 
-#restart{
+.button{
+    margin-top:25px;
+
+    padding:15px 35px;
+
     border:0;
-    padding:15px 30px;
+    border-radius:13px;
 
-    color:#17233d;
+    background:linear-gradient(#dcff63,#87c92c);
+    color:#17220d;
 
-    background:
-        linear-gradient(
-            #ffe96a,
-            #ffc928
-        );
-
-    border-radius:14px;
-
-    font-size:19px;
-    font-weight:900;
+    font-size:20px;
+    font-weight:1000;
 
     cursor:pointer;
 
     box-shadow:
-        0 5px 0 #b98300,
-        0 10px 25px rgba(0,0,0,.25);
+        0 5px 0 #477b19,
+        0 12px 25px rgba(0,0,0,.35);
 }
 
-#restart:active{
+.button:active{
     transform:translateY(4px);
-    box-shadow:0 1px 0 #b98300;
+    box-shadow:0 1px 0 #477b19;
 }
 
-/* CONTROLES MOBILE */
+/* ================= CONTROLES ================= */
 
-#mobileControls{
-    position:absolute;
+#controls{
+    position:fixed;
     z-index:30;
-
     left:0;
     right:0;
     bottom:18px;
 
     display:none;
-
     justify-content:space-between;
 
     padding:0 18px;
@@ -236,53 +183,47 @@ canvas{
     pointer-events:none;
 }
 
-.mobile-group{
+.group{
     display:flex;
-    gap:12px;
+    gap:10px;
 }
 
-.mobile-btn{
-    width:68px;
-    height:68px;
+.control{
+    width:64px;
+    height:64px;
 
     border-radius:50%;
 
+    border:3px solid rgba(255,255,255,.65);
+
+    background:rgba(5,15,10,.65);
+
     color:white;
-
-    background:rgba(15,25,48,.65);
-
-    border:3px solid rgba(255,255,255,.7);
-
-    font-size:28px;
+    font-size:25px;
     font-weight:bold;
 
-    box-shadow:0 6px 20px rgba(0,0,0,.25);
-
     pointer-events:auto;
-
-    user-select:none;
-    touch-action:none;
 }
 
-.mobile-btn:active{
-    transform:scale(.92);
-    background:rgba(255,255,255,.25);
+.control:active{
+    transform:scale(.9);
+    background:rgba(130,255,130,.25);
+}
+
+.hidden{
+    display:none!important;
 }
 
 @media(max-width:800px){
-    #mobileControls{
+    #controls{
         display:flex;
     }
 
-    #title{
-        display:none;
-    }
-
     #hud{
-        top:10px;
-        left:10px;
-        font-size:14px;
-        padding:8px 10px;
+        top:8px;
+        gap:7px;
+        padding:7px 9px;
+        font-size:12px;
     }
 }
 </style>
@@ -292,665 +233,470 @@ canvas{
 
 <div id="game">
 
-    <canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
 
-    <div id="title">
-        🌟 NICO E A AVENTURA DOS BUBUS 🌟
-    </div>
+<div id="hud">
+    <div class="hudItem">❤️ <span id="lives">3</span></div>
+    <div class="hudItem">🔫 <span id="ammo">30</span></div>
+    <div class="hudItem">🧟 <span id="kills">0</span></div>
+    <div class="hudItem">⭐ <span id="score">0</span></div>
+    <div class="hudItem">🏆 <span id="mission">0%</span></div>
+</div>
 
-    <div id="hud">
+<div id="start" class="screen">
+    <div class="panel">
 
-        <div class="hud-item">
-            🪙
-            <span id="score">0</span>
+        <div class="logo">NICO</div>
+
+        <div class="subtitle">
+            ZONA ZUMBI
         </div>
 
-        <div class="hud-item">
-            ❤️
-            <span id="lives">3</span>
-        </div>
+        <p>
+            A cidade foi tomada por zumbis!
+            Explore o mapa, sobreviva aos ataques,
+            encontre munição e elimine todos os inimigos.
+        </p>
 
-    </div>
+        <p style="margin-top:12px">
+            <b>← →</b> mover •
+            <b>↑</b> pular •
+            <b>ESPAÇO</b> atirar
+        </p>
 
-    <div id="mobileControls">
-
-        <div class="mobile-group">
-
-            <button class="mobile-btn"
-                    id="leftBtn">
-                ◀
-            </button>
-
-            <button class="mobile-btn"
-                    id="rightBtn">
-                ▶
-            </button>
-
-        </div>
-
-        <button class="mobile-btn"
-                id="jumpBtn">
-            ⬆
+        <button id="startButton" class="button">
+            COMEÇAR MISSÃO
         </button>
 
     </div>
+</div>
 
-    <div id="overlay">
+<div id="end" class="screen hidden">
+    <div class="panel">
 
-        <div class="panel">
+        <h1 id="endTitle">
+            MISSÃO CONCLUÍDA!
+        </h1>
 
-            <div class="panel-icon"
-                 id="panelIcon">
-                🏆
-            </div>
+        <p id="endText"></p>
 
-            <h1 id="panelTitle">
-                Você venceu!
-            </h1>
-
-            <p id="panelText">
-                Nico terminou a aventura!
-            </p>
-
-            <button id="restart">
-                Jogar novamente
-            </button>
-
-        </div>
+        <button id="restart" class="button">
+            JOGAR NOVAMENTE
+        </button>
 
     </div>
+</div>
+
+<div id="controls">
+
+    <div class="group">
+        <button class="control" id="left">◀</button>
+        <button class="control" id="right">▶</button>
+    </div>
+
+    <div class="group">
+        <button class="control" id="shoot">🔫</button>
+        <button class="control" id="jump">▲</button>
+    </div>
+
+</div>
 
 </div>
 
 <script>
 "use strict";
 
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
+/* =====================================================
+   NICO — ZONA ZUMBI
+===================================================== */
 
-const canvas =
-    document.getElementById("canvas");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-const ctx =
-    canvas.getContext("2d");
-
-const scoreEl =
-    document.getElementById("score");
-
-const livesEl =
-    document.getElementById("lives");
-
-const overlay =
-    document.getElementById("overlay");
-
-const panelIcon =
-    document.getElementById("panelIcon");
-
-const panelTitle =
-    document.getElementById("panelTitle");
-
-const panelText =
-    document.getElementById("panelText");
-
-const restartBtn =
-    document.getElementById("restart");
-
-
-const WORLD_WIDTH = 5200;
-
-const GROUND_Y = 520;
-
-const PLAYER_W = 54;
-const PLAYER_H = 76;
-
-const GRAVITY = 1850;
-
-const MOVE_SPEED = 390;
-
-const JUMP_SPEED = 720;
-
-const MAX_LIVES = 3;
-
-
-/* =========================================================
-   CANVAS
-========================================================= */
-
-let width = 0;
-let height = 0;
-let dpr = 1;
+let W=innerWidth;
+let H=innerHeight;
 
 function resize(){
 
-    dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
+    W=innerWidth;
+    H=innerHeight;
 
-    width =
-        window.innerWidth;
+    const dpr=Math.min(devicePixelRatio||1,2);
 
-    height =
-        window.innerHeight;
+    canvas.width=W*dpr;
+    canvas.height=H*dpr;
 
-    canvas.width =
-        Math.floor(width * dpr);
+    canvas.style.width=W+"px";
+    canvas.style.height=H+"px";
 
-    canvas.height =
-        Math.floor(height * dpr);
-
-    canvas.style.width =
-        width + "px";
-
-    canvas.style.height =
-        height + "px";
-
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
+    ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-window.addEventListener(
-    "resize",
-    resize
-);
-
+addEventListener("resize",resize);
 resize();
 
 
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function clamp(v,min,max){
-    return Math.max(
-        min,
-        Math.min(max,v)
-    );
-}
-
-function lerp(a,b,t){
-    return a+(b-a)*t;
-}
-
-function rand(min,max){
-    return Math.random()*(max-min)+min;
-}
-
-function rectsOverlap(a,b){
-
-    return (
-        a.x < b.x+b.w &&
-        a.x+a.w > b.x &&
-        a.y < b.y+b.h &&
-        a.y+a.h > b.y
-    );
-}
-
-
-/* =========================================================
+/* =====================================================
    ESTADO
-========================================================= */
+===================================================== */
 
-const state = {
-
-    running:true,
-
-    cameraX:0,
-
+const state={
+    running:false,
+    camera:0,
     score:0,
-
-    lives:MAX_LIVES,
-
-    time:0,
-
+    kills:0,
+    lives:3,
+    ammo:30,
+    maxAmmo:30,
     shake:0,
-
-    invulnerable:0
+    time:0
 };
 
 
-/* =========================================================
-   NICO
-========================================================= */
+/* =====================================================
+   CONTROLES
+===================================================== */
 
-const player = {
+const keys={
+    left:false,
+    right:false,
+    jump:false,
+    shoot:false
+};
 
-    x:120,
+let jumpPressed=false;
+let shootPressed=false;
 
-    y:GROUND_Y-PLAYER_H,
+addEventListener("keydown",e=>{
 
-    w:PLAYER_W,
+    const k=e.key.toLowerCase();
 
-    h:PLAYER_H,
+    if(k==="arrowleft"||k==="a"){
+        keys.left=true;
+        e.preventDefault();
+    }
+
+    if(k==="arrowright"||k==="d"){
+        keys.right=true;
+        e.preventDefault();
+    }
+
+    if(k==="arrowup"||k==="w"){
+        if(!keys.jump) jumpPressed=true;
+        keys.jump=true;
+        e.preventDefault();
+    }
+
+    if(k===" "){
+        shootPressed=true;
+        keys.shoot=true;
+        e.preventDefault();
+    }
+});
+
+addEventListener("keyup",e=>{
+
+    const k=e.key.toLowerCase();
+
+    if(k==="arrowleft"||k==="a")
+        keys.left=false;
+
+    if(k==="arrowright"||k==="d")
+        keys.right=false;
+
+    if(k==="arrowup"||k==="w")
+        keys.jump=false;
+
+    if(k===" ")
+        keys.shoot=false;
+});
+
+
+function button(id,key){
+
+    const b=document.getElementById(id);
+
+    b.addEventListener("pointerdown",e=>{
+
+        e.preventDefault();
+
+        if(key==="jump")
+            jumpPressed=true;
+
+        if(key==="shoot")
+            shootPressed=true;
+
+        keys[key]=true;
+
+        try{
+            b.setPointerCapture(e.pointerId);
+        }catch(_){}
+    });
+
+    const release=()=>{
+        keys[key]=false;
+    };
+
+    b.addEventListener("pointerup",release);
+    b.addEventListener("pointercancel",release);
+    b.addEventListener("lostpointercapture",release);
+}
+
+button("left","left");
+button("right","right");
+button("jump","jump");
+button("shoot","shoot");
+
+
+/* =====================================================
+   JOGADOR
+===================================================== */
+
+const player={
+
+    x:160,
+    y:0,
+
+    w:42,
+    h:62,
 
     vx:0,
-
     vy:0,
 
-    grounded:true,
+    speed:6,
+    jump:15,
 
+    grounded:false,
     facing:1,
 
-    walkTime:0
+    shootCooldown:0,
+    invincible:0,
+
+    animation:0
 };
 
 
-/* =========================================================
-   CONTROLES
-========================================================= */
+/* =====================================================
+   MUNDO
+===================================================== */
 
-const keys = {
+const WORLD=5200;
 
-    left:false,
-
-    right:false,
-
-    jump:false
+const ground={
+    y:0,
+    h:300
 };
 
+let platforms=[];
+let zombies=[];
+let bullets=[];
+let particles=[];
+let ammoBoxes=[];
+let medkits=[];
+let trees=[];
+let buildings=[];
 
-window.addEventListener(
-    "keydown",
-    e=>{
 
-        if(
-            e.key==="ArrowLeft" ||
-            e.key.toLowerCase()==="a"
-        ){
-            keys.left=true;
-            e.preventDefault();
-        }
+/* =====================================================
+   CRIAR MUNDO
+===================================================== */
 
-        if(
-            e.key==="ArrowRight" ||
-            e.key.toLowerCase()==="d"
-        ){
-            keys.right=true;
-            e.preventDefault();
-        }
+function createWorld(){
 
-        if(
-            e.key==="ArrowUp" ||
-            e.key.toLowerCase()==="w" ||
-            e.code==="Space"
-        ){
-            keys.jump=true;
-            e.preventDefault();
-        }
+    platforms=[];
+    zombies=[];
+    bullets=[];
+    particles=[];
+    ammoBoxes=[];
+    medkits=[];
+    trees=[];
+    buildings=[];
+
+    ground.y=H-105;
+
+    player.x=160;
+    player.y=ground.y-player.h;
+
+    player.vx=0;
+    player.vy=0;
+
+    /* PLATAFORMAS */
+
+    const p=[
+        [500,ground.y-100,220],
+        [900,ground.y-180,190],
+        [1220,ground.y-110,250],
+        [1600,ground.y-210,220],
+        [1950,ground.y-120,260],
+        [2350,ground.y-230,220],
+        [2700,ground.y-130,280],
+        [3150,ground.y-220,230],
+        [3500,ground.y-120,300],
+        [4000,ground.y-210,250],
+        [4400,ground.y-120,300]
+    ];
+
+    for(const a of p){
+
+        platforms.push({
+            x:a[0],
+            y:a[1],
+            w:a[2],
+            h:28
+        });
     }
-);
 
 
-window.addEventListener(
-    "keyup",
-    e=>{
+    /* ZUMBIS */
 
-        if(
-            e.key==="ArrowLeft" ||
-            e.key.toLowerCase()==="a"
-        ){
-            keys.left=false;
-        }
+    const positions=[
+        650,1050,1350,1750,
+        2100,2500,2900,3300,
+        3700,4100,4500,4800
+    ];
 
-        if(
-            e.key==="ArrowRight" ||
-            e.key.toLowerCase()==="d"
-        ){
-            keys.right=false;
-        }
+    positions.forEach((x,i)=>{
 
-        if(
-            e.key==="ArrowUp" ||
-            e.key.toLowerCase()==="w" ||
-            e.code==="Space"
-        ){
-            keys.jump=false;
-        }
+        zombies.push({
+
+            x,
+            y:ground.y-55,
+
+            w:46,
+            h:52,
+
+            vx:0,
+            vy:0,
+
+            speed:1.0+Math.random()*.55,
+
+            health:i%4===0?2:1,
+
+            alive:true,
+
+            animation:Math.random()*10
+        });
+    });
+
+
+    /* CAIXAS DE MUNIÇÃO */
+
+    [780,1450,2300,3200,3950,4700]
+    .forEach(x=>{
+        ammoBoxes.push({
+            x,
+            y:ground.y-35,
+            collected:false
+        });
+    });
+
+
+    /* KITS */
+
+    [1100,2850,4300]
+    .forEach(x=>{
+        medkits.push({
+            x,
+            y:ground.y-35,
+            collected:false
+        });
+    });
+
+
+    /* ÁRVORES */
+
+    for(let x=250;x<WORLD;x+=180+Math.random()*130){
+
+        trees.push({
+            x,
+            y:ground.y,
+            scale:.8+Math.random()*.6
+        });
     }
-);
 
 
-/* MOBILE */
+    /* PRÉDIOS */
 
-function holdButton(
-    id,
-    prop
-){
+    for(let x=350;x<WORLD;x+=500){
 
-    const button =
-        document.getElementById(id);
-
-    button.addEventListener(
-        "pointerdown",
-        e=>{
-            e.preventDefault();
-            keys[prop]=true;
-        }
-    );
-
-    button.addEventListener(
-        "pointerup",
-        e=>{
-            e.preventDefault();
-            keys[prop]=false;
-        }
-    );
-
-    button.addEventListener(
-        "pointercancel",
-        ()=>{
-            keys[prop]=false;
-        }
-    );
-
-    button.addEventListener(
-        "pointerleave",
-        ()=>{
-            keys[prop]=false;
-        }
-    );
-}
-
-holdButton(
-    "leftBtn",
-    "left"
-);
-
-holdButton(
-    "rightBtn",
-    "right"
-);
-
-document
-    .getElementById("jumpBtn")
-    .addEventListener(
-        "pointerdown",
-        e=>{
-            e.preventDefault();
-            keys.jump=true;
-        }
-    );
-
-document
-    .getElementById("jumpBtn")
-    .addEventListener(
-        "pointerup",
-        ()=>{
-            keys.jump=false;
-        }
-    );
-
-
-/* =========================================================
-   PLATAFORMAS
-========================================================= */
-
-const platforms = [
-
-    {x:0,y:GROUND_Y,w:WORLD_WIDTH,h:200},
-
-    {x:430,y:410,w:210,h:25},
-
-    {x:760,y:330,w:190,h:25},
-
-    {x:1080,y:420,w:220,h:25},
-
-    {x:1390,y:315,w:210,h:25},
-
-    {x:1710,y:390,w:230,h:25},
-
-    {x:2050,y:300,w:230,h:25},
-
-    {x:2390,y:405,w:230,h:25},
-
-    {x:2750,y:330,w:230,h:25},
-
-    {x:3100,y:420,w:230,h:25},
-
-    {x:3450,y:300,w:250,h:25},
-
-    {x:3830,y:390,w:230,h:25},
-
-    {x:4200,y:310,w:260,h:25},
-
-    {x:4620,y:400,w:250,h:25}
-];
-
-
-/* =========================================================
-   MOEDAS
-========================================================= */
-
-const coins = [];
-
-function addCoin(x,y){
-
-    coins.push({
-
-        x,
-        y,
-
-        r:13,
-
-        collected:false,
-
-        phase:Math.random()*Math.PI*2
-    });
+        buildings.push({
+            x,
+            w:130+Math.random()*100,
+            h:100+Math.random()*140
+        });
+    }
 }
 
 
-/* grupos */
+/* =====================================================
+   COLISÃO
+===================================================== */
 
-[
-    [470,365],
-    [525,365],
-    [580,365],
+function overlap(a,b){
 
-    [800,285],
-    [855,285],
-    [910,285],
-
-    [1130,375],
-    [1190,375],
-    [1250,375],
-
-    [1440,260],
-    [1500,260],
-    [1560,260],
-
-    [1770,335],
-    [1830,335],
-    [1890,335],
-
-    [2110,245],
-    [2170,245],
-    [2230,245],
-
-    [2450,350],
-    [2510,350],
-    [2570,350],
-
-    [2810,275],
-    [2870,275],
-    [2930,275],
-
-    [3160,365],
-    [3220,365],
-    [3280,365],
-
-    [3510,245],
-    [3570,245],
-    [3630,245],
-
-    [3890,335],
-    [3950,335],
-    [4010,335],
-
-    [4270,255],
-    [4330,255],
-    [4390,255],
-
-    [4690,345],
-    [4750,345]
-].forEach(
-    p=>addCoin(p[0],p[1])
-);
-
-
-/* =========================================================
-   BUBUS
-========================================================= */
-
-const enemies = [];
-
-function addBubu(x,y){
-
-    enemies.push({
-
-        x,
-        y,
-
-        w:58,
-        h:50,
-
-        startX:x,
-
-        vx:0,
-
-        direction:
-            Math.random()>.5 ? 1:-1,
-
-        speed:
-            rand(35,65),
-
-        alive:true,
-
-        phase:
-            Math.random()*Math.PI*2
-    });
+    return(
+        a.x<b.x+b.w &&
+        a.x+a.w>b.x &&
+        a.y<b.y+b.h &&
+        a.y+a.h>b.y
+    );
 }
 
 
-[
-    [650,GROUND_Y-50],
-    [1000,GROUND_Y-50],
-    [1320,GROUND_Y-50],
-    [1630,GROUND_Y-50],
-    [1980,GROUND_Y-50],
-    [2320,GROUND_Y-50],
-    [2680,GROUND_Y-50],
-    [3020,GROUND_Y-50],
-    [3370,GROUND_Y-50],
-    [3740,GROUND_Y-50],
-    [4120,GROUND_Y-50],
-    [4510,GROUND_Y-50]
-].forEach(
-    p=>addBubu(p[0],p[1])
-);
-
-
-/* =========================================================
+/* =====================================================
    PARTÍCULAS
-========================================================= */
+===================================================== */
 
-const particles = [];
+function particles(x,y,color,count=10){
 
-function particle(
-    x,
-    y,
-    color,
-    amount=8,
-    power=180
-){
+    for(let i=0;i<count;i++){
 
-    for(
-        let i=0;
-        i<amount;
-        i++
-    ){
-
-        const angle =
-            Math.random()*Math.PI*2;
-
-        const speed =
-            Math.random()*power;
-
-        particles.push({
-
+        particles.list.push({
             x,
             y,
 
-            vx:
-                Math.cos(angle)*speed,
+            vx:(Math.random()-.5)*6,
+            vy:-Math.random()*5,
 
-            vy:
-                Math.sin(angle)*speed,
+            life:1,
 
-            life:rand(.35,.8),
-
-            maxLife:.8,
-
-            size:rand(2,6),
+            size:2+Math.random()*5,
 
             color
         });
     }
 }
 
+particles.list=[];
 
-function updateParticles(dt){
+function updateParticles(){
 
-    for(
-        let i=particles.length-1;
-        i>=0;
-        i--
-    ){
+    for(let i=particles.list.length-1;i>=0;i--){
 
-        const p=particles[i];
+        const p=particles.list[i];
 
-        p.life-=dt;
+        p.x+=p.vx;
+        p.y+=p.vy;
 
-        p.vy+=500*dt;
+        p.vy+=.18;
+        p.life-=.035;
 
-        p.x+=p.vx*dt;
-
-        p.y+=p.vy*dt;
-
-        if(p.life<=0){
-
-            particles.splice(i,1);
-        }
+        if(p.life<=0)
+            particles.list.splice(i,1);
     }
 }
 
-
 function drawParticles(){
 
-    for(const p of particles){
+    for(const p of particles.list){
 
-        const alpha =
-            clamp(
-                p.life/p.maxLife,
-                0,
-                1
-            );
-
-        ctx.globalAlpha=alpha;
-
+        ctx.globalAlpha=p.life;
         ctx.fillStyle=p.color;
 
         ctx.beginPath();
 
         ctx.arc(
-            p.x,
+            p.x-state.camera,
             p.y,
             p.size,
             0,
@@ -964,459 +710,673 @@ function drawParticles(){
 }
 
 
-/* =========================================================
-   CENÁRIO
-========================================================= */
+/* =====================================================
+   JOGADOR
+===================================================== */
 
-function drawSky(){
+function updatePlayer(){
 
-    const gradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            height
-        );
+    if(player.invincible>0)
+        player.invincible--;
 
-    gradient.addColorStop(
-        0,
-        "#51bfff"
+    if(keys.left){
+
+        player.vx-=.75;
+        player.facing=-1;
+
+    }else if(keys.right){
+
+        player.vx+=.75;
+        player.facing=1;
+
+    }else{
+
+        player.vx*=.8;
+    }
+
+    player.vx=Math.max(
+        -player.speed,
+        Math.min(player.speed,player.vx)
     );
 
-    gradient.addColorStop(
-        .58,
-        "#a8e7ff"
-    );
 
-    gradient.addColorStop(
-        1,
-        "#d9f5ff"
-    );
+    if(jumpPressed && player.grounded){
 
-    ctx.fillStyle=gradient;
+        player.vy=-player.jump;
+        player.grounded=false;
 
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
-}
-
-
-/* SOL */
-
-function drawSun(){
-
-    const x =
-        width-120;
-
-    const y=95;
-
-    const glow =
-        ctx.createRadialGradient(
-            x,y,10,
-            x,y,80
-        );
-
-    glow.addColorStop(
-        0,
-        "rgba(255,245,145,.9)"
-    );
-
-    glow.addColorStop(
-        1,
-        "rgba(255,220,50,0)"
-    );
-
-    ctx.fillStyle=glow;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        85,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle="#ffe15b";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        42,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-}
-
-
-/* NUVENS */
-
-function cloud(
-    x,
-    y,
-    scale
-){
-
-    ctx.save();
-
-    ctx.translate(
-        x,
-        y
-    );
-
-    ctx.scale(
-        scale,
-        scale
-    );
-
-    ctx.fillStyle=
-        "rgba(255,255,255,.88)";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        15,
-        25,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        35,
-        5,
-        32,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        70,
-        16,
-        25,
-        0,
-        Math.PI*2
-    );
-
-    ctx.roundRect(
-        -25,
-        15,
-        120,
-        30,
-        20
-    );
-
-    ctx.fill();
-
-    ctx.restore();
-}
-
-
-function drawClouds(){
-
-    cloud(
-        150-(state.cameraX*.12%1200),
-        120,
-        1
-    );
-
-    cloud(
-        650-(state.cameraX*.08%1400),
-        185,
-        .75
-    );
-
-    cloud(
-        1100-(state.cameraX*.1%1500),
-        100,
-        .9
-    );
-}
-
-
-/* MONTANHAS */
-
-function mountainLayer(
-    offset,
-    color,
-    baseY,
-    size
-){
-
-    ctx.fillStyle=color;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        -100,
-        height
-    );
-
-    for(
-        let x=-100;
-        x<width+200;
-        x+=size
-    ){
-
-        const worldX =
-            x+
-            state.cameraX*offset;
-
-        const peak =
-            baseY -
-            100 -
-            Math.sin(
-                worldX*.0015
-            )*60;
-
-        ctx.lineTo(
-            x,
-            peak
-        );
-
-        ctx.lineTo(
-            x+size/2,
-            baseY
+        particles(
+            player.x+player.w/2,
+            player.y+player.h,
+            "#d7ead9",
+            8
         );
     }
 
-    ctx.lineTo(
-        width+200,
-        height
+    jumpPressed=false;
+
+
+    player.vy+=.72;
+
+    if(player.vy>18)
+        player.vy=18;
+
+
+    player.x+=player.vx;
+
+    player.x=Math.max(
+        0,
+        Math.min(WORLD-player.w,player.x)
     );
 
-    ctx.closePath();
 
-    ctx.fill();
-}
+    const oldBottom=player.y+player.h;
 
+    player.y+=player.vy;
 
-/* ÁRVORES */
-
-function tree(
-    x,
-    y,
-    scale
-){
-
-    ctx.save();
-
-    ctx.translate(x,y);
-
-    ctx.scale(scale,scale);
-
-    ctx.fillStyle="#70452b";
-
-    ctx.fillRect(
-        -7,
-        0,
-        14,
-        55
-    );
-
-    ctx.fillStyle="#237a46";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        -15,
-        27,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        -20,
-        5,
-        23,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        20,
-        5,
-        23,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.restore();
-}
+    player.grounded=false;
 
 
-function drawTrees(){
+    /* CHÃO */
 
-    for(
-        let x=
-            -100-
-            (state.cameraX*.3%500);
-        x<width+300;
-        x+=170
-    ){
+    if(player.y+player.h>=ground.y){
 
-        tree(
-            x,
-            GROUND_Y,
-            .75
-        );
+        player.y=ground.y-player.h;
+
+        player.vy=0;
+        player.grounded=true;
     }
-}
 
 
-/* =========================================================
-   MUNDO
-========================================================= */
-
-function drawPlatforms(){
+    /* PLATAFORMAS */
 
     for(const p of platforms){
 
         if(
-            p.x+p.w <
-            state.cameraX-100 ||
-            p.x >
-            state.cameraX+width+100
+            player.x+player.w<=p.x ||
+            player.x>=p.x+p.w
+        ) continue;
+
+        if(
+            player.vy>=0 &&
+            oldBottom<=p.y &&
+            player.y+player.h>=p.y
         ){
-            continue;
+
+            player.y=p.y-player.h;
+            player.vy=0;
+            player.grounded=true;
+        }
+    }
+
+
+    /* TIRO */
+
+    if(
+        (keys.shoot||shootPressed) &&
+        player.shootCooldown<=0
+    ){
+
+        shoot();
+        shootPressed=false;
+    }
+
+    if(player.shootCooldown>0)
+        player.shootCooldown--;
+
+
+    player.animation+=Math.abs(player.vx)*.18;
+}
+
+
+/* =====================================================
+   TIRO
+===================================================== */
+
+function shoot(){
+
+    if(state.ammo<=0)
+        return;
+
+    state.ammo--;
+
+    player.shootCooldown=10;
+
+    bullets.push({
+
+        x:player.facing===1
+            ? player.x+player.w
+            : player.x,
+
+        y:player.y+27,
+
+        vx:player.facing*13,
+
+        life:70
+    });
+
+    state.shake=2;
+
+    particles(
+        player.x+(player.facing===1?player.w:0),
+        player.y+27,
+        "#ffd85a",
+        5
+    );
+}
+
+
+/* =====================================================
+   BALAS
+===================================================== */
+
+function updateBullets(){
+
+    for(let i=bullets.length-1;i>=0;i--){
+
+        const b=bullets[i];
+
+        b.x+=b.vx;
+        b.life--;
+
+        let remove=false;
+
+
+        for(const z of zombies){
+
+            if(!z.alive)
+                continue;
+
+            const hit={
+
+                x:b.x-4,
+                y:b.y-3,
+                w:8,
+                h:6
+            };
+
+            if(overlap(hit,z)){
+
+                z.health--;
+
+                particles(
+                    b.x,
+                    b.y,
+                    "#d84b38",
+                    8
+                );
+
+                remove=true;
+
+                if(z.health<=0){
+
+                    z.alive=false;
+
+                    state.kills++;
+                    state.score+=250;
+
+                    state.shake=7;
+
+                    particles(
+                        z.x+z.w/2,
+                        z.y+z.h/2,
+                        "#70d66d",
+                        18
+                    );
+                }
+
+                break;
+            }
         }
 
-        /* terra */
 
-        ctx.fillStyle="#9b5b32";
-
-        ctx.fillRect(
-            p.x,
-            p.y,
-            p.w,
-            p.h
-        );
-
-        /* grama */
-
-        ctx.fillStyle="#42a83c";
-
-        ctx.fillRect(
-            p.x,
-            p.y,
-            p.w,
-            9
-        );
-
-        /* detalhes */
-
-        ctx.fillStyle=
-            "rgba(71,38,20,.35)";
-
-        for(
-            let x=p.x+12;
-            x<p.x+p.w;
-            x+=30
+        if(
+            remove ||
+            b.life<=0 ||
+            b.x<0 ||
+            b.x>WORLD
         ){
 
-            ctx.fillRect(
-                x,
-                p.y+15,
-                4,
-                8
+            bullets.splice(i,1);
+        }
+    }
+}
+
+
+/* =====================================================
+   ZUMBIS
+===================================================== */
+
+function updateZombies(){
+
+    for(const z of zombies){
+
+        if(!z.alive)
+            continue;
+
+        z.animation+=.08;
+
+
+        const distance=
+            player.x-z.x;
+
+
+        /* IA */
+
+        if(Math.abs(distance)<650){
+
+            z.vx=
+                Math.sign(distance)*
+                z.speed;
+
+        }else{
+
+            z.vx=
+                Math.sin(z.animation)*.7;
+        }
+
+
+        z.x+=z.vx;
+
+
+        z.vy+=.7;
+
+        z.y+=z.vy;
+
+
+        if(z.y+z.h>=ground.y){
+
+            z.y=ground.y-z.h;
+            z.vy=0;
+        }
+
+
+        /* ATAQUE */
+
+        if(
+            overlap(player,z) &&
+            player.invincible<=0
+        ){
+
+            state.lives--;
+
+            player.invincible=100;
+
+            state.shake=12;
+
+            particles(
+                player.x+player.w/2,
+                player.y+player.h/2,
+                "#e94b4b",
+                15
+            );
+
+            player.x-=
+                Math.sign(distance)*70;
+
+            if(state.lives<=0){
+
+                state.running=false;
+
+                finish(
+                    "NICO FOI DERROTADO 💀",
+                    "Os zumbis dominaram a cidade."
+                );
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   ITENS
+===================================================== */
+
+function updateItems(){
+
+    const pr={
+        x:player.x,
+        y:player.y,
+        w:player.w,
+        h:player.h
+    };
+
+
+    for(const box of ammoBoxes){
+
+        if(
+            !box.collected &&
+            overlap(pr,{
+                x:box.x,
+                y:box.y,
+                w:30,
+                h:30
+            })
+        ){
+
+            box.collected=true;
+
+            state.ammo=
+                Math.min(
+                    state.maxAmmo,
+                    state.ammo+15
+                );
+
+            state.score+=50;
+
+            particles(
+                box.x,
+                box.y,
+                "#ffd34d",
+                12
+            );
+        }
+    }
+
+
+    for(const kit of medkits){
+
+        if(
+            !kit.collected &&
+            overlap(pr,{
+                x:kit.x,
+                y:kit.y,
+                w:30,
+                h:30
+            })
+        ){
+
+            kit.collected=true;
+
+            state.lives=
+                Math.min(3,state.lives+1);
+
+            state.score+=100;
+
+            particles(
+                kit.x,
+                kit.y,
+                "#ff6475",
+                12
             );
         }
     }
 }
 
 
-/* =========================================================
-   MOEDAS
-========================================================= */
+/* =====================================================
+   CÂMERA
+===================================================== */
 
-function drawCoins(){
+function updateCamera(){
 
-    for(const c of coins){
+    const target=
+        player.x-W*.38;
 
-        if(c.collected){
-            continue;
-        }
+    state.camera+=
+        (target-state.camera)*.1;
 
-        const bob =
-            Math.sin(
-                state.time*4+
-                c.phase
-            )*5;
+    state.camera=Math.max(
+        0,
+        Math.min(WORLD-W,state.camera)
+    );
+}
 
-        const scale =
-            .75+
-            Math.abs(
-                Math.sin(
-                    state.time*3+
-                    c.phase
-                )
-            )*.25;
 
-        ctx.save();
+/* =====================================================
+   FUNDO
+===================================================== */
 
-        ctx.translate(
-            c.x,
-            c.y+bob
+function drawBackground(){
+
+    const sky=
+        ctx.createLinearGradient(
+            0,0,0,H
         );
 
-        ctx.scale(
-            scale,
-            1
-        );
+    sky.addColorStop(0,"#071b28");
+    sky.addColorStop(.55,"#12352f");
+    sky.addColorStop(1,"#182419");
 
-        /* brilho */
+    ctx.fillStyle=sky;
 
-        ctx.shadowColor="#ffe66b";
-        ctx.shadowBlur=15;
+    ctx.fillRect(0,0,W,H);
 
-        ctx.fillStyle="#ffd52e";
+
+    /* LUA */
+
+    ctx.fillStyle="#d9e9c8";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        W-130,
+        100,
+        43,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /* NÉVOA */
+
+    ctx.fillStyle="rgba(190,220,190,.07)";
+
+    for(let i=0;i<8;i++){
 
         ctx.beginPath();
 
         ctx.ellipse(
-            0,
-            0,
-            c.r,
-            c.r*1.15,
+            i*180-(state.camera*.15%180),
+            H-180,
+            180,
+            45,
             0,
             0,
             Math.PI*2
         );
 
         ctx.fill();
+    }
 
-        ctx.shadowBlur=0;
 
-        ctx.strokeStyle="#c18a00";
+    /* PRÉDIOS */
 
-        ctx.lineWidth=4;
+    for(const b of buildings){
 
-        ctx.stroke();
+        const x=b.x-state.camera*.35;
 
-        ctx.fillStyle=
-            "rgba(255,255,255,.55)";
+        if(x<-250||x>W+250)
+            continue;
+
+        ctx.fillStyle="#172522";
+
+        ctx.fillRect(
+            x,
+            ground.y-b.h,
+            b.w,
+            b.h
+        );
+
+
+        for(let wy=b.y||0;wy<b.h-20;wy+=35){
+
+            for(let wx=15;wx<b.w-15;wx+=35){
+
+                ctx.fillStyle=
+                    Math.random()>.25
+                    ? "#b7b75c"
+                    : "#273b34";
+
+                ctx.fillRect(
+                    x+wx,
+                    ground.y-b.h+wy+10,
+                    12,
+                    16
+                );
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   TERRENO
+===================================================== */
+
+function drawGround(){
+
+    const x=-state.camera;
+
+    ctx.fillStyle="#304a2c";
+
+    ctx.fillRect(
+        x,
+        ground.y,
+        WORLD,
+        300
+    );
+
+
+    ctx.fillStyle="#3e7834";
+
+    ctx.fillRect(
+        x,
+        ground.y,
+        WORLD,
+        14
+    );
+
+
+    /* ESTRADA */
+
+    ctx.fillStyle="#222925";
+
+    ctx.fillRect(
+        x,
+        ground.y+50,
+        WORLD,
+        90
+    );
+
+
+    ctx.strokeStyle="#b2ad63";
+    ctx.lineWidth=5;
+
+    for(
+        let xx=0;
+        xx<WORLD;
+        xx+=100
+    ){
 
         ctx.beginPath();
 
-        ctx.ellipse(
-            -5,
-            -6,
-            4,
-            7,
-            -.4,
+        ctx.moveTo(
+            xx-state.camera,
+            ground.y+93
+        );
+
+        ctx.lineTo(
+            xx+55-state.camera,
+            ground.y+93
+        );
+
+        ctx.stroke();
+    }
+}
+
+
+/* =====================================================
+   PLATAFORMAS
+===================================================== */
+
+function drawPlatforms(){
+
+    for(const p of platforms){
+
+        const x=p.x-state.camera;
+
+        ctx.fillStyle="#465c38";
+
+        ctx.fillRect(
+            x,
+            p.y,
+            p.w,
+            p.h
+        );
+
+        ctx.fillStyle="#6b9146";
+
+        ctx.fillRect(
+            x,
+            p.y,
+            p.w,
+            7
+        );
+    }
+}
+
+
+/* =====================================================
+   ÁRVORES
+===================================================== */
+
+function drawTrees(){
+
+    for(const t of trees){
+
+        const x=t.x-state.camera*.75;
+
+        if(x<-100||x>W+100)
+            continue;
+
+        ctx.save();
+
+        ctx.translate(
+            x,
+            t.y
+        );
+
+        ctx.scale(
+            t.scale,
+            t.scale
+        );
+
+        ctx.fillStyle="#4a2c1d";
+
+        ctx.fillRect(
+            -8,
+            -75,
+            16,
+            75
+        );
+
+        ctx.fillStyle="#163b24";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -90,
+            35,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            -25,
+            -70,
+            28,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            25,
+            -70,
+            28,
             0,
             Math.PI*2
         );
@@ -1428,258 +1388,490 @@ function drawCoins(){
 }
 
 
-/* =========================================================
-   NICO
-========================================================= */
+/* =====================================================
+   ITENS
+===================================================== */
 
-function drawNico(){
+function drawItems(){
 
-    const x=player.x;
-    const y=player.y;
+    for(const box of ammoBoxes){
 
-    const walking =
-        Math.abs(player.vx)>20 &&
-        player.grounded;
+        if(box.collected)
+            continue;
 
-    const leg =
-        walking
-        ? Math.sin(player.walkTime*12)*5
-        : 0;
+        const x=box.x-state.camera;
 
-    ctx.save();
+        ctx.fillStyle="#c99b31";
 
-    ctx.translate(
-        x+player.w/2,
-        y
-    );
+        ctx.fillRect(
+            x,
+            box.y,
+            30,
+            30
+        );
 
-    ctx.scale(
-        player.facing,
-        1
-    );
+        ctx.strokeStyle="#ffe47c";
 
-    /* sombra */
+        ctx.lineWidth=3;
 
-    if(player.grounded){
+        ctx.strokeRect(
+            x+2,
+            box.y+2,
+            26,
+            26
+        );
 
-        ctx.fillStyle=
-            "rgba(0,0,0,.22)";
+        ctx.fillStyle="#191e18";
+
+        ctx.font="bold 16px Arial";
+        ctx.textAlign="center";
+
+        ctx.fillText(
+            "AM",
+            x+15,
+            box.y+20
+        );
+    }
+
+
+    for(const kit of medkits){
+
+        if(kit.collected)
+            continue;
+
+        const x=kit.x-state.camera;
+
+        ctx.fillStyle="#e9e9df";
+
+        ctx.fillRect(
+            x,
+            kit.y,
+            30,
+            25
+        );
+
+        ctx.fillStyle="#d92e40";
+
+        ctx.fillRect(
+            x+12,
+            kit.y+4,
+            6,
+            17
+        );
+
+        ctx.fillRect(
+            x+6,
+            kit.y+10,
+            18,
+            6
+        );
+    }
+}
+
+
+/* =====================================================
+   ZUMBI — GRÁFICO
+===================================================== */
+
+function drawZombies(){
+
+    for(const z of zombies){
+
+        if(!z.alive)
+            continue;
+
+        const x=z.x-state.camera;
+
+        const bob=
+            Math.sin(z.animation)*2;
+
+        ctx.save();
+
+        ctx.translate(
+            x+z.w/2,
+            z.y+z.h/2+bob
+        );
+
+
+        /* sombra */
+
+        ctx.fillStyle="rgba(0,0,0,.3)";
 
         ctx.beginPath();
 
         ctx.ellipse(
             0,
-            player.h+3,
-            27,
-            7,
+            29,
+            25,
+            6,
             0,
             0,
             Math.PI*2
         );
 
         ctx.fill();
+
+
+        /* pernas */
+
+        ctx.fillStyle="#24382e";
+
+        ctx.fillRect(
+            -15,
+            13,
+            11,
+            18
+        );
+
+        ctx.fillRect(
+            4,
+            13,
+            11,
+            18
+        );
+
+
+        /* corpo */
+
+        const body=
+            ctx.createLinearGradient(
+                -22,-5,22,25
+            );
+
+        body.addColorStop(
+            0,
+            "#6fa85c"
+        );
+
+        body.addColorStop(
+            1,
+            "#315c38"
+        );
+
+        ctx.fillStyle=body;
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            -22,
+            -6,
+            44,
+            31,
+            8
+        );
+
+        ctx.fill();
+
+
+        /* cabeça */
+
+        ctx.fillStyle="#82b96a";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -20,
+            20,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* cabelo */
+
+        ctx.fillStyle="#18231c";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            -11,
+            -36,
+            10,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            0,
+            -39,
+            11,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            11,
+            -35,
+            9,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* olhos */
+
+        ctx.fillStyle="#d9ff66";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            -7,
+            -20,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            7,
+            -20,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /* boca */
+
+        ctx.strokeStyle="#371d19";
+        ctx.lineWidth=3;
+
+        ctx.beginPath();
+
+        ctx.moveTo(-8,-8);
+        ctx.lineTo(8,-8);
+
+        ctx.stroke();
+
+
+        /* braços */
+
+        ctx.strokeStyle="#82b96a";
+        ctx.lineWidth=9;
+        ctx.lineCap="round";
+
+        ctx.beginPath();
+
+        ctx.moveTo(-18,0);
+        ctx.lineTo(-32,10);
+
+        ctx.moveTo(18,0);
+        ctx.lineTo(32,7);
+
+        ctx.stroke();
+
+
+        ctx.restore();
     }
+}
 
-    /* perna esquerda */
 
-    ctx.strokeStyle="#3d281d";
+/* =====================================================
+   NICO — GRÁFICO
+===================================================== */
 
-    ctx.lineWidth=9;
+function drawPlayer(){
 
+    if(
+        player.invincible>0 &&
+        Math.floor(player.invincible/7)%2===0
+    )
+        return;
+
+    const x=player.x-state.camera;
+    const y=player.y;
+
+    ctx.save();
+
+    ctx.translate(
+        x+player.w/2,
+        y+player.h/2
+    );
+
+    ctx.scale(player.facing,1);
+
+
+    /* sombra */
+
+    ctx.fillStyle="rgba(0,0,0,.35)";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        35,
+        23,
+        6,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    const walk=
+        player.grounded &&
+        Math.abs(player.vx)>.4;
+
+    const leg=
+        walk
+        ? Math.sin(player.animation)*5
+        : 0;
+
+
+    /* pernas */
+
+    ctx.fillStyle="#172f5c";
+
+    ctx.fillRect(
+        -15,
+        16+leg,
+        11,
+        17
+    );
+
+    ctx.fillRect(
+        4,
+        16-leg,
+        11,
+        17
+    );
+
+
+    /* botas */
+
+    ctx.fillStyle="#38231b";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        -20,
+        27+leg,
+        20,
+        10,
+        5
+    );
+
+    ctx.roundRect(
+        0,
+        27-leg,
+        20,
+        10,
+        5
+    );
+
+    ctx.fill();
+
+
+    /* corpo */
+
+    ctx.fillStyle="#2ba85d";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        -21,
+        -4,
+        42,
+        29,
+        10
+    );
+
+    ctx.fill();
+
+
+    ctx.strokeStyle="#164e2d";
+    ctx.lineWidth=3;
+    ctx.stroke();
+
+
+    /* mochila */
+
+    ctx.fillStyle="#70462b";
+
+    ctx.fillRect(
+        -25,
+        -1,
+        7,
+        23
+    );
+
+
+    /* braços */
+
+    ctx.strokeStyle="#ffc98f";
+    ctx.lineWidth=8;
     ctx.lineCap="round";
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        -10,
-        58
-    );
-
-    ctx.lineTo(
-        -10+leg,
-        70
-    );
+    ctx.moveTo(-19,4);
+    ctx.lineTo(-27,14);
 
     ctx.stroke();
 
-    /* perna direita */
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        10,
-        58
-    );
-
-    ctx.lineTo(
-        10-leg,
-        70
-    );
+    ctx.moveTo(19,4);
+    ctx.lineTo(28,5);
 
     ctx.stroke();
 
-    /* sapatos */
 
-    ctx.fillStyle="#47291d";
+    /* arma */
+
+    ctx.strokeStyle="#202522";
+    ctx.lineWidth=6;
 
     ctx.beginPath();
 
-    ctx.ellipse(
-        -12+leg,
-        72,
-        12,
-        6,
-        0,
-        0,
-        Math.PI*2
-    );
+    ctx.moveTo(17,4);
+    ctx.lineTo(43,4);
 
-    ctx.ellipse(
-        12-leg,
-        72,
-        12,
-        6,
-        0,
-        0,
-        Math.PI*2
-    );
+    ctx.stroke();
 
-    ctx.fill();
+    ctx.fillStyle="#111";
 
-    /* corpo */
-
-    const bodyGradient =
-        ctx.createLinearGradient(
-            0,
-            35,
-            0,
-            65
-        );
-
-    bodyGradient.addColorStop(
-        0,
-        "#37c96b"
-    );
-
-    bodyGradient.addColorStop(
+    ctx.fillRect(
+        38,
         1,
-        "#138944"
+        11,
+        6
     );
 
-    ctx.fillStyle=bodyGradient;
-
-    ctx.strokeStyle="#126b38";
-
-    ctx.lineWidth=3;
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        -22,
-        32,
-        44,
-        34,
-        11
-    );
-
-    ctx.fill();
-
-    ctx.stroke();
-
-    /* gola */
-
-    ctx.fillStyle="#e7f5ec";
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        -10,
-        32,
-        20,
-        7,
-        3
-    );
-
-    ctx.fill();
-
-    /* braço */
-
-    ctx.strokeStyle="#ffc98f";
-
-    ctx.lineWidth=9;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        -19,
-        40
-    );
-
-    ctx.lineTo(
-        -28,
-        53
-    );
-
-    ctx.stroke();
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        19,
-        40
-    );
-
-    ctx.lineTo(
-        28,
-        53
-    );
-
-    ctx.stroke();
 
     /* pescoço */
 
-    ctx.fillStyle="#e8a96e";
+    ctx.fillStyle="#e7af76";
 
     ctx.fillRect(
-        -7,
-        25,
-        14,
-        12
+        -6,
+        -13,
+        12,
+        8
     );
+
 
     /* cabeça */
 
-    const skin =
-        ctx.createLinearGradient(
-            -20,
-            0,
-            20,
-            35
-        );
-
-    skin.addColorStop(
-        0,
-        "#ffd7a0"
-    );
-
-    skin.addColorStop(
-        1,
-        "#f2ae70"
-    );
-
-    ctx.fillStyle=skin;
-
-    ctx.strokeStyle="#713f2b";
-
-    ctx.lineWidth=3;
+    ctx.fillStyle="#ffc98f";
 
     ctx.beginPath();
 
     ctx.ellipse(
         0,
-        18,
-        21,
-        23,
+        -21,
+        20,
+        22,
         0,
         0,
         Math.PI*2
@@ -1687,77 +1879,61 @@ function drawNico(){
 
     ctx.fill();
 
+
+    ctx.strokeStyle="#713f2b";
+    ctx.lineWidth=3;
     ctx.stroke();
 
-    /* orelha */
 
-    ctx.fillStyle="#f2b476";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        -20,
-        20,
-        6,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* cabelo azul */
+    /* cabelo */
 
     ctx.fillStyle="#174ea6";
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        -21,
-        8
-    );
-
-    ctx.quadraticCurveTo(
-        -19,
-        -12,
+    ctx.arc(
+        -11,
+        -36,
+        11,
         0,
-        -8
+        Math.PI*2
     );
 
-    ctx.quadraticCurveTo(
-        20,
-        -13,
-        22,
-        9
+    ctx.arc(
+        0,
+        -39,
+        12,
+        0,
+        Math.PI*2
     );
 
-    ctx.lineTo(
-        14,
-        3
+    ctx.arc(
+        12,
+        -35,
+        10,
+        0,
+        Math.PI*2
     );
 
-    ctx.lineTo(
-        8,
-        10
-    );
+    ctx.fill();
 
-    ctx.lineTo(
-        2,
-        2
-    );
 
-    ctx.lineTo(
-        -5,
-        10
-    );
+    /* franja */
 
-    ctx.lineTo(
-        -12,
-        3
-    );
+    ctx.beginPath();
+
+    ctx.moveTo(-18,-31);
+    ctx.lineTo(-5,-35);
+    ctx.lineTo(0,-27);
+    ctx.lineTo(9,-35);
+    ctx.lineTo(18,-28);
+    ctx.lineTo(18,-40);
+    ctx.lineTo(-18,-40);
 
     ctx.closePath();
 
     ctx.fill();
+
 
     /* olhos */
 
@@ -1766,1068 +1942,314 @@ function drawNico(){
     ctx.beginPath();
 
     ctx.ellipse(
-        -8,
-        17,
-        3.5,
-        5,
-        0,
-        0,
-        Math.PI*2
+        -7,-21,3,5,
+        0,0,Math.PI*2
     );
 
     ctx.ellipse(
-        8,
-        17,
-        3.5,
-        5,
-        0,
-        0,
-        Math.PI*2
+        7,-21,3,5,
+        0,0,Math.PI*2
     );
 
     ctx.fill();
 
-    /* brilho olhos */
+
+    /* brilho */
 
     ctx.fillStyle="#fff";
 
     ctx.beginPath();
 
     ctx.arc(
-        -7,
-        15,
-        1.2,
-        0,
-        Math.PI*2
+        -6,-23,1,
+        0,Math.PI*2
     );
 
     ctx.arc(
-        9,
-        15,
-        1.2,
-        0,
-        Math.PI*2
+        8,-23,1,
+        0,Math.PI*2
     );
 
     ctx.fill();
 
+
     /* boca */
 
-    ctx.strokeStyle="#84352d";
-
+    ctx.strokeStyle="#7b3028";
     ctx.lineWidth=2;
 
     ctx.beginPath();
 
     ctx.arc(
-        0,
-        25,
-        7,
-        .15,
-        Math.PI-.15
+        0,-12,6,
+        0,Math.PI
     );
 
     ctx.stroke();
+
 
     ctx.restore();
 }
 
 
-/* =========================================================
-   BUBU
-========================================================= */
+/* =====================================================
+   BALAS
+===================================================== */
 
-function drawBubu(enemy){
+function drawBullets(){
 
-    if(!enemy.alive){
-        return;
-    }
+    for(const b of bullets){
 
-    const bounce =
-        Math.sin(
-            state.time*5+
-            enemy.phase
-        )*2;
+        ctx.fillStyle="#ffe36a";
 
-    ctx.save();
+        ctx.shadowColor="#ffb300";
+        ctx.shadowBlur=10;
 
-    ctx.translate(
-        enemy.x+enemy.w/2,
-        enemy.y+bounce
-    );
+        ctx.beginPath();
 
-    /* sombra */
-
-    ctx.fillStyle=
-        "rgba(0,0,0,.2)";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        0,
-        enemy.h+4,
-        27,
-        6,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* corpo */
-
-    const body =
-        ctx.createLinearGradient(
-            0,
-            -5,
-            0,
-            45
-        );
-
-    body.addColorStop(
-        0,
-        "#ff963c"
-    );
-
-    body.addColorStop(
-        1,
-        "#dc5520"
-    );
-
-    ctx.fillStyle=body;
-
-    ctx.strokeStyle="#873216";
-
-    ctx.lineWidth=4;
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        -29,
-        -22,
-        58,
-        50,
-        18
-    );
-
-    ctx.fill();
-
-    ctx.stroke();
-
-    /* chifre esquerdo */
-
-    ctx.fillStyle="#ffd84a";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        -20,
-        -19
-    );
-
-    ctx.lineTo(
-        -25,
-        -39
-    );
-
-    ctx.lineTo(
-        -8,
-        -27
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    ctx.stroke();
-
-    /* chifre direito */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        20,
-        -19
-    );
-
-    ctx.lineTo(
-        25,
-        -39
-    );
-
-    ctx.lineTo(
-        8,
-        -27
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    ctx.stroke();
-
-    /* olhos */
-
-    ctx.fillStyle="#fff";
-
-    ctx.beginPath();
-
-    ctx.ellipse(
-        -11,
-        -5,
-        8,
-        10,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.ellipse(
-        11,
-        -5,
-        8,
-        10,
-        0,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* pupilas */
-
-    ctx.fillStyle="#171717";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        -10,
-        -4,
-        4,
-        0,
-        Math.PI*2
-    );
-
-    ctx.arc(
-        12,
-        -4,
-        4,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* boca */
-
-    ctx.strokeStyle="#68230f";
-
-    ctx.lineWidth=3;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        0,
-        10,
-        9,
-        0,
-        Math.PI
-    );
-
-    ctx.stroke();
-
-    /* dentes */
-
-    ctx.fillStyle="#fff";
-
-    ctx.fillRect(
-        -4,
-        17,
-        4,
-        5
-    );
-
-    ctx.fillRect(
-        1,
-        17,
-        4,
-        5
-    );
-
-    ctx.restore();
-}
-
-
-/* =========================================================
-   BANDEIRA FINAL
-========================================================= */
-
-const goalX=4970;
-
-function drawGoal(){
-
-    const x=goalX;
-
-    ctx.strokeStyle="#eee";
-
-    ctx.lineWidth=8;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x,
-        GROUND_Y
-    );
-
-    ctx.lineTo(
-        x,
-        GROUND_Y-190
-    );
-
-    ctx.stroke();
-
-    /* bandeira */
-
-    ctx.fillStyle="#ff4c5b";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x,
-        GROUND_Y-185
-    );
-
-    ctx.lineTo(
-        x+90,
-        GROUND_Y-155
-    );
-
-    ctx.lineTo(
-        x,
-        GROUND_Y-125
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    ctx.fillStyle="#fff";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x+24,
-        GROUND_Y-155,
-        9,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /* brilho */
-
-    ctx.shadowColor="#ffe86a";
-    ctx.shadowBlur=20;
-
-    ctx.fillStyle="#ffe86a";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        GROUND_Y-190,
-        8,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.shadowBlur=0;
-}
-
-
-/* =========================================================
-   CHÃO
-========================================================= */
-
-function drawGround(){
-
-    ctx.fillStyle="#3c9c3a";
-
-    ctx.fillRect(
-        0,
-        GROUND_Y,
-        WORLD_WIDTH,
-        200
-    );
-
-    ctx.fillStyle="#51bd46";
-
-    ctx.fillRect(
-        0,
-        GROUND_Y,
-        WORLD_WIDTH,
-        15
-    );
-
-    /* detalhes */
-
-    ctx.fillStyle=
-        "rgba(30,100,30,.25)";
-
-    for(
-        let x=0;
-        x<WORLD_WIDTH;
-        x+=38
-    ){
-
-        ctx.fillRect(
-            x,
-            GROUND_Y+25+
-            (x%4)*5,
+        ctx.arc(
+            b.x-state.camera,
+            b.y,
             4,
-            13
-        );
-    }
-}
-
-
-/* =========================================================
-   FÍSICA
-========================================================= */
-
-function jump(){
-
-    if(
-        state.running &&
-        player.grounded
-    ){
-
-        player.vy =
-            -JUMP_SPEED;
-
-        player.grounded=false;
-
-        particle(
-            player.x+27,
-            player.y+75,
-            "#dff8ff",
-            9,
-            100
-        );
-    }
-}
-
-
-/* detectar pressionamento novo */
-
-let previousJump=false;
-
-
-/* =========================================================
-   MOVIMENTO
-========================================================= */
-
-function updatePlayer(dt){
-
-    if(!state.running){
-        return;
-    }
-
-    const direction =
-        (keys.right?1:0) -
-        (keys.left?1:0);
-
-    if(direction!==0){
-
-        player.vx =
-            lerp(
-                player.vx,
-                direction*MOVE_SPEED,
-                Math.min(1,dt*10)
-            );
-
-        player.facing=direction;
-
-    }else{
-
-        player.vx =
-            lerp(
-                player.vx,
-                0,
-                Math.min(1,dt*12)
-            );
-    }
-
-    if(
-        keys.jump &&
-        !previousJump
-    ){
-        jump();
-    }
-
-    previousJump=keys.jump;
-
-    player.vy +=
-        GRAVITY*dt;
-
-    const oldY=player.y;
-
-    player.x +=
-        player.vx*dt;
-
-    player.y +=
-        player.vy*dt;
-
-    player.x =
-        clamp(
-            player.x,
             0,
-            WORLD_WIDTH-player.w
+            Math.PI*2
         );
 
-    player.grounded=false;
+        ctx.fill();
 
-    /* plataformas */
-
-    for(const p of platforms){
-
-        if(
-            player.x+player.w >
-                p.x &&
-            player.x <
-                p.x+p.w
-        ){
-
-            const oldBottom =
-                oldY+player.h;
-
-            const newBottom =
-                player.y+player.h;
-
-            if(
-                player.vy>=0 &&
-                oldBottom<=p.y &&
-                newBottom>=p.y
-            ){
-
-                player.y =
-                    p.y-player.h;
-
-                player.vy=0;
-
-                player.grounded=true;
-
-                break;
-            }
-        }
-    }
-
-    if(player.grounded){
-
-        if(
-            Math.abs(player.vx)>20
-        ){
-
-            player.walkTime+=dt;
-        }else{
-
-            player.walkTime=0;
-        }
+        ctx.shadowBlur=0;
     }
 }
 
 
-/* =========================================================
-   MOEDAS
-========================================================= */
-
-function updateCoins(){
-
-    const pr={
-        x:player.x,
-        y:player.y,
-        w:player.w,
-        h:player.h
-    };
-
-    for(const c of coins){
-
-        if(c.collected){
-            continue;
-        }
-
-        const cr={
-            x:c.x-c.r,
-            y:c.y-c.r,
-            w:c.r*2,
-            h:c.r*2
-        };
-
-        if(rectsOverlap(pr,cr)){
-
-            c.collected=true;
-
-            state.score++;
-
-            updateHUD();
-
-            particle(
-                c.x,
-                c.y,
-                "#ffd52e",
-                15,
-                170
-            );
-        }
-    }
-}
-
-
-/* =========================================================
-   BUBUS
-========================================================= */
-
-function updateEnemies(dt){
-
-    const pr={
-        x:player.x+7,
-        y:player.y+5,
-        w:player.w-14,
-        h:player.h-5
-    };
-
-    for(const e of enemies){
-
-        if(!e.alive){
-            continue;
-        }
-
-        e.x +=
-            e.direction*
-            e.speed*
-            dt;
-
-        if(
-            Math.abs(
-                e.x-e.startX
-            )>70
-        ){
-            e.direction*=-1;
-        }
-
-        const er={
-            x:e.x,
-            y:e.y,
-            w:e.w,
-            h:e.h
-        };
-
-        if(
-            state.invulnerable<=0 &&
-            rectsOverlap(pr,er)
-        ){
-
-            /* pisou */
-
-            const playerBottom =
-                player.y+player.h;
-
-            if(
-                player.vy>0 &&
-                playerBottom-e.y<28
-            ){
-
-                e.alive=false;
-
-                player.vy=
-                    -JUMP_SPEED*.65;
-
-                state.score+=2;
-
-                state.shake=.18;
-
-                updateHUD();
-
-                particle(
-                    e.x+29,
-                    e.y+20,
-                    "#ff8a38",
-                    24,
-                    260
-                );
-
-            }else{
-
-                loseLife();
-            }
-        }
-    }
-}
-
-
-/* =========================================================
-   VIDAS
-========================================================= */
-
-function loseLife(){
-
-    if(
-        state.invulnerable>0 ||
-        !state.running
-    ){
-        return;
-    }
-
-    state.lives--;
-
-    state.invulnerable=2;
-
-    state.shake=.35;
-
-    particle(
-        player.x+27,
-        player.y+35,
-        "#ff5263",
-        25,
-        220
-    );
-
-    updateHUD();
-
-    if(state.lives<=0){
-
-        finish(
-            false
-        );
-
-        return;
-    }
-
-    player.x =
-        Math.max(
-            80,
-            player.x-260
-        );
-
-    player.y =
-        GROUND_Y-player.h;
-
-    player.vx=0;
-    player.vy=0;
-}
-
-
-/* =========================================================
-   OBJETIVO
-========================================================= */
-
-function checkGoal(){
-
-    if(
-        player.x+player.w >
-        goalX-25
-    ){
-
-        finish(true);
-    }
-}
-
-
-/* =========================================================
-   CÂMERA
-========================================================= */
-
-function updateCamera(dt){
-
-    const target =
-        player.x-
-        width*.38;
-
-    const maxCamera =
-        Math.max(
-            0,
-            WORLD_WIDTH-width
-        );
-
-    const desired =
-        clamp(
-            target,
-            0,
-            maxCamera
-        );
-
-    state.cameraX =
-        lerp(
-            state.cameraX,
-            desired,
-            Math.min(1,dt*5)
-        );
-}
-
-
-/* =========================================================
-   HUD
-========================================================= */
-
-function updateHUD(){
-
-    scoreEl.textContent =
-        state.score;
-
-    livesEl.textContent =
-        state.lives;
-}
-
-
-/* =========================================================
-   FINAL
-========================================================= */
-
-function finish(won){
-
-    if(!state.running){
-        return;
-    }
-
-    state.running=false;
-
-    if(won){
-
-        panelIcon.textContent="🏆";
-
-        panelTitle.textContent=
-            "Você venceu!";
-
-        panelText.textContent=
-            `Nico terminou a aventura com ${state.score} pontos!`;
-
-    }else{
-
-        panelIcon.textContent="💥";
-
-        panelTitle.textContent=
-            "Fim de jogo!";
-
-        panelText.textContent=
-            "O Nico ficou sem vidas.";
-    }
-
-    overlay.classList.add("show");
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function reset(){
-
-    state.running=true;
-
-    state.cameraX=0;
-
-    state.score=0;
-
-    state.lives=MAX_LIVES;
-
-    state.time=0;
-
-    state.shake=0;
-
-    state.invulnerable=0;
-
-    player.x=120;
-
-    player.y=
-        GROUND_Y-player.h;
-
-    player.vx=0;
-
-    player.vy=0;
-
-    player.grounded=true;
-
-    player.facing=1;
-
-    player.walkTime=0;
-
-    for(const c of coins){
-        c.collected=false;
-    }
-
-    for(const e of enemies){
-
-        e.alive=true;
-
-        e.x=e.startX;
-
-        e.direction=
-            Math.random()>.5
-            ?1:-1;
-    }
-
-    particles.length=0;
-
-    overlay.classList.remove("show");
-
-    updateHUD();
-}
-
-
-restartBtn.addEventListener(
-    "click",
-    reset
-);
-
-
-/* =========================================================
-   DESENHO PRINCIPAL
-========================================================= */
+/* =====================================================
+   RENDER
+===================================================== */
 
 function render(){
 
     ctx.clearRect(
-        0,
-        0,
-        width,
-        height
+        0,0,W,H
     );
 
-    drawSky();
-
-    drawSun();
-
-    drawClouds();
-
-    mountainLayer(
-        .08,
-        "#9ac6aa",
-        430,
-        320
-    );
-
-    mountainLayer(
-        .16,
-        "#65a982",
-        475,
-        280
-    );
-
-    mountainLayer(
-        .25,
-        "#4c9167",
-        500,
-        240
-    );
-
+    drawBackground();
     drawTrees();
-
-    ctx.save();
-
-    let shakeX=0;
-    let shakeY=0;
-
-    if(state.shake>0){
-
-        shakeX=
-            rand(-5,5);
-
-        shakeY=
-            rand(-4,4);
-    }
-
-    ctx.translate(
-        -state.cameraX+
-        shakeX,
-        shakeY
-    );
-
     drawGround();
-
     drawPlatforms();
-
-    drawCoins();
-
-    for(const e of enemies){
-        drawBubu(e);
-    }
-
-    drawGoal();
-
-    if(
-        state.invulnerable<=0 ||
-        Math.floor(
-            state.invulnerable*10
-        )%2===0
-    ){
-        drawNico();
-    }
-
+    drawItems();
+    drawZombies();
+    drawBullets();
+    drawPlayer();
     drawParticles();
-
-    ctx.restore();
 }
 
 
-/* =========================================================
-   LOOP
-========================================================= */
+/* =====================================================
+   HUD
+===================================================== */
 
-let lastTime=
-    performance.now();
+function updateHUD(){
 
-function loop(now){
+    document.getElementById("lives")
+        .textContent=state.lives;
 
-    let dt=
-        (now-lastTime)/1000;
+    document.getElementById("ammo")
+        .textContent=state.ammo;
 
-    lastTime=now;
+    document.getElementById("kills")
+        .textContent=state.kills;
 
-    dt=
-        Math.min(
-            dt,
-            .033
+    document.getElementById("score")
+        .textContent=state.score;
+
+
+    const percent=Math.min(
+        100,
+        Math.floor(
+            player.x/(WORLD-300)*100
+        )
+    );
+
+    document.getElementById("mission")
+        .textContent=percent+"%";
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function finish(title,text){
+
+    document.getElementById("endTitle")
+        .textContent=title;
+
+    document.getElementById("endText")
+        .textContent=text;
+
+    document.getElementById("end")
+        .classList.remove("hidden");
+}
+
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(){
+
+    if(!state.running)
+        return;
+
+    state.time+=.016;
+
+    updatePlayer();
+    updateBullets();
+    updateZombies();
+    updateItems();
+    updateParticles();
+    updateCamera();
+
+
+    /* VITÓRIA */
+
+    const remaining=zombies.filter(
+        z=>z.alive
+    ).length;
+
+    if(
+        player.x>WORLD-350 &&
+        remaining===0
+    ){
+
+        state.running=false;
+
+        finish(
+            "MISSÃO CONCLUÍDA! 🏆",
+            `Nico sobreviveu à Zona Zumbi! ${state.kills} zumbis derrotados e ${state.score} pontos.`
+        );
+    }
+
+
+    /* caiu */
+
+    if(player.y>H+200){
+
+        state.lives--;
+
+        player.x=Math.max(
+            100,
+            player.x-250
         );
 
-    state.time+=dt;
+        player.y=ground.y-player.h;
 
-    if(state.running){
+        player.vy=0;
 
-        updatePlayer(dt);
+        if(state.lives<=0){
 
-        updateCoins();
+            state.running=false;
 
-        updateEnemies(dt);
-
-        checkGoal();
-
-        updateCamera(dt);
-
-        if(state.invulnerable>0){
-            state.invulnerable-=dt;
-        }
-
-        if(state.shake>0){
-            state.shake-=dt;
+            finish(
+                "FIM DE JOGO 💀",
+                "Nico não conseguiu sobreviver."
+            );
         }
     }
 
-    updateParticles(dt);
+
+    if(state.shake>0){
+
+        state.shake*=.85;
+
+        if(state.shake<.2)
+            state.shake=0;
+    }
+
+    updateHUD();
+}
+
+
+/* =====================================================
+   LOOP
+===================================================== */
+
+let last=0;
+
+function loop(time){
+
+    const delta=
+        Math.min(
+            (time-last)/16.67,
+            2
+        );
+
+    last=time;
+
+    if(state.running){
+
+        const steps=Math.max(
+            1,
+            Math.round(delta)
+        );
+
+        for(let i=0;i<steps;i++)
+            update();
+    }
+
+
+    ctx.save();
+
+    if(state.shake>0){
+
+        ctx.translate(
+            (Math.random()-.5)*state.shake,
+            (Math.random()-.5)*state.shake
+        );
+    }
 
     render();
+
+    ctx.restore();
 
     requestAnimationFrame(loop);
 }
 
 
-/* =========================================================
-   INICIAR
-========================================================= */
+/* =====================================================
+   START
+===================================================== */
 
+function startGame(){
+
+    state.running=true;
+    state.score=0;
+    state.kills=0;
+    state.lives=3;
+    state.ammo=30;
+    state.camera=0;
+    state.shake=0;
+
+    createWorld();
+
+    document.getElementById("start")
+        .classList.add("hidden");
+
+    document.getElementById("end")
+        .classList.add("hidden");
+
+    updateHUD();
+}
+
+
+document.getElementById("startButton")
+    .addEventListener("click",startGame);
+
+document.getElementById("restart")
+    .addEventListener("click",startGame);
+
+
+createWorld();
 updateHUD();
 
 requestAnimationFrame(loop);
