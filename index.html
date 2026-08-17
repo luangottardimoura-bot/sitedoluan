@@ -2,467 +2,854 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Mini GTA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco Ativo</title>
+
 <style>
-    * { box-sizing: border-box; }
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: #111;
-        font-family: Arial, sans-serif;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0b7a45, #21b66f);
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin: 20px 0 5px;
+    font-size: 42px;
+}
+
+.subtitulo {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+#configuracao {
+    background: white;
+    width: min(500px, 90%);
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px #0005;
+    text-align: center;
+}
+
+#configuracao input,
+#configuracao select {
+    width: 90%;
+    padding: 12px;
+    margin: 7px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #087f45;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #065f34;
+}
+
+#jogo {
+    display: none;
+    width: 95%;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.area-jogo {
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    gap: 20px;
+}
+
+.tabuleiro {
+    background: #eee;
+    border: 8px solid #174b32;
+    border-radius: 15px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 100px);
+    gap: 5px;
+    min-height: 520px;
+}
+
+.casa {
+    background: white;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 5px;
+    text-align: center;
+    position: relative;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.casa strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.casa .icone {
+    font-size: 25px;
+}
+
+.esporte {
+    background: #d9f7e7;
+}
+
+.pergunta {
+    background: #dcecff;
+}
+
+.desafio {
+    background: #fff0c2;
+}
+
+.perigo {
+    background: #ffd6d6;
+}
+
+.bonus {
+    background: #e7d8ff;
+}
+
+.inicio {
+    background: #b9f5cb;
+}
+
+.chegada {
+    background: #ffd86b;
+}
+
+.player {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    font-size: 22px;
+}
+
+.painel {
+    background: white;
+    border-radius: 15px;
+    padding: 18px;
+    box-shadow: 0 5px 20px #0004;
+}
+
+#turno {
+    font-size: 20px;
+    font-weight: bold;
+    color: #087f45;
+    margin-bottom: 10px;
+}
+
+.dado {
+    font-size: 65px;
+    text-align: center;
+    margin: 10px;
+}
+
+.info-jogadores {
+    margin-top: 15px;
+}
+
+.jogador-info {
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.controles {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+#mensagem {
+    margin-top: 15px;
+    background: #f1f1f1;
+    padding: 12px;
+    border-radius: 10px;
+    min-height: 50px;
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0009;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.modal-box {
+    width: min(500px, 90%);
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 10px 30px #0008;
+}
+
+.modal-box h2 {
+    color: #087f45;
+}
+
+.opcoes button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    background: #eee;
+    color: #222;
+}
+
+.opcoes button:hover {
+    background: #c9f3db;
+}
+
+@media(max-width: 900px) {
+    .area-jogo {
+        grid-template-columns: 1fr;
     }
 
-    canvas {
-        display: block;
-        background: #397a3b;
+    .tabuleiro {
+        grid-template-rows: repeat(5, 75px);
     }
 
-    #hud {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        color: white;
+    .casa {
+        font-size: 9px;
+    }
+
+    .casa strong {
+        font-size: 10px;
+    }
+
+    .casa .icone {
         font-size: 18px;
-        background: rgba(0,0,0,.65);
-        padding: 12px;
-        border-radius: 8px;
-        z-index: 2;
     }
-
-    #help {
-        position: fixed;
-        bottom: 15px;
-        left: 15px;
-        color: white;
-        background: rgba(0,0,0,.65);
-        padding: 10px;
-        border-radius: 8px;
-        z-index: 2;
-    }
+}
 </style>
 </head>
+
 <body>
 
-<div id="hud">
-    ❤️ Vida: <span id="vida">100</span><br>
-    💰 Dinheiro: $<span id="dinheiro">500</span><br>
-    ⭐ Procurado: <span id="estrelas">0</span>
+<h1>🏃 BANCO ATIVO 🏃</h1>
+<div class="subtitulo">
+    O jogo que transforma atividade física em diversão!
 </div>
 
-<div id="help">
-    WASD = andar/dirigir | E = entrar no carro | ESPAÇO = atirar
+<div id="configuracao">
+    <h2>🎮 Começar jogo</h2>
+
+    <label>Quantidade de jogadores:</label>
+    <select id="quantidade">
+        <option value="2">2 jogadores</option>
+        <option value="3">3 jogadores</option>
+        <option value="4">4 jogadores</option>
+    </select>
+
+    <div id="nomes"></div>
+
+    <button onclick="iniciarJogo()">COMEÇAR JOGO</button>
 </div>
 
-<canvas id="game"></canvas>
+<div id="jogo">
+
+    <div class="area-jogo">
+
+        <div class="tabuleiro" id="tabuleiro"></div>
+
+        <div class="painel">
+
+            <div id="turno">Turno</div>
+
+            <div class="dado" id="dado">🎲</div>
+
+            <button onclick="jogarDado()" id="btnDado">
+                🎲 JOGAR DADO
+            </button>
+
+            <div class="controles">
+                <button onclick="mostrarRegras()">📖 Regras</button>
+                <button onclick="novoJogo()">🔄 Novo jogo</button>
+            </div>
+
+            <div id="mensagem">
+                Bem-vindo ao Banco Ativo!
+            </div>
+
+            <div class="info-jogadores" id="infoJogadores"></div>
+
+        </div>
+    </div>
+</div>
+
+<div id="modal">
+    <div class="modal-box" id="modalConteudo"></div>
+</div>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const casas = [
+    {nome:"INÍCIO", icone:"🏁", tipo:"inicio"},
+    {nome:"Quadra de Futebol", icone:"⚽", tipo:"esporte", preco:300},
+    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
+    {nome:"Pista de Corrida", icone:"🏃", tipo:"esporte", preco:350},
+    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
+    {nome:"Academia", icone:"🏋️", tipo:"esporte", preco:400},
 
-const keys = {};
+    {nome:"Sedentarismo", icone:"📱", tipo:"perigo"},
+    {nome:"Quadra de Vôlei", icone:"🏐", tipo:"esporte", preco:300},
+    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
+    {nome:"Parque", icone:"🌳", tipo:"esporte", preco:250},
+    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
+    {nome:"Descanso", icone:"😴", tipo:"bonus"},
 
-document.addEventListener("keydown", e => {
-    keys[e.key.toLowerCase()] = true;
+    {nome:"Piscina", icone:"🏊", tipo:"esporte", preco:400},
+    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
+    {nome:"Pista de Ciclismo", icone:"🚴", tipo:"esporte", preco:350},
+    {nome:"Sedentarismo", icone:"📱", tipo:"perigo"},
+    {nome:"Basquete", icone:"🏀", tipo:"esporte", preco:300},
+    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
 
-    if (e.key.toLowerCase() === "e") {
-        entrarNoCarro();
-    }
-
-    if (e.code === "Space") {
-        atirar();
-    }
-});
-
-document.addEventListener("keyup", e => {
-    keys[e.key.toLowerCase()] = false;
-});
-
-let player = {
-    x: 600,
-    y: 500,
-    size: 18,
-    speed: 3,
-    vida: 100,
-    dinheiro: 500,
-    noCarro: false
-};
-
-let camera = {
-    x: 0,
-    y: 0
-};
-
-let carros = [
-    {x: 450, y: 400, cor: "#e63946", ocupado:false},
-    {x: 800, y: 550, cor: "#3498db", ocupado:false},
-    {x: 1000, y: 350, cor: "#f1c40f", ocupado:false}
+    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
+    {nome:"Academia ao ar livre", icone:"🤸", tipo:"esporte", preco:250},
+    {nome:"Bônus Saúde", icone:"❤️", tipo:"bonus"},
+    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
+    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
+    {nome:"CHEGADA", icone:"🏆", tipo:"chegada"}
 ];
 
-let policiais = [
-    {x: 1300, y: 700, speed: 1.5},
-    {x: 300, y: 900, speed: 1.3}
+let jogadores = [];
+let jogadorAtual = 0;
+let jogou = false;
+
+const perguntas = [
+    {
+        pergunta:"Qual é um benefício da atividade física?",
+        opcoes:["Melhora a saúde","Causa sedentarismo","Diminui a disposição"],
+        correta:0
+    },
+    {
+        pergunta:"O que é sedentarismo?",
+        opcoes:[
+            "Praticar esportes todos os dias",
+            "Fazer pouca ou nenhuma atividade física",
+            "Dormir cedo"
+        ],
+        correta:1
+    },
+    {
+        pergunta:"Qual atividade fortalece os músculos?",
+        opcoes:["Musculação","Assistir TV","Jogar videogame"],
+        correta:0
+    },
+    {
+        pergunta:"A atividade física pode ajudar a:",
+        opcoes:[
+            "Aumentar o estresse",
+            "Melhorar o humor",
+            "Diminuir a interação social"
+        ],
+        correta:1
+    },
+    {
+        pergunta:"Qual destes é um esporte?",
+        opcoes:["Futebol","Celular","Televisão"],
+        correta:0
+    },
+    {
+        pergunta:"O esporte em equipe ajuda a desenvolver:",
+        opcoes:[
+            "Respeito e cooperação",
+            "Isolamento",
+            "Sedentarismo"
+        ],
+        correta:0
+    }
 ];
 
-let balas = [];
+const desafios = [
+    "Faça 10 polichinelos!",
+    "Faça 5 agachamentos!",
+    "Fique 10 segundos em uma perna!",
+    "Faça 10 segundos de corrida parada!",
+    "Cite 5 esportes rapidamente!",
+    "Faça uma mímica de um esporte!"
+];
 
-let predios = [];
+const cores = [
+    "#e74c3c",
+    "#3498db",
+    "#f39c12",
+    "#9b59b6"
+];
 
-// Cria a cidade
-for (let x = 0; x < 2500; x += 250) {
-    for (let y = 0; y < 1800; y += 220) {
-        predios.push({
-            x: x + 25,
-            y: y + 25,
-            w: 170,
-            h: 130,
-            cor: ["#777","#888","#996633","#555"][Math.floor(Math.random()*4)]
+document.getElementById("quantidade").addEventListener("change", criarNomes);
+
+function criarNomes() {
+
+    const qtd = Number(document.getElementById("quantidade").value);
+    const div = document.getElementById("nomes");
+
+    div.innerHTML = "";
+
+    for(let i=0;i<qtd;i++){
+
+        div.innerHTML += `
+            <input
+                id="nome${i}"
+                placeholder="Nome do jogador ${i+1}"
+                value="Jogador ${i+1}">
+        `;
+    }
+}
+
+criarNomes();
+
+function iniciarJogo(){
+
+    const qtd = Number(document.getElementById("quantidade").value);
+
+    jogadores = [];
+
+    for(let i=0;i<qtd;i++){
+
+        jogadores.push({
+            nome:document.getElementById("nome"+i).value || "Jogador "+(i+1),
+            pos:0,
+            pontos:1000,
+            propriedades:[]
         });
     }
+
+    jogadorAtual = 0;
+
+    document.getElementById("configuracao").style.display="none";
+    document.getElementById("jogo").style.display="block";
+
+    montarTabuleiro();
+    atualizar();
 }
 
-function atualizar() {
+function montarTabuleiro(){
 
-    let velocidade = player.noCarro ? 7 : player.speed;
+    const tabuleiro = document.getElementById("tabuleiro");
 
-    let dx = 0;
-    let dy = 0;
+    tabuleiro.innerHTML="";
 
-    if (keys["w"]) dy -= velocidade;
-    if (keys["s"]) dy += velocidade;
-    if (keys["a"]) dx -= velocidade;
-    if (keys["d"]) dx += velocidade;
+    casas.forEach((casa,i)=>{
 
-    player.x += dx;
-    player.y += dy;
+        const div = document.createElement("div");
 
-    player.x = Math.max(20, Math.min(2480, player.x));
-    player.y = Math.max(20, Math.min(1780, player.y));
+        div.className = "casa "+casa.tipo;
 
-    // Câmera seguindo jogador
-    camera.x = player.x - canvas.width / 2;
-    camera.y = player.y - canvas.height / 2;
+        div.innerHTML = `
+            <strong>${casa.nome}</strong>
+            <div class="icone">${casa.icone}</div>
+            ${casa.preco ? `<small>💰 ${casa.preco} PS</small>` : ""}
+            <div id="players-${i}"></div>
+        `;
 
-    camera.x = Math.max(0, Math.min(2500 - canvas.width, camera.x));
-    camera.y = Math.max(0, Math.min(1800 - canvas.height, camera.y));
-
-    // Polícia persegue jogador
-    policiais.forEach(policial => {
-
-        if (player.noCarro || estrelas() > 0) {
-
-            let dx = player.x - policial.x;
-            let dy = player.y - policial.y;
-            let distancia = Math.hypot(dx, dy);
-
-            if (distancia > 35) {
-                policial.x += dx / distancia * policial.speed;
-                policial.y += dy / distancia * policial.speed;
-            }
-
-            if (distancia < 40) {
-                player.vida -= 0.2;
-            }
-        }
+        tabuleiro.appendChild(div);
     });
 
-    // Atualiza balas
-    balas.forEach(b => {
-        b.x += b.dx;
-        b.y += b.dy;
-        b.tempo--;
-    });
-
-    balas = balas.filter(b => b.tempo > 0);
-
-    // Bala acerta policial
-    balas.forEach(b => {
-        policiais.forEach(p => {
-
-            if (Math.hypot(b.x-p.x, b.y-p.y) < 25) {
-                p.x = Math.random()*2400;
-                p.y = Math.random()*1700;
-
-                player.dinheiro += 100;
-            }
-
-        });
-    });
-
-    if (player.vida <= 0) {
-        alert("Você morreu!");
-        location.reload();
-    }
-
-    document.getElementById("vida").textContent =
-        Math.floor(player.vida);
-
-    document.getElementById("dinheiro").textContent =
-        player.dinheiro;
-
-    document.getElementById("estrelas").textContent =
-        "★".repeat(estrelas());
+    atualizarJogadoresNoTabuleiro();
 }
 
-function estrelas() {
-    return player.noCarro ? 2 : 1;
-}
+function atualizarJogadoresNoTabuleiro(){
 
-function entrarNoCarro() {
-
-    let carroMaisProximo = null;
-    let menorDistancia = 60;
-
-    carros.forEach(carro => {
-
-        let d = Math.hypot(
-            player.x - carro.x,
-            player.y - carro.y
-        );
-
-        if (d < menorDistancia) {
-            menorDistancia = d;
-            carroMaisProximo = carro;
-        }
+    document.querySelectorAll("[id^='players-']").forEach(e=>{
+        e.innerHTML="";
     });
 
-    if (carroMaisProximo) {
+    jogadores.forEach((j,i)=>{
 
-        player.noCarro = !player.noCarro;
+        const lugar = document.getElementById("players-"+j.pos);
 
-        if (player.noCarro) {
-            carroMaisProximo.ocupado = true;
-        } else {
-            carroMaisProximo.ocupado = false;
-        }
-    }
-}
+        if(lugar){
 
-function atirar() {
+            const span=document.createElement("span");
 
-    let velocidade = 12;
+            span.className="player";
+            span.style.color=cores[i];
 
-    // Tiro para a direita
-    balas.push({
-        x: player.x,
-        y: player.y,
-        dx: velocidade,
-        dy: 0,
-        tempo: 80
-    });
+            span.innerHTML="●";
 
-    player.dinheiro -= 1;
-}
-
-function desenharCidade() {
-
-    // Fundo
-    ctx.fillStyle = "#3d8c40";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Estradas horizontais
-    ctx.fillStyle = "#333";
-
-    for (let y = 180; y < 1800; y += 400) {
-        ctx.fillRect(
-            -camera.x,
-            y-camera.y,
-            2500,
-            90
-        );
-    }
-
-    // Estradas verticais
-    for (let x = 180; x < 2500; x += 500) {
-        ctx.fillRect(
-            x-camera.x,
-            -camera.y,
-            90,
-            1800
-        );
-    }
-
-    // Prédios
-    predios.forEach(p => {
-
-        ctx.fillStyle = p.cor;
-
-        ctx.fillRect(
-            p.x-camera.x,
-            p.y-camera.y,
-            p.w,
-            p.h
-        );
-
-        // Janelas
-        ctx.fillStyle = "#f5d76e";
-
-        for (let wx = 0; wx < 4; wx++) {
-            for (let wy = 0; wy < 3; wy++) {
-
-                ctx.fillRect(
-                    p.x + 20 + wx*38-camera.x,
-                    p.y + 20 + wy*35-camera.y,
-                    15,
-                    15
-                );
-
-            }
+            lugar.appendChild(span);
         }
     });
 }
 
-function desenharCarros() {
+function atualizar(){
 
-    carros.forEach(carro => {
+    const j = jogadores[jogadorAtual];
 
-        ctx.fillStyle = carro.cor;
+    document.getElementById("turno").innerHTML =
+        `🎮 Vez de: <b>${j.nome}</b>`;
 
-        ctx.fillRect(
-            carro.x-camera.x-30,
-            carro.y-camera.y-18,
-            60,
-            36
-        );
+    const info=document.getElementById("infoJogadores");
 
-        ctx.fillStyle = "#111";
+    info.innerHTML="";
 
-        ctx.fillRect(
-            carro.x-camera.x-20,
-            carro.y-camera.y-14,
-            40,
-            10
-        );
+    jogadores.forEach((j,i)=>{
 
-        // rodas
-        ctx.fillStyle = "#050505";
-
-        ctx.fillRect(
-            carro.x-camera.x-25,
-            carro.y-camera.y+14,
-            14,
-            8
-        );
-
-        ctx.fillRect(
-            carro.x-camera.x+11,
-            carro.y-camera.y+14,
-            14,
-            8
-        );
+        info.innerHTML += `
+            <div class="jogador-info"
+                 style="background:${cores[i]}">
+                <b>${j.nome}</b><br>
+                ❤️ ${j.pontos} Pontos de Saúde<br>
+                🏟️ ${j.propriedades.length} propriedades
+            </div>
+        `;
     });
+
+    atualizarJogadoresNoTabuleiro();
 }
 
-function desenharPolicia() {
+function jogarDado(){
 
-    policiais.forEach(p => {
+    if(jogou) return;
 
-        ctx.fillStyle = "#111";
+    jogou=true;
 
-        ctx.fillRect(
-            p.x-camera.x-12,
-            p.y-camera.y-15,
-            24,
-            30
-        );
+    const j=jogadores[jogadorAtual];
 
-        ctx.fillStyle = "#3498db";
+    const numero=Math.floor(Math.random()*6)+1;
 
-        ctx.beginPath();
-        ctx.arc(
-            p.x-camera.x,
-            p.y-camera.y-20,
-            8,
-            0,
-            Math.PI*2
-        );
-        ctx.fill();
-    });
-}
+    document.getElementById("dado").innerHTML=numero;
 
-function desenharPlayer() {
+    document.getElementById("mensagem").innerHTML =
+        `${j.nome} tirou ${numero}!`;
 
-    ctx.fillStyle = player.noCarro ? "#ffcc00" : "#00ff66";
+    let novaPos=j.pos+numero;
 
-    ctx.beginPath();
+    if(novaPos>=casas.length-1){
 
-    ctx.arc(
-        player.x-camera.x,
-        player.y-camera.y,
-        player.noCarro ? 20 : player.size,
-        0,
-        Math.PI*2
-    );
+        novaPos=casas.length-1;
 
-    ctx.fill();
+        j.pos=novaPos;
 
-    // Vida acima do personagem
-    ctx.fillStyle = "red";
+        atualizar();
 
-    ctx.fillRect(
-        player.x-camera.x-20,
-        player.y-camera.y-35,
-        40,
-        5
-    );
+        setTimeout(()=>vitoria(j),500);
 
-    ctx.fillStyle = "lime";
+        return;
+    }
 
-    ctx.fillRect(
-        player.x-camera.x-20,
-        player.y-camera.y-35,
-        40 * (player.vida/100),
-        5
-    );
-}
+    if(novaPos>=casas.length){
 
-function desenharBalas() {
+        novaPos=casas.length-1;
+    }
 
-    balas.forEach(b => {
-
-        ctx.fillStyle = "yellow";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            b.x-camera.x,
-            b.y-camera.y,
-            4,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-    });
-}
-
-function desenhar() {
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    desenharCidade();
-    desenharCarros();
-    desenharPolicia();
-    desenharBalas();
-    desenharPlayer();
-}
-
-function loop() {
+    j.pos=novaPos;
 
     atualizar();
-    desenhar();
 
-    requestAnimationFrame(loop);
+    setTimeout(()=>acaoCasa(casas[novaPos]),400);
 }
 
-loop();
+function acaoCasa(casa){
 
-window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+    const j=jogadores[jogadorAtual];
+
+    if(casa.tipo==="esporte"){
+
+        comprarPropriedade(casa);
+
+    }else if(casa.tipo==="pergunta"){
+
+        fazerPergunta();
+
+    }else if(casa.tipo==="desafio"){
+
+        fazerDesafio();
+
+    }else if(casa.tipo==="perigo"){
+
+        j.pontos-=100;
+
+        if(j.pontos<0) j.pontos=0;
+
+        document.getElementById("mensagem").innerHTML =
+            `📱 ${j.nome} caiu no sedentarismo e perdeu 100 PS!`;
+
+        finalizarTurno();
+
+    }else if(casa.tipo==="bonus"){
+
+        j.pontos+=200;
+
+        document.getElementById("mensagem").innerHTML =
+            `❤️ Bônus de saúde! ${j.nome} ganhou 200 PS.`;
+
+        finalizarTurno();
+
+    }else{
+
+        finalizarTurno();
+    }
+
+    atualizar();
+}
+
+function comprarPropriedade(casa){
+
+    const j=jogadores[jogadorAtual];
+
+    if(casa.dono!==undefined){
+
+        if(casa.dono===jogadorAtual){
+
+            document.getElementById("mensagem").innerHTML =
+                "🏟️ Você já possui este espaço!";
+
+            finalizarTurno();
+            return;
+        }
+
+        const dono=jogadores[casa.dono];
+
+        j.pontos-=100;
+        dono.pontos+=100;
+
+        if(j.pontos<0) j.pontos=0;
+
+        document.getElementById("mensagem").innerHTML =
+            `🏟️ ${j.nome} pagou 100 PS para ${dono.nome}.`;
+
+        finalizarTurno();
+        return;
+    }
+
+    if(j.pontos<casa.preco){
+
+        document.getElementById("mensagem").innerHTML =
+            `❌ Você não tem pontos suficientes para comprar ${casa.nome}.`;
+
+        finalizarTurno();
+        return;
+    }
+
+    abrirModal(`
+        <h2>🏟️ ${casa.nome}</h2>
+        <p>Preço: <b>${casa.preco} Pontos de Saúde</b></p>
+        <p>Você quer comprar este espaço?</p>
+
+        <button onclick="confirmarCompra()">COMPRAR</button>
+        <button onclick="fecharModal()">NÃO COMPRAR</button>
+    `);
+
+    window.propriedadeAtual=casa;
+}
+
+function confirmarCompra(){
+
+    const casa=window.propriedadeAtual;
+    const j=jogadores[jogadorAtual];
+
+    j.pontos-=casa.preco;
+
+    casa.dono=jogadorAtual;
+
+    j.propriedades.push(casa.nome);
+
+    fecharModal();
+
+    document.getElementById("mensagem").innerHTML =
+        `🏆 ${j.nome} comprou ${casa.nome}!`;
+
+    atualizar();
+
+    finalizarTurno();
+}
+
+function fazerPergunta(){
+
+    const p=perguntas[Math.floor(Math.random()*perguntas.length)];
+
+    let html=`
+        <h2>❓ Pergunta</h2>
+        <p><b>${p.pergunta}</b></p>
+        <div class="opcoes">
+    `;
+
+    p.opcoes.forEach((op,i)=>{
+
+        html+=`
+            <button onclick="responder(${i},${p.correta})">
+                ${op}
+            </button>
+        `;
+    });
+
+    html+=`</div>`;
+
+    abrirModal(html);
+}
+
+function responder(escolha,correta){
+
+    const j=jogadores[jogadorAtual];
+
+    if(escolha===correta){
+
+        j.pontos+=100;
+
+        document.getElementById("mensagem").innerHTML =
+            `✅ Muito bem, ${j.nome}! Você ganhou 100 PS.`;
+
+    }else{
+
+        document.getElementById("mensagem").innerHTML =
+            `❌ Resposta incorreta! Continue aprendendo sobre atividade física.`;
+    }
+
+    fecharModal();
+
+    atualizar();
+
+    finalizarTurno();
+}
+
+function fazerDesafio(){
+
+    const desafio=desafios[Math.floor(Math.random()*desafios.length)];
+
+    abrirModal(`
+        <h2>💪 DESAFIO!</h2>
+        <p>${desafio}</p>
+        <p>Faça o desafio e clique em concluir.</p>
+
+        <button onclick="concluirDesafio()">
+            ✅ CONCLUÍ O DESAFIO
+        </button>
+    `);
+}
+
+function concluirDesafio(){
+
+    const j=jogadores[jogadorAtual];
+
+    j.pontos+=100;
+
+    fecharModal();
+
+    document.getElementById("mensagem").innerHTML =
+        `💪 Parabéns, ${j.nome}! Você ganhou 100 PS.`;
+
+    atualizar();
+
+    finalizarTurno();
+}
+
+function finalizarTurno(){
+
+    atualizar();
+
+    setTimeout(()=>{
+
+        jogadorAtual++;
+
+        if(jogadorAtual>=jogadores.length){
+            jogadorAtual=0;
+        }
+
+        jogou=false;
+
+        document.getElementById("dado").innerHTML="🎲";
+
+        atualizar();
+
+    },1200);
+}
+
+function vitoria(j){
+
+    document.getElementById("btnDado").disabled=true;
+
+    abrirModal(`
+        <h2>🏆 FIM DE JOGO!</h2>
+
+        <p>
+            <b>${j.nome}</b> chegou primeiro à chegada!
+        </p>
+
+        <h3>❤️ Pontos de Saúde</h3>
+
+        ${jogadores
+            .sort((a,b)=>b.pontos-a.pontos)
+            .map((p,i)=>`
+                <p>${i+1}º - ${p.nome}: ${p.pontos} PS</p>
+            `).join("")}
+
+        <button onclick="novoJogo()">🔄 JOGAR NOVAMENTE</button>
+    `);
+}
+
+function abrirModal(conteudo){
+
+    document.getElementById("modalConteudo").innerHTML=conteudo;
+
+    document.getElementById("modal").style.display="flex";
+}
+
+function fecharModal(){
+
+    document.getElementById("modal").style.display="none";
+}
+
+function mostrarRegras(){
+
+    abrirModal(`
+        <h2>📖 REGRAS</h2>
+
+        <p>🎲 Jogue o dado e avance pelo tabuleiro.</p>
+
+        <p>🏟️ Compre espaços esportivos usando Pontos de Saúde.</p>
+
+        <p>❓ Responda perguntas para ganhar pontos.</p>
+
+        <p>💪 Faça desafios físicos para ganhar pontos.</p>
+
+        <p>📱 Cuidado com o sedentarismo!</p>
+
+        <p>❤️ Bônus aumentam seus Pontos de Saúde.</p>
+
+        <p>🏆 Quem chegar primeiro à chegada termina o jogo.</p>
+
+        <p><b>Vence quem tiver mais Pontos de Saúde!</b></p>
+
+        <button onclick="fecharModal()">FECHAR</button>
+    `);
+}
+
+function novoJogo(){
+
+    location.reload();
+}
+
 </script>
 
 </body>
