@@ -3,851 +3,1009 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Banco Ativo</title>
+
+<title>Missão Movimento</title>
 
 <style>
-* {
-    box-sizing: border-box;
+
+*{
+    box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0b7a45, #21b66f);
-    color: #222;
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#101827;
+    color:white;
 }
 
-h1 {
-    text-align: center;
-    color: white;
-    margin: 20px 0 5px;
-    font-size: 42px;
+header{
+    text-align:center;
+    padding:22px;
+    background:linear-gradient(135deg,#00c853,#00a8ff);
 }
 
-.subtitulo {
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
+header h1{
+    margin:0;
+    font-size:42px;
 }
 
-#configuracao {
-    background: white;
-    width: min(500px, 90%);
-    margin: 30px auto;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 8px 25px #0005;
-    text-align: center;
+header p{
+    margin:8px 0 0;
 }
 
-#configuracao input,
-#configuracao select {
-    width: 90%;
-    padding: 12px;
-    margin: 7px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    font-size: 16px;
+#inicio{
+    max-width:550px;
+    margin:45px auto;
+    background:#182235;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px #0008;
+    text-align:center;
 }
 
-button {
-    border: none;
-    padding: 12px 18px;
-    border-radius: 10px;
-    background: #087f45;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .2s;
+input,select{
+    width:90%;
+    padding:13px;
+    margin:7px;
+    border:0;
+    border-radius:10px;
+    font-size:16px;
 }
 
-button:hover {
-    transform: scale(1.05);
-    background: #065f34;
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    background:#00c853;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    margin:5px;
 }
 
-#jogo {
-    display: none;
-    width: 95%;
-    max-width: 1300px;
-    margin: auto;
+button:hover{
+    background:#00a844;
+    transform:translateY(-2px);
 }
 
-.area-jogo {
-    display: grid;
-    grid-template-columns: 1fr 330px;
-    gap: 20px;
+#game{
+    display:none;
+    max-width:1250px;
+    margin:20px auto;
+    padding:10px;
 }
 
-.tabuleiro {
-    background: #eee;
-    border: 8px solid #174b32;
-    border-radius: 15px;
-    padding: 8px;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(5, 100px);
-    gap: 5px;
-    min-height: 520px;
+.layout{
+    display:grid;
+    grid-template-columns:1fr 330px;
+    gap:20px;
 }
 
-.casa {
-    background: white;
-    border: 2px solid #333;
-    border-radius: 8px;
-    padding: 5px;
-    text-align: center;
-    position: relative;
-    font-size: 12px;
-    overflow: hidden;
+.board{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:7px;
+    background:#0b111d;
+    padding:10px;
+    border-radius:20px;
 }
 
-.casa strong {
-    display: block;
-    font-size: 13px;
-    margin-bottom: 5px;
+.cell{
+    min-height:105px;
+    border-radius:14px;
+    padding:8px;
+    border:2px solid #29364c;
+    background:#1c2738;
+    text-align:center;
+    position:relative;
 }
 
-.casa .icone {
-    font-size: 25px;
+.cell strong{
+    display:block;
+    font-size:12px;
 }
 
-.esporte {
-    background: #d9f7e7;
+.cell .symbol{
+    font-size:30px;
+    margin:7px;
 }
 
-.pergunta {
-    background: #dcecff;
+.cell small{
+    color:#b9c7d9;
 }
 
-.desafio {
-    background: #fff0c2;
+.start{
+    background:#064d35;
 }
 
-.perigo {
-    background: #ffd6d6;
+.challenge{
+    background:#513d00;
 }
 
-.bonus {
-    background: #e7d8ff;
+.question{
+    background:#073f5f;
 }
 
-.inicio {
-    background: #b9f5cb;
+.event{
+    background:#45206b;
 }
 
-.chegada {
-    background: #ffd86b;
+.rest{
+    background:#343b49;
 }
 
-.player {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    font-size: 22px;
+.finish{
+    background:#725300;
 }
 
-.painel {
-    background: white;
-    border-radius: 15px;
-    padding: 18px;
-    box-shadow: 0 5px 20px #0004;
+.players{
+    position:absolute;
+    bottom:5px;
+    left:0;
+    right:0;
 }
 
-#turno {
-    font-size: 20px;
-    font-weight: bold;
-    color: #087f45;
-    margin-bottom: 10px;
+.token{
+    display:inline-block;
+    font-size:20px;
+    margin:1px;
 }
 
-.dado {
-    font-size: 65px;
-    text-align: center;
-    margin: 10px;
+.panel{
+    background:#182235;
+    padding:20px;
+    border-radius:20px;
+    box-shadow:0 8px 25px #0006;
 }
 
-.info-jogadores {
-    margin-top: 15px;
+.turn{
+    color:#00e676;
+    font-size:20px;
+    margin-bottom:15px;
 }
 
-.jogador-info {
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    color: white;
+.stats{
+    background:#111927;
+    padding:12px;
+    border-radius:12px;
+    margin:8px 0;
 }
 
-.controles {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 15px;
+.stat{
+    display:flex;
+    justify-content:space-between;
+    margin:5px 0;
 }
 
-#mensagem {
-    margin-top: 15px;
-    background: #f1f1f1;
-    padding: 12px;
-    border-radius: 10px;
-    min-height: 50px;
+.dice{
+    text-align:center;
+    font-size:65px;
+    margin:15px;
 }
 
-#modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0009;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
+.message{
+    margin-top:15px;
+    padding:15px;
+    background:#111927;
+    border-radius:12px;
+    min-height:70px;
 }
 
-.modal-box {
-    width: min(500px, 90%);
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    text-align: center;
-    box-shadow: 0 10px 30px #0008;
+#modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000b;
+    justify-content:center;
+    align-items:center;
+    z-index:99;
 }
 
-.modal-box h2 {
-    color: #087f45;
+.modal{
+    background:#182235;
+    max-width:520px;
+    width:90%;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
 }
 
-.opcoes button {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-    background: #eee;
-    color: #222;
+.answer{
+    display:block;
+    width:100%;
+    background:#26364e;
 }
 
-.opcoes button:hover {
-    background: #c9f3db;
+.answer:hover{
+    background:#00a8ff;
 }
 
-@media(max-width: 900px) {
-    .area-jogo {
-        grid-template-columns: 1fr;
+.ability{
+    background:#233149;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+@media(max-width:850px){
+
+    .layout{
+        grid-template-columns:1fr;
     }
 
-    .tabuleiro {
-        grid-template-rows: repeat(5, 75px);
+    .board{
+        grid-template-columns:repeat(4,1fr);
     }
 
-    .casa {
-        font-size: 9px;
-    }
-
-    .casa strong {
-        font-size: 10px;
-    }
-
-    .casa .icone {
-        font-size: 18px;
-    }
 }
+
+@media(max-width:500px){
+
+    header h1{
+        font-size:30px;
+    }
+
+    .board{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .cell{
+        min-height:90px;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>🏃 BANCO ATIVO 🏃</h1>
-<div class="subtitulo">
-    O jogo que transforma atividade física em diversão!
+<header>
+
+<h1>⚡ MISSÃO MOVIMENTO</h1>
+
+<p>
+Uma aventura para descobrir como cuidar melhor do corpo e da mente!
+</p>
+
+</header>
+
+
+<section id="inicio">
+
+<h2>🎮 Preparar missão</h2>
+
+<p>Escolha de 2 a 4 participantes.</p>
+
+<select id="qtd">
+
+<option value="2">2 jogadores</option>
+<option value="3">3 jogadores</option>
+<option value="4">4 jogadores</option>
+
+</select>
+
+<div id="names"></div>
+
+<button onclick="startGame()">
+🚀 INICIAR MISSÃO
+</button>
+
+</section>
+
+
+<section id="game">
+
+<div class="layout">
+
+<div class="board" id="board"></div>
+
+
+<div class="panel">
+
+<div class="turn" id="turn"></div>
+
+<div class="dice" id="dice">🎲</div>
+
+<button id="roll" onclick="rollDice()">
+🎲 AVANÇAR
+</button>
+
+<button onclick="rules()">
+📘 COMO JOGAR
+</button>
+
+<div id="message" class="message">
+Prepare-se para começar!
 </div>
 
-<div id="configuracao">
-    <h2>🎮 Começar jogo</h2>
+<div id="playersInfo"></div>
 
-    <label>Quantidade de jogadores:</label>
-    <select id="quantidade">
-        <option value="2">2 jogadores</option>
-        <option value="3">3 jogadores</option>
-        <option value="4">4 jogadores</option>
-    </select>
-
-    <div id="nomes"></div>
-
-    <button onclick="iniciarJogo()">COMEÇAR JOGO</button>
 </div>
 
-<div id="jogo">
-
-    <div class="area-jogo">
-
-        <div class="tabuleiro" id="tabuleiro"></div>
-
-        <div class="painel">
-
-            <div id="turno">Turno</div>
-
-            <div class="dado" id="dado">🎲</div>
-
-            <button onclick="jogarDado()" id="btnDado">
-                🎲 JOGAR DADO
-            </button>
-
-            <div class="controles">
-                <button onclick="mostrarRegras()">📖 Regras</button>
-                <button onclick="novoJogo()">🔄 Novo jogo</button>
-            </div>
-
-            <div id="mensagem">
-                Bem-vindo ao Banco Ativo!
-            </div>
-
-            <div class="info-jogadores" id="infoJogadores"></div>
-
-        </div>
-    </div>
 </div>
+
+</section>
+
 
 <div id="modal">
-    <div class="modal-box" id="modalConteudo"></div>
+
+<div class="modal" id="modalContent"></div>
+
 </div>
+
 
 <script>
 
-const casas = [
-    {nome:"INÍCIO", icone:"🏁", tipo:"inicio"},
-    {nome:"Quadra de Futebol", icone:"⚽", tipo:"esporte", preco:300},
-    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
-    {nome:"Pista de Corrida", icone:"🏃", tipo:"esporte", preco:350},
-    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
-    {nome:"Academia", icone:"🏋️", tipo:"esporte", preco:400},
+const spaces=[
 
-    {nome:"Sedentarismo", icone:"📱", tipo:"perigo"},
-    {nome:"Quadra de Vôlei", icone:"🏐", tipo:"esporte", preco:300},
-    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
-    {nome:"Parque", icone:"🌳", tipo:"esporte", preco:250},
-    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
-    {nome:"Descanso", icone:"😴", tipo:"bonus"},
+["BASE DE ENERGIA","🏠","start"],
+["AQUECIMENTO","🔥","challenge"],
+["QUIZ DO CORPO","🧠","question"],
+["CAMINHO DA CORRIDA","🏃","challenge"],
+["EVENTO SAUDÁVEL","✨","event"],
+["ZONA DO ESPORTE","⚽","challenge"],
 
-    {nome:"Piscina", icone:"🏊", tipo:"esporte", preco:400},
-    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
-    {nome:"Pista de Ciclismo", icone:"🚴", tipo:"esporte", preco:350},
-    {nome:"Sedentarismo", icone:"📱", tipo:"perigo"},
-    {nome:"Basquete", icone:"🏀", tipo:"esporte", preco:300},
-    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
+["PAUSA DIGITAL","📵","rest"],
+["DESAFIO DE FORÇA","💪","challenge"],
+["QUIZ DA MENTE","🧠","question"],
+["TRILHA","🌳","challenge"],
+["EVENTO SURPRESA","🎁","event"],
+["HIDRATAÇÃO","💧","rest"],
 
-    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
-    {nome:"Academia ao ar livre", icone:"🤸", tipo:"esporte", preco:250},
-    {nome:"Bônus Saúde", icone:"❤️", tipo:"bonus"},
-    {nome:"Desafio Físico", icone:"💪", tipo:"desafio"},
-    {nome:"Pergunta", icone:"❓", tipo:"pergunta"},
-    {nome:"CHEGADA", icone:"🏆", tipo:"chegada"}
+["DESAFIO CARDIO","❤️","challenge"],
+["QUIZ DA SAÚDE","🩺","question"],
+["MOVIMENTO LIVRE","🤸","challenge"],
+["EVENTO POSITIVO","⭐","event"],
+["TEMPO DE DESCANSO","😴","rest"],
+["DESAFIO EM EQUIPE","🤝","challenge"],
+
+["QUIZ FINAL","🏆","question"],
+["CAMINHO DA DANÇA","💃","challenge"],
+["EVENTO ESPECIAL","🌟","event"],
+["DESAFIO RELÂMPAGO","⚡","challenge"],
+["ÚLTIMA ETAPA","🚀","challenge"],
+["META FINAL","🏁","finish"]
+
 ];
 
-let jogadores = [];
-let jogadorAtual = 0;
-let jogou = false;
 
-const perguntas = [
-    {
-        pergunta:"Qual é um benefício da atividade física?",
-        opcoes:["Melhora a saúde","Causa sedentarismo","Diminui a disposição"],
-        correta:0
-    },
-    {
-        pergunta:"O que é sedentarismo?",
-        opcoes:[
-            "Praticar esportes todos os dias",
-            "Fazer pouca ou nenhuma atividade física",
-            "Dormir cedo"
-        ],
-        correta:1
-    },
-    {
-        pergunta:"Qual atividade fortalece os músculos?",
-        opcoes:["Musculação","Assistir TV","Jogar videogame"],
-        correta:0
-    },
-    {
-        pergunta:"A atividade física pode ajudar a:",
-        opcoes:[
-            "Aumentar o estresse",
-            "Melhorar o humor",
-            "Diminuir a interação social"
-        ],
-        correta:1
-    },
-    {
-        pergunta:"Qual destes é um esporte?",
-        opcoes:["Futebol","Celular","Televisão"],
-        correta:0
-    },
-    {
-        pergunta:"O esporte em equipe ajuda a desenvolver:",
-        opcoes:[
-            "Respeito e cooperação",
-            "Isolamento",
-            "Sedentarismo"
-        ],
-        correta:0
-    }
+const questions=[
+
+[
+"Qual é um benefício da atividade física?",
+["Melhora a saúde","Aumenta o sedentarismo","Diminui a disposição"],
+0
+],
+
+[
+"Qual destes é um exemplo de atividade física?",
+["Assistir televisão","Caminhar","Ficar sentado"],
+1
+],
+
+[
+"O sedentarismo pode aumentar o risco de:",
+["Problemas de saúde","Mais energia","Melhor condicionamento"],
+0
+],
+
+[
+"A atividade física pode contribuir para:",
+["Melhorar o humor","Aumentar o estresse","Diminuir a socialização"],
+0
+],
+
+[
+"Qual atitude ajuda a combater o sedentarismo?",
+["Passar mais tempo sentado","Praticar exercícios","Evitar qualquer movimento"],
+1
+],
+
+[
+"Esportes em grupo podem desenvolver:",
+["Cooperação","Isolamento","Desinteresse"],
+0
+],
+
+[
+"Qual destes ajuda na saúde dos ossos?",
+["Atividade física","Ficar o dia inteiro sentado","Evitar movimentos"],
+0
+]
+
 ];
 
-const desafios = [
-    "Faça 10 polichinelos!",
-    "Faça 5 agachamentos!",
-    "Fique 10 segundos em uma perna!",
-    "Faça 10 segundos de corrida parada!",
-    "Cite 5 esportes rapidamente!",
-    "Faça uma mímica de um esporte!"
+
+const challenges=[
+
+"Faça 10 polichinelos.",
+"Faça 8 agachamentos.",
+"Corra parado durante 15 segundos.",
+"Fique 10 segundos equilibrado em uma perna.",
+"Faça uma mímica de um esporte.",
+"Cite 5 atividades físicas.",
+"Faça 5 movimentos de alongamento.",
+"Crie um grito de guerra para sua equipe."
+
 ];
 
-const cores = [
-    "#e74c3c",
-    "#3498db",
-    "#f39c12",
-    "#9b59b6"
-];
 
-document.getElementById("quantidade").addEventListener("change", criarNomes);
+const abilities=[
 
-function criarNomes() {
+{
+name:"⚡ Energia Extra",
+text:"Uma vez por partida, avance 2 casas extras."
+},
 
-    const qtd = Number(document.getElementById("quantidade").value);
-    const div = document.getElementById("nomes");
+{
+name:"🧠 Mente Rápida",
+text:"Uma vez por partida, pode tentar novamente uma pergunta errada."
+},
 
-    div.innerHTML = "";
+{
+name:"❤️ Vida Saudável",
+text:"Recebe 2 pontos de saúde quando completa um desafio."
+},
 
-    for(let i=0;i<qtd;i++){
-
-        div.innerHTML += `
-            <input
-                id="nome${i}"
-                placeholder="Nome do jogador ${i+1}"
-                value="Jogador ${i+1}">
-        `;
-    }
+{
+name:"🏃 Atleta",
+text:"Uma vez por partida, pode ignorar uma casa de descanso."
 }
 
-criarNomes();
+];
 
-function iniciarJogo(){
 
-    const qtd = Number(document.getElementById("quantidade").value);
+let players=[];
+let current=0;
+let usedAbility=false;
+let moved=false;
 
-    jogadores = [];
+
+document.getElementById("qtd").addEventListener("change",makeNames);
+
+makeNames();
+
+
+function makeNames(){
+
+    let qtd=Number(document.getElementById("qtd").value);
+
+    let area=document.getElementById("names");
+
+    area.innerHTML="";
 
     for(let i=0;i<qtd;i++){
 
-        jogadores.push({
-            nome:document.getElementById("nome"+i).value || "Jogador "+(i+1),
-            pos:0,
-            pontos:1000,
-            propriedades:[]
+        area.innerHTML+=`
+
+        <input
+        id="name${i}"
+        value="Jogador ${i+1}"
+        placeholder="Nome do jogador">
+
+        `;
+
+    }
+
+}
+
+
+function startGame(){
+
+    let qtd=Number(document.getElementById("qtd").value);
+
+    players=[];
+
+    for(let i=0;i<qtd;i++){
+
+        players.push({
+
+            name:
+            document.getElementById("name"+i).value
+            ||"Jogador "+(i+1),
+
+            position:0,
+
+            energy:10,
+
+            health:5,
+
+            knowledge:0,
+
+            ability:
+            abilities[i],
+
+            finished:false
+
         });
+
     }
 
-    jogadorAtual = 0;
+    current=0;
 
-    document.getElementById("configuracao").style.display="none";
-    document.getElementById("jogo").style.display="block";
+    document.getElementById("inicio").style.display="none";
 
-    montarTabuleiro();
-    atualizar();
+    document.getElementById("game").style.display="block";
+
+    createBoard();
+
+    update();
+
 }
 
-function montarTabuleiro(){
 
-    const tabuleiro = document.getElementById("tabuleiro");
+function createBoard(){
 
-    tabuleiro.innerHTML="";
+    let board=document.getElementById("board");
 
-    casas.forEach((casa,i)=>{
+    board.innerHTML="";
 
-        const div = document.createElement("div");
+    spaces.forEach((s,i)=>{
 
-        div.className = "casa "+casa.tipo;
+        let div=document.createElement("div");
 
-        div.innerHTML = `
-            <strong>${casa.nome}</strong>
-            <div class="icone">${casa.icone}</div>
-            ${casa.preco ? `<small>💰 ${casa.preco} PS</small>` : ""}
-            <div id="players-${i}"></div>
+        div.className="cell "+s[2];
+
+        div.innerHTML=`
+
+        <strong>${s[0]}</strong>
+
+        <div class="symbol">${s[1]}</div>
+
+        <div class="players" id="p${i}"></div>
+
         `;
 
-        tabuleiro.appendChild(div);
+        board.appendChild(div);
+
     });
 
-    atualizarJogadoresNoTabuleiro();
 }
 
-function atualizarJogadoresNoTabuleiro(){
 
-    document.querySelectorAll("[id^='players-']").forEach(e=>{
-        e.innerHTML="";
-    });
+function update(){
 
-    jogadores.forEach((j,i)=>{
+    let p=players[current];
 
-        const lugar = document.getElementById("players-"+j.pos);
+    document.getElementById("turn").innerHTML=
+    `🎯 Vez de <b>${p.name}</b>`;
 
-        if(lugar){
-
-            const span=document.createElement("span");
-
-            span.className="player";
-            span.style.color=cores[i];
-
-            span.innerHTML="●";
-
-            lugar.appendChild(span);
-        }
-    });
-}
-
-function atualizar(){
-
-    const j = jogadores[jogadorAtual];
-
-    document.getElementById("turno").innerHTML =
-        `🎮 Vez de: <b>${j.nome}</b>`;
-
-    const info=document.getElementById("infoJogadores");
+    let info=document.getElementById("playersInfo");
 
     info.innerHTML="";
 
-    jogadores.forEach((j,i)=>{
+    players.forEach((p,i)=>{
 
-        info.innerHTML += `
-            <div class="jogador-info"
-                 style="background:${cores[i]}">
-                <b>${j.nome}</b><br>
-                ❤️ ${j.pontos} Pontos de Saúde<br>
-                🏟️ ${j.propriedades.length} propriedades
-            </div>
+        info.innerHTML+=`
+
+        <div class="stats">
+
+        <b>${p.name}</b>
+
+        <div class="stat">
+        ⚡ Energia <span>${p.energy}</span>
+        </div>
+
+        <div class="stat">
+        ❤️ Saúde <span>${p.health}</span>
+        </div>
+
+        <div class="stat">
+        🧠 Conhecimento <span>${p.knowledge}</span>
+        </div>
+
+        <div class="ability">
+        ${p.ability.name}<br>
+        <small>${p.ability.text}</small>
+        </div>
+
+        </div>
+
         `;
+
     });
 
-    atualizarJogadoresNoTabuleiro();
+    drawPlayers();
+
 }
 
-function jogarDado(){
 
-    if(jogou) return;
+function drawPlayers(){
 
-    jogou=true;
+    document.querySelectorAll(".players")
+    .forEach(x=>x.innerHTML="");
 
-    const j=jogadores[jogadorAtual];
+    players.forEach((p,i)=>{
 
-    const numero=Math.floor(Math.random()*6)+1;
+        let area=document.getElementById("p"+p.position);
 
-    document.getElementById("dado").innerHTML=numero;
+        let token=document.createElement("span");
 
-    document.getElementById("mensagem").innerHTML =
-        `${j.nome} tirou ${numero}!`;
+        token.className="token";
 
-    let novaPos=j.pos+numero;
+        token.innerHTML=["🔴","🔵","🟡","🟣"][i];
 
-    if(novaPos>=casas.length-1){
+        area.appendChild(token);
 
-        novaPos=casas.length-1;
+    });
 
-        j.pos=novaPos;
-
-        atualizar();
-
-        setTimeout(()=>vitoria(j),500);
-
-        return;
-    }
-
-    if(novaPos>=casas.length){
-
-        novaPos=casas.length-1;
-    }
-
-    j.pos=novaPos;
-
-    atualizar();
-
-    setTimeout(()=>acaoCasa(casas[novaPos]),400);
 }
 
-function acaoCasa(casa){
 
-    const j=jogadores[jogadorAtual];
+function rollDice(){
 
-    if(casa.tipo==="esporte"){
+    if(moved)return;
 
-        comprarPropriedade(casa);
+    moved=true;
 
-    }else if(casa.tipo==="pergunta"){
+    let p=players[current];
 
-        fazerPergunta();
+    let roll=Math.floor(Math.random()*6)+1;
 
-    }else if(casa.tipo==="desafio"){
+    document.getElementById("dice").innerText=roll;
 
-        fazerDesafio();
+    p.position+=roll;
 
-    }else if(casa.tipo==="perigo"){
+    if(p.position>=spaces.length-1){
 
-        j.pontos-=100;
+        p.position=spaces.length-1;
 
-        if(j.pontos<0) j.pontos=0;
+        update();
 
-        document.getElementById("mensagem").innerHTML =
-            `📱 ${j.nome} caiu no sedentarismo e perdeu 100 PS!`;
+        setTimeout(finish,500);
 
-        finalizarTurno();
+        return;
 
-    }else if(casa.tipo==="bonus"){
-
-        j.pontos+=200;
-
-        document.getElementById("mensagem").innerHTML =
-            `❤️ Bônus de saúde! ${j.nome} ganhou 200 PS.`;
-
-        finalizarTurno();
-
-    }else{
-
-        finalizarTurno();
     }
 
-    atualizar();
+    p.energy--;
+
+    if(p.energy<0)p.energy=0;
+
+    update();
+
+    setTimeout(resolveSpace,500);
+
 }
 
-function comprarPropriedade(casa){
 
-    const j=jogadores[jogadorAtual];
+function resolveSpace(){
 
-    if(casa.dono!==undefined){
+    let p=players[current];
 
-        if(casa.dono===jogadorAtual){
+    let type=spaces[p.position][2];
 
-            document.getElementById("mensagem").innerHTML =
-                "🏟️ Você já possui este espaço!";
+    if(type==="challenge"){
 
-            finalizarTurno();
-            return;
-        }
+        challenge();
 
-        const dono=jogadores[casa.dono];
-
-        j.pontos-=100;
-        dono.pontos+=100;
-
-        if(j.pontos<0) j.pontos=0;
-
-        document.getElementById("mensagem").innerHTML =
-            `🏟️ ${j.nome} pagou 100 PS para ${dono.nome}.`;
-
-        finalizarTurno();
-        return;
     }
 
-    if(j.pontos<casa.preco){
+    else if(type==="question"){
 
-        document.getElementById("mensagem").innerHTML =
-            `❌ Você não tem pontos suficientes para comprar ${casa.nome}.`;
+        question();
 
-        finalizarTurno();
-        return;
     }
 
-    abrirModal(`
-        <h2>🏟️ ${casa.nome}</h2>
-        <p>Preço: <b>${casa.preco} Pontos de Saúde</b></p>
-        <p>Você quer comprar este espaço?</p>
+    else if(type==="event"){
 
-        <button onclick="confirmarCompra()">COMPRAR</button>
-        <button onclick="fecharModal()">NÃO COMPRAR</button>
+        event();
+
+    }
+
+    else if(type==="rest"){
+
+        rest();
+
+    }
+
+    else{
+
+        nextTurn();
+
+    }
+
+}
+
+
+function challenge(){
+
+    let text=
+    challenges[
+    Math.floor(Math.random()*challenges.length)
+    ];
+
+    openModal(`
+
+    <h2>💪 DESAFIO</h2>
+
+    <p>${text}</p>
+
+    <p>Complete a atividade para ganhar energia!</p>
+
+    <button onclick="completeChallenge()">
+    ✅ COMPLETEI
+    </button>
+
     `);
 
-    window.propriedadeAtual=casa;
 }
 
-function confirmarCompra(){
 
-    const casa=window.propriedadeAtual;
-    const j=jogadores[jogadorAtual];
+function completeChallenge(){
 
-    j.pontos-=casa.preco;
+    let p=players[current];
 
-    casa.dono=jogadorAtual;
+    p.energy+=2;
 
-    j.propriedades.push(casa.nome);
+    p.health+=1;
 
-    fecharModal();
+    closeModal();
 
-    document.getElementById("mensagem").innerHTML =
-        `🏆 ${j.nome} comprou ${casa.nome}!`;
+    message(
+    `💪 Excelente! ${p.name} completou o desafio e ganhou energia e saúde.`
+    );
 
-    atualizar();
+    update();
 
-    finalizarTurno();
+    nextTurn();
+
 }
 
-function fazerPergunta(){
 
-    const p=perguntas[Math.floor(Math.random()*perguntas.length)];
+function question(){
+
+    let q=
+    questions[
+    Math.floor(Math.random()*questions.length)
+    ];
 
     let html=`
-        <h2>❓ Pergunta</h2>
-        <p><b>${p.pergunta}</b></p>
-        <div class="opcoes">
+
+    <h2>🧠 QUIZ</h2>
+
+    <p><b>${q[0]}</b></p>
+
     `;
 
-    p.opcoes.forEach((op,i)=>{
+    q[1].forEach((answer,i)=>{
 
         html+=`
-            <button onclick="responder(${i},${p.correta})">
-                ${op}
-            </button>
+
+        <button class="answer"
+        onclick="answer(${i},${q[3]})">
+
+        ${answer}
+
+        </button>
+
         `;
+
     });
 
-    html+=`</div>`;
+    openModal(html);
 
-    abrirModal(html);
 }
 
-function responder(escolha,correta){
 
-    const j=jogadores[jogadorAtual];
+function answer(choice,correct){
 
-    if(escolha===correta){
+    let p=players[current];
 
-        j.pontos+=100;
+    if(choice===correct){
 
-        document.getElementById("mensagem").innerHTML =
-            `✅ Muito bem, ${j.nome}! Você ganhou 100 PS.`;
+        p.knowledge+=2;
+
+        p.health+=1;
+
+        message(
+        "🧠 Resposta correta! Você ganhou conhecimento e saúde."
+        );
 
     }else{
 
-        document.getElementById("mensagem").innerHTML =
-            `❌ Resposta incorreta! Continue aprendendo sobre atividade física.`;
+        p.knowledge+=0;
+
+        message(
+        "❌ Não foi dessa vez. Continue aprendendo!"
+        );
+
     }
 
-    fecharModal();
+    closeModal();
 
-    atualizar();
+    update();
 
-    finalizarTurno();
+    nextTurn();
+
 }
 
-function fazerDesafio(){
 
-    const desafio=desafios[Math.floor(Math.random()*desafios.length)];
+function event(){
 
-    abrirModal(`
-        <h2>💪 DESAFIO!</h2>
-        <p>${desafio}</p>
-        <p>Faça o desafio e clique em concluir.</p>
+    let p=players[current];
 
-        <button onclick="concluirDesafio()">
-            ✅ CONCLUÍ O DESAFIO
-        </button>
-    `);
+    let events=[
+
+    ["🌟 Você ajudou um colega a praticar esporte!","health",2],
+
+    ["💧 Você lembrou de se hidratar!","energy",2],
+
+    ["📵 Você ficou menos tempo no celular hoje!","health",1],
+
+    ["🎵 Você descobriu uma atividade que gosta!","energy",3],
+
+    ["😴 Você descansou adequadamente!","health",1]
+
+    ];
+
+    let e=events[Math.floor(Math.random()*events.length)];
+
+    p[e[1]]+=e[2];
+
+    message(`${e[0]} +${e[2]} ponto(s)!`);
+
+    update();
+
+    nextTurn();
+
 }
 
-function concluirDesafio(){
 
-    const j=jogadores[jogadorAtual];
+function rest(){
 
-    j.pontos+=100;
+    let p=players[current];
 
-    fecharModal();
+    p.energy+=3;
 
-    document.getElementById("mensagem").innerHTML =
-        `💪 Parabéns, ${j.nome}! Você ganhou 100 PS.`;
+    message(
+    `😴 Momento de descanso! ${p.name} recuperou 3 pontos de energia.`
+    );
 
-    atualizar();
+    update();
 
-    finalizarTurno();
+    nextTurn();
+
 }
 
-function finalizarTurno(){
 
-    atualizar();
+function nextTurn(){
 
     setTimeout(()=>{
 
-        jogadorAtual++;
+        current++;
 
-        if(jogadorAtual>=jogadores.length){
-            jogadorAtual=0;
-        }
+        if(current>=players.length)
+        current=0;
 
-        jogou=false;
+        moved=false;
 
-        document.getElementById("dado").innerHTML="🎲";
+        document.getElementById("dice").innerText="🎲";
 
-        atualizar();
+        update();
 
     },1200);
+
 }
 
-function vitoria(j){
 
-    document.getElementById("btnDado").disabled=true;
+function finish(){
 
-    abrirModal(`
-        <h2>🏆 FIM DE JOGO!</h2>
+    let ranking=[...players];
+
+    ranking.sort((a,b)=>{
+
+        let scoreA=
+        a.health*3+
+        a.energy+
+        a.knowledge*2;
+
+        let scoreB=
+        b.health*3+
+        b.energy+
+        b.knowledge*2;
+
+        return scoreB-scoreA;
+
+    });
+
+    let html=`
+
+    <h2>🏆 MISSÃO CONCLUÍDA!</h2>
+
+    <p>Todos chegaram ao final da jornada.</p>
+
+    `;
+
+    ranking.forEach((p,i)=>{
+
+        let score=
+        p.health*3+
+        p.energy+
+        p.knowledge*2;
+
+        html+=`
 
         <p>
-            <b>${j.nome}</b> chegou primeiro à chegada!
+        ${i+1}º <b>${p.name}</b>
+        — ${score} pontos
         </p>
 
-        <h3>❤️ Pontos de Saúde</h3>
+        `;
 
-        ${jogadores
-            .sort((a,b)=>b.pontos-a.pontos)
-            .map((p,i)=>`
-                <p>${i+1}º - ${p.nome}: ${p.pontos} PS</p>
-            `).join("")}
+    });
 
-        <button onclick="novoJogo()">🔄 JOGAR NOVAMENTE</button>
-    `);
+    html+=`
+
+    <button onclick="location.reload()">
+    🔄 NOVA MISSÃO
+    </button>
+
+    `;
+
+    openModal(html);
+
+    document.getElementById("roll").disabled=true;
+
 }
 
-function abrirModal(conteudo){
 
-    document.getElementById("modalConteudo").innerHTML=conteudo;
+function message(text){
+
+    document.getElementById("message").innerHTML=text;
+
+}
+
+
+function openModal(html){
+
+    document.getElementById("modalContent").innerHTML=html;
 
     document.getElementById("modal").style.display="flex";
+
 }
 
-function fecharModal(){
+
+function closeModal(){
 
     document.getElementById("modal").style.display="none";
+
 }
 
-function mostrarRegras(){
 
-    abrirModal(`
-        <h2>📖 REGRAS</h2>
+function rules(){
 
-        <p>🎲 Jogue o dado e avance pelo tabuleiro.</p>
+    openModal(`
 
-        <p>🏟️ Compre espaços esportivos usando Pontos de Saúde.</p>
+    <h2>📘 COMO JOGAR</h2>
 
-        <p>❓ Responda perguntas para ganhar pontos.</p>
+    <p>🎲 Jogue o dado e avance pelo caminho.</p>
 
-        <p>💪 Faça desafios físicos para ganhar pontos.</p>
+    <p>⚡ A energia diminui quando você avança.</p>
 
-        <p>📱 Cuidado com o sedentarismo!</p>
+    <p>💪 Os desafios recuperam energia.</p>
 
-        <p>❤️ Bônus aumentam seus Pontos de Saúde.</p>
+    <p>🧠 As perguntas aumentam seu conhecimento.</p>
 
-        <p>🏆 Quem chegar primeiro à chegada termina o jogo.</p>
+    <p>❤️ Eventos e desafios ajudam sua saúde.</p>
 
-        <p><b>Vence quem tiver mais Pontos de Saúde!</b></p>
+    <p>🏁 Ao chegar ao final, os pontos são calculados.</p>
 
-        <button onclick="fecharModal()">FECHAR</button>
+    <p>
+    <b>Saúde × 3 + Energia + Conhecimento × 2
+    = pontuação final.</b>
+    </p>
+
+    <p>
+    Portanto, chegar primeiro não garante a vitória!
+    </p>
+
+    <button onclick="closeModal()">FECHAR</button>
+
     `);
-}
 
-function novoJogo(){
-
-    location.reload();
 }
 
 </script>
