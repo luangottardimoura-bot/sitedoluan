@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futebol Retrô - Física Realista</title>
+<title>Super Soccer Arcade 90s</title>
 <style>
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #090c10;
+    background: #0d0f12;
     color: #fff;
     font-family: 'Courier New', Courier, monospace;
     display: flex;
@@ -19,34 +19,34 @@
   }
 
   h1 {
-    color: #00ff66;
+    color: #ffea00;
     margin: 10px 0 5px;
-    text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+    text-shadow: 2px 2px #ff0055;
     font-size: 24px;
   }
 
   canvas {
-    background: #125424;
+    background: #1e8535;
     border: 4px solid #fff;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
     image-rendering: pixelated;
   }
 
   .hud {
     margin-top: 10px;
     font-size: 13px;
-    color: #aaa;
+    color: #ccc;
   }
 
-  .destaque { color: #ffcc00; font-weight: bold; }
+  .destaque { color: #ffea00; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<h1>⚽ FUTEBOL RETRÔ REALISTA ⚽</h1>
+<h1>⚡ SUPER SOCCER ARCADE ⚡</h1>
 <canvas id="campo" width="800" height="500"></canvas>
 <div class="hud">
-  WASD: Mover | <span class="destaque">Segure ESPAÇO: Carregar Chute</span> | <span class="destaque">E: Passe Rápido</span>
+  WASD: Mover | <span class="destaque">SHIFT: Pique</span> | <span class="destaque">ESPAÇO: Chute Direcionado</span> | <span class="destaque">K: Carrinho / Roubar Bola</span>
 </div>
 
 <script>
@@ -70,292 +70,277 @@ function tocarSom(freq, tipo = 'sine', duracao = 0.1, vol = 0.2) {
   osc.stop(audioCtx.currentTime + duracao);
 }
 
-// Entidade com física de inércia
-class Atleta {
-  constructor(x, y, cor, eGoleiro = false) {
+class Jogador {
+  constructor(x, y, cor, eJogador = false) {
     this.x = x;
     this.y = y;
     this.vx = 0;
     this.vy = 0;
-    this.massa = 1.2;
-    this.tam = 22;
-    this.acel = 0.45;
-    this.atrito = 0.86;
+    this.tam = 18;
     this.cor = cor;
-    this.eGoleiro = eGoleiro;
+    this.eJogador = eJogador;
+    this.estamina = 100;
+    this.emCarrinho = false;
+    this.tempoCarrinho = 0;
+    this.miraAngulo = 0;
   }
 
   atualizar() {
-    this.vx *= this.atrito;
-    this.vy *= this.atrito;
-    this.x += this.vx;
-    this.y += this.vy;
+    if (this.emCarrinho) {
+      this.tempoCarrinho--;
+      this.x += this.vx * 1.5;
+      this.y += this.vy * 1.5;
+      if (this.tempoCarrinho <= 0) this.emCarrinho = false;
+    } else {
+      this.vx *= 0.85;
+      this.vy *= 0.85;
+      this.x += this.vx;
+      this.y += this.vy;
+    }
 
-    // Limites do campo
-    this.x = Math.max(20, Math.min(780, this.x));
-    this.y = Math.max(20, Math.min(480, this.y));
+    this.x = Math.max(25, Math.min(775, this.x));
+    this.y = Math.max(25, Math.min(475, this.y));
   }
 }
 
-const jogador = new Atleta(220, 250, "#00a2ff");
-const goleiroAzul = new Atleta(30, 250, "#00f3ff", true);
-
-const oponente = new Atleta(580, 250, "#ff3344");
-const goleiroVermelho = new Atleta(770, 250, "#ff8800", true);
+const p1 = new Jogador(250, 250, "#00e1ff", true);
+const rival = new Jogador(550, 250, "#ff0055", false);
+const goleiroEsq = new Jogador(35, 250, "#00ff66", false);
+const goleiroDir = new Jogador(765, 250, "#ffaa00", false);
 
 const bola = {
-  x: 400,
-  y: 250,
-  vx: 0,
-  vy: 0,
-  raio: 7,
-  massa: 0.4,
-  atrito: 0.982,
-  rastro: []
+  x: 400, y: 250, vx: 0, vy: 0, raio: 6, atrito: 0.981
 };
 
 let teclas = {};
-let golsJogador = 0;
-let golsOponente = 0;
-let forcaChute = 0;
-let carregandoChute = false;
+let placarA = 0;
+let placarB = 0;
+let tremorCam = 0;
 let textoGolTempo = 0;
 
 document.addEventListener("keydown", e => {
   teclas[e.key.toLowerCase()] = true;
 
-  if (e.code === "Space" && !carregandoChute) {
-    carregandoChute = true;
-    forcaChute = 0;
+  if (e.code === "Space" && Math.hypot(p1.x - bola.x, p1.y - bola.y) < 35) {
+    bola.vx = Math.cos(p1.miraAngulo) * 14;
+    bola.vy = Math.sin(p1.miraAngulo) * 14;
+    tocarSom(300, "square", 0.12, 0.3);
   }
-  if (e.key.toLowerCase() === "e") {
-    executarChute(6);
+
+  if (e.key.toLowerCase() === "k" && !p1.emCarrinho && p1.estamina > 20) {
+    p1.emCarrinho = true;
+    p1.tempoCarrinho = 18;
+    p1.estamina -= 20;
+    tocarSom(150, "sawtooth", 0.15, 0.2);
   }
 });
 
 document.addEventListener("keyup", e => {
   teclas[e.key.toLowerCase()] = false;
-
-  if (e.code === "Space" && carregandoChute) {
-    executarChute(4 + (forcaChute / 100) * 12);
-    carregandoChute = false;
-    forcaChute = 0;
-  }
 });
 
-function dist(a, b) {
-  return Math.hypot(a.x - b.x, a.y - b.y);
-}
+function IA_Controlar(bot, alvoX, alvoY, velMax) {
+  if (bot.emCarrinho) return;
+  const dx = alvoX - bot.x;
+  const dy = alvoY - bot.y;
+  const d = Math.hypot(dx, dy);
 
-function executarChute(potencia) {
-  if (dist(jogador, bola) < 38) {
-    const ang = Math.atan2(bola.y - jogador.y, bola.x - jogador.x);
-    bola.vx = Math.cos(ang) * potencia + jogador.vx * 0.5;
-    bola.vy = Math.sin(ang) * potencia + jogador.vy * 0.5;
-    tocarSom(180 + potencia * 15, "square", 0.12, 0.3);
-  }
-}
-
-function resolverColisao(p, b) {
-  const d = dist(p, b);
-  const raioMin = p.tam / 2 + b.raio;
-
-  if (d < raioMin) {
-    const ang = Math.atan2(b.y - p.y, b.x - p.x);
-    const sobreposicao = raioMin - d;
-
-    // Empurra a bola para fora do corpo do jogador
-    b.x += Math.cos(ang) * sobreposicao;
-    b.y += Math.sin(ang) * sobreposicao;
-
-    // Transferência de momento linear (física realista de impacto)
-    const velRelativaX = b.vx - p.vx;
-    const velRelativaY = b.vy - p.vy;
-    const velEmAngulo = velRelativaX * Math.cos(ang) + velRelativaY * Math.sin(ang);
-
-    if (velEmAngulo < 0) {
-      const impulso = (2 * velEmAngulo) / (p.massa + b.massa);
-      b.vx -= impulso * p.massa * Math.cos(ang) * 0.8;
-      b.vy -= impulso * p.massa * Math.sin(ang) * 0.8;
-      p.vx += impulso * b.massa * Math.cos(ang) * 0.2;
-      p.vy += impulso * b.massa * Math.sin(ang) * 0.2;
-      tocarSom(120, "sine", 0.04, 0.1);
+  if (d > 5) {
+    bot.vx += (dx / d) * 0.35;
+    bot.vy += (dy / d) * 0.35;
+    const vAtual = Math.hypot(bot.vx, bot.vy);
+    if (vAtual > velMax) {
+      bot.vx = (bot.vx / vAtual) * velMax;
+      bot.vy = (bot.vy / vAtual) * velMax;
     }
   }
-}
 
-function IA_Goleiro(goleiro, xFixa) {
-  goleiro.x = xFixa;
-  const alvoY = Math.max(180, Math.min(320, bola.y));
-  const dy = alvoY - goleiro.y;
-  goleiro.vy += Math.sign(dy) * 0.3;
-}
-
-function IA_Oponente(p) {
-  const dy = bola.y - p.y;
-  const dx = bola.x - p.x;
-  p.vx += Math.sign(dx) * 0.25;
-  p.vy += Math.sign(dy) * 0.25;
-
-  if (dist(p, bola) < 32 && Math.random() < 0.08) {
-    const ang = Math.atan2(250 - p.y, 0 - p.x);
-    bola.vx = Math.cos(ang) * 11;
-    bola.vy = Math.sin(ang) * 11;
-    tocarSom(220, "square", 0.1, 0.2);
+  // Carrinho da IA
+  if (d < 30 && Math.random() < 0.03 && !bot.emCarrinho) {
+    bot.emCarrinho = true;
+    bot.tempoCarrinho = 15;
+    tocarSom(140, "sawtooth", 0.1, 0.2);
   }
+}
+
+function resolverColisoes() {
+  const todos = [p1, rival, goleiroEsq, goleiroDir];
+
+  todos.forEach(p => {
+    const d = Math.hypot(p.x - bola.x, p.y - bola.y);
+    const limite = p.tam + bola.raio;
+
+    if (d < limite) {
+      const ang = Math.atan2(bola.y - p.y, bola.x - p.x);
+      const forca = p.emCarrinho ? 8 : 3.5;
+      bola.vx = Math.cos(ang) * forca;
+      bola.vy = Math.sin(ang) * forca;
+      tocarSom(180, "sine", 0.05, 0.1);
+    }
+  });
 }
 
 function atualizar() {
-  // Carregamento da barra de força
-  if (carregandoChute) {
-    forcaChute = Math.min(100, forcaChute + 3);
+  // Controle P1 + Pique
+  let velAcel = 0.45;
+  let velMax = 3.5;
+
+  if (teclas["shift"] && p1.estamina > 1) {
+    velMax = 5.2;
+    p1.estamina -= 0.8;
+  } else if (p1.estamina < 100) {
+    p1.estamina += 0.4;
   }
 
-  // Controles de movimento do Jogador (Aceleração contínua)
-  if (teclas["w"] || teclas["arrowup"]) jogador.vy -= jogador.acel;
-  if (teclas["s"] || teclas["arrowdown"]) jogador.vy += jogador.acel;
-  if (teclas["a"] || teclas["arrowleft"]) jogador.vx -= jogador.acel;
-  if (teclas["d"] || teclas["arrowright"]) jogador.vx += jogador.acel;
+  if (!p1.emCarrinho) {
+    if (teclas["w"]) p1.vy -= velAcel;
+    if (teclas["s"]) p1.vy += velAcel;
+    if (teclas["a"]) p1.vx -= velAcel;
+    if (teclas["d"]) p1.vx += velAcel;
 
-  // Atualizar Entidades
-  [jogador, oponente, goleiroAzul, goleiroVermelho].forEach(p => p.atualizar());
-
-  IA_Oponente(oponente);
-  IA_Goleiro(goleiroAzul, 25);
-  IA_Goleiro(goleiroVermelho, 775);
-
-  // Colisões Físicas
-  [jogador, oponente, goleiroAzul, goleiroVermelho].forEach(p => resolverColisao(p, bola));
-
-  // Física da Bola
-  if (Math.hypot(bola.vx, bola.vy) > 1.5) {
-    bola.rastro.push({ x: bola.x, y: bola.y, a: 0.5 });
+    const vP1 = Math.hypot(p1.vx, p1.vy);
+    if (vP1 > velMax) {
+      p1.vx = (p1.vx / vP1) * velMax;
+      p1.vy = (p1.vy / vP1) * velMax;
+    }
   }
-  if (bola.rastro.length > 6) bola.rastro.shift();
 
+  // Ângulo de mira baseado no movimento ou na bola
+  p1.miraAngulo = Math.atan2(250 - p1.y, 800 - p1.x);
+
+  // IAs
+  IA_Controlar(rival, bola.x, bola.y, 3.2);
+  IA_Controlar(goleiroEsq, 35, Math.max(170, Math.min(330, bola.y)), 2.8);
+  IA_Controlar(goleiroDir, 765, Math.max(170, Math.min(330, bola.y)), 2.8);
+
+  p1.atualizar();
+  rival.atualizar();
+  goleiroEsq.atualizar();
+  goleiroDir.atualizar();
+
+  resolverColisoes();
+
+  // Movimento Bola
   bola.x += bola.vx;
   bola.y += bola.vy;
   bola.vx *= bola.atrito;
   bola.vy *= bola.atrito;
 
-  // Paredes
-  if (bola.y - bola.raio < 5 || bola.y + bola.raio > 495) {
-    bola.vy *= -0.8;
-    tocarSom(150, "triangle", 0.05, 0.15);
+  // Bordas
+  if (bola.y < 15 || bola.y > 485) bola.vy *= -0.8;
+  if ((bola.x < 15 || bola.x > 785) && (bola.y < 170 || bola.y > 330)) bola.vx *= -0.8;
+
+  // Gol
+  if (bola.y >= 170 && bola.y <= 330) {
+    if (bola.x > 790) { placarA++; pontuar(); }
+    if (bola.x < 10) { placarB++; pontuar(); }
   }
 
-  // Traves laterais
-  if ((bola.x - bola.raio < 5 || bola.x + bola.raio > 795) && (bola.y <= 180 || bola.y >= 320)) {
-    bola.vx *= -0.8;
-    tocarSom(150, "triangle", 0.05, 0.15);
-  }
-
-  // Detecção de Gol
-  if (bola.y > 180 && bola.y < 320) {
-    if (bola.x > 792) {
-      golsJogador++;
-      textoGolTempo = 50;
-      tocarSom(523, "sine", 0.25, 0.3);
-      reset();
-    }
-    if (bola.x < 8) {
-      golsOponente++;
-      textoGolTempo = 50;
-      tocarSom(130, "sawtooth", 0.25, 0.3);
-      reset();
-    }
-  }
+  if (tremorCam > 0) tremorCam--;
 }
 
-function reset() {
-  bola.x = 400; bola.y = 250; bola.vx = 0; bola.vy = 0; bola.rastro = [];
-  jogador.x = 220; jogador.y = 250; jogador.vx = 0; jogador.vy = 0;
-  oponente.x = 580; oponente.y = 250; oponente.vx = 0; oponente.vy = 0;
+function pontuar() {
+  textoGolTempo = 50;
+  tremorCam = 15;
+  tocarSom(587, "square", 0.3, 0.4);
+  bola.x = 400; bola.y = 250; bola.vx = 0; bola.vy = 0;
+  p1.x = 250; p1.y = 250;
+  rival.x = 550; rival.y = 250;
 }
 
 function desenhar() {
-  ctx.clearRect(0, 0, 800, 500);
-
-  // Gramado com textura de listras
-  for (let i = 0; i < 800; i += 80) {
-    ctx.fillStyle = (i / 80) % 2 === 0 ? "#125424" : "#145d28";
-    ctx.fillRect(i, 0, 80, 500);
+  ctx.save();
+  if (tremorCam > 0) {
+    ctx.translate((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
   }
 
-  // Marcações de campo
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(5, 5, 790, 490);
+  ctx.clearRect(0, 0, 800, 500);
 
+  // Gramado Retro
+  ctx.fillStyle = "#1e8535";
+  ctx.fillRect(0, 0, 800, 500);
+  ctx.fillStyle = "#186e2b";
+  for (let i = 0; i < 800; i += 100) {
+    ctx.fillRect(i, 0, 50, 500);
+  }
+
+  // Linhas
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(10, 10, 780, 480);
   ctx.beginPath();
-  ctx.moveTo(400, 5); ctx.lineTo(400, 495);
-  ctx.arc(400, 250, 65, 0, Math.PI * 2);
+  ctx.moveTo(400, 10); ctx.lineTo(400, 490);
+  ctx.arc(400, 250, 60, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.strokeRect(5, 150, 90, 200);
-  ctx.strokeRect(705, 150, 90, 200);
-
   // Traves
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 180, 6, 140);
-  ctx.fillRect(794, 180, 6, 140);
+  ctx.strokeRect(10, 170, 50, 160);
+  ctx.strokeRect(740, 170, 50, 160);
 
-  // Rastro
-  bola.rastro.forEach(p => {
-    ctx.fillStyle = `rgba(255, 255, 255, ${p.a})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, bola.raio * 0.7, 0, Math.PI * 2);
-    ctx.fill();
-    p.a -= 0.08;
-  });
-
-  // Bola com sombra
-  ctx.fillStyle = "rgba(0,0,0,0.25)";
+  // Bola e Sombra
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.beginPath();
-  ctx.ellipse(bola.x, bola.y + 6, 7, 3, 0, 0, Math.PI * 2);
+  ctx.arc(bola.x + 3, bola.y + 4, bola.raio, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.arc(bola.x, bola.y, bola.raio, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 1;
-  ctx.stroke();
 
-  // Jogadores com sombras dinâmicas
-  [jogador, oponente, goleiroAzul, goleiroVermelho].forEach(p => {
+  // Jogadores
+  [p1, rival, goleiroEsq, goleiroDir].forEach(p => {
     ctx.fillStyle = "rgba(0,0,0,0.3)";
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 10, 10, 4, 0, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y + 8, p.tam, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = p.cor;
-    ctx.fillRect(p.x - p.tam / 2, p.y - p.tam / 2, p.tam, p.tam);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 2;
     ctx.strokeStyle = "#fff";
-    ctx.strokeRect(p.x - p.tam / 2, p.y - p.tam / 2, p.tam, p.tam);
+    ctx.stroke();
+
+    // Efeito Carrinho
+    if (p.emCarrinho) {
+      ctx.fillStyle = "rgba(255,255,255,0.4)";
+      ctx.beginPath();
+      ctx.arc(p.x - p.vx * 2, p.y - p.vy * 2, p.tam * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
   });
 
-  // Placar HUD
-  ctx.fillStyle = "#fff";
-  ctx.font = "bold 26px monospace";
-  ctx.fillText(`${golsJogador}  -  ${golsOponente}`, 355, 40);
-
-  // Barra de carregamento do chute
-  if (carregandoChute) {
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
-    ctx.fillRect(jogador.x - 20, jogador.y - 25, 40, 6);
-    ctx.fillStyle = forcaChute > 70 ? "#ff3300" : "#ffcc00";
-    ctx.fillRect(jogador.x - 20, jogador.y - 25, (forcaChute / 100) * 40, 6);
+  // Guia de mira do P1
+  if (Math.hypot(p1.x - bola.x, p1.y - bola.y) < 35) {
+    ctx.strokeStyle = "#ffea00";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p1.x + Math.cos(p1.miraAngulo) * 40, p1.y + Math.sin(p1.miraAngulo) * 40);
+    ctx.stroke();
   }
 
-  // Texto de Gol
+  // HUD / Placar
+  ctx.fillStyle = "#ffea00";
+  ctx.font = "bold 28px monospace";
+  ctx.fillText(`${placarA} - ${placarB}`, 360, 45);
+
+  // Barra de Estamina
+  ctx.fillStyle = "#333";
+  ctx.fillRect(20, 20, 100, 8);
+  ctx.fillStyle = p1.estamina > 20 ? "#00e1ff" : "#ff0055";
+  ctx.fillRect(20, 20, p1.estamina, 8);
+
   if (textoGolTempo > 0) {
-    ctx.fillStyle = "#ffcc00";
-    ctx.font = "bold 55px monospace";
-    ctx.fillText("G O L !", 310, 260);
+    ctx.fillStyle = "#ffea00";
+    ctx.font = "bold 60px monospace";
+    ctx.fillText("GOOOOL!", 270, 260);
     textoGolTempo--;
   }
+
+  ctx.restore();
 }
 
 function loop() {
