@@ -3,301 +3,363 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zombie Survival 1v1</title>
+<title>Arena de Tiro 2P - Turbo</title>
+
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #0a0a0c;
-    color: #fff;
-    font-family: 'Courier New', Courier, monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  h1 {
-    color: #ff3333;
-    margin: 10px 0 5px;
-    text-shadow: 0 0 10px #ff0000;
-    font-size: 22px;
-  }
+body {
+  margin: 0;
+  background: #06060c;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  user-select: none;
+}
 
-  canvas {
-    background: #15181c;
-    border: 3px solid #ff3333;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-  }
+h1 {
+  color: #00f3ff;
+  text-shadow: 0 0 15px #00f3ff;
+  margin: 15px 0 5px;
+  letter-spacing: 2px;
+}
 
-  .hud {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #aaa;
-    display: flex;
-    gap: 20px;
-  }
+canvas {
+  background: #0d0d1a;
+  border: 3px solid #00f3ff;
+  box-shadow: 0 0 35px rgba(0, 243, 255, 0.3);
+  max-width: 95vw;
+}
 
-  .p1-text { color: #00a2ff; font-weight: bold; }
-  .p2-text { color: #ffaa00; font-weight: bold; }
+.info {
+  margin-bottom: 10px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.azul { color: #00f3ff; font-weight: bold; }
+.vermelho { color: #ff1744; font-weight: bold; }
 </style>
 </head>
+
 <body>
 
-<h1>🧟 ZOMBIE SURVIVAL - MODO 1v1 🧟</h1>
-<canvas id="gameCanvas" width="800" height="500"></canvas>
-<div class="hud">
-  <div><span class="p1-text">P1 (Azul):</span> WASD: Mover | ESPAÇO: Atirar</div>
-  <div><span class="p2-text">P2 (Laranja):</span> Setas: Mover | ENTER: Atirar</div>
+<h1>ARENA DE TIRO 2P - TURBO</h1>
+
+<div class="info">
+  <span class="azul">P1: WASD + F</span>
+  &nbsp; | &nbsp;
+  <span class="vermelho">P2: SETAS + L</span>
 </div>
 
+<canvas id="game" width="900" height="550"></canvas>
+
 <script>
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
+// --- SISTEMA DE ÁUDIO SINTETIZADO ---
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
 
-function tocarSom(freq, tipo = 'sine', duracao = 0.1, vol = 0.2) {
+function initAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
   if (audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = tipo;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duracao);
 }
 
-class Jogador {
-  constructor(x, y, cor, id) {
-    this.x = x;
-    this.y = y;
-    this.cor = cor;
-    this.id = id;
-    this.raio = 15;
-    this.velocidade = 3.5;
-    this.angulo = 0;
-    this.vida = 100;
-    this.pontos = 0;
-    this.vivo = true;
-    this.recarregando = 0;
-  }
-
-  desenhar() {
-    if (!this.vivo) return;
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angulo);
-
-    // Arma
-    ctx.fillStyle = "#888";
-    ctx.fillRect(0, -3, 22, 6);
-
-    // Corpo
-    ctx.fillStyle = this.cor;
-    ctx.beginPath();
-    ctx.arc(0, 0, this.raio, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
+function tocarSom(freq, tipo, duracao, vol = 0.1) {
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = tipo;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duracao);
+  } catch(e) {}
 }
 
-const p1 = new Jogador(200, 250, "#00a2ff", 1);
-const p2 = new Jogador(600, 250, "#ffaa00", 2);
-
-let tiros = [];
-let zumbis = [];
-let teclas = {};
-let tempoGerarZumbi = 0;
-let vencedor = null;
+const teclas = {};
 
 document.addEventListener("keydown", e => {
-  teclas[e.code] = true;
+  initAudio();
+  teclas[e.key.toLowerCase()] = true;
 
-  if (e.code === "Space" && p1.vivo && p1.recarregando <= 0) {
-    atirar(p1);
-    p1.recarregando = 10;
-  }
-  if (e.code === "Enter" && p2.vivo && p2.recarregando <= 0) {
-    atirar(p2);
-    p2.recarregando = 10;
-  }
-  if (vencedor && e.code === "KeyR") {
-    reiniciarJogo();
-  }
+  if (e.key.toLowerCase() === "f") atirar(jogador1);
+  if (e.key.toLowerCase() === "l") atirar(jogador2);
+  if (e.key.toLowerCase() === "r" && jogoAcabou) reiniciar();
 });
 
-document.addEventListener("keyup", e => teclas[e.code] = false);
+document.addEventListener("keyup", e => {
+  teclas[e.key.toLowerCase()] = false;
+});
 
-function atirar(jogador) {
-  tiros.push({
-    x: jogador.x + Math.cos(jogador.angulo) * jogador.raio,
-    y: jogador.y + Math.sin(jogador.angulo) * jogador.raio,
-    vx: Math.cos(jogador.angulo) * 10,
-    vy: Math.sin(jogador.angulo) * 10,
-    raio: 4,
-    donoId: jogador.id
-  });
-  tocarSom(400, "square", 0.08, 0.2);
+const jogador1 = {
+  id: 1, x: 120, y: 275, tamanho: 24, velocidade: 4,
+  cor: "#00f3ff", pontos: 0, direcaoX: 1, direcaoY: 0,
+  cooldown: 0, recuo: 0, escudos: 0, tiroTriplo: 0
+};
+
+const jogador2 = {
+  id: 2, x: 780, y: 275, tamanho: 24, velocidade: 4,
+  cor: "#ff1744", pontos: 0, direcaoX: -1, direcaoY: 0,
+  cooldown: 0, recuo: 0, escudos: 0, tiroTriplo: 0
+};
+
+let balas = [];
+let particulas = [];
+let powerups = [];
+let jogoAcabou = false;
+let vencedor = "";
+let screenShake = 0;
+let tempoPowerup = 0;
+
+const obstaculos = [
+  {x: 400, y: 150, w: 100, h: 30},
+  {x: 400, y: 370, w: 100, h: 30},
+  {x: 270, y: 225, w: 30, h: 100},
+  {x: 600, y: 225, w: 30, h: 100}
+];
+
+function moverJogador(p, controles) {
+  let dx = 0, dy = 0;
+
+  if (teclas[controles.cima]) dy--;
+  if (teclas[controles.baixo]) dy++;
+  if (teclas[controles.esquerda]) dx--;
+  if (teclas[controles.direita]) dx++;
+
+  if (dx !== 0 || dy !== 0) {
+    const tamanho = Math.hypot(dx, dy);
+    dx /= tamanho;
+    dy /= tamanho;
+
+    p.x += dx * p.velocidade;
+    p.y += dy * p.velocidade;
+
+    p.direcaoX = dx;
+    p.direcaoY = dy;
+  }
+
+  tratarColisaoObstaculos(p);
+
+  p.x = Math.max(15, Math.min(canvas.width - 15, p.x));
+  p.y = Math.max(15, Math.min(canvas.height - 15, p.y));
 }
 
-function criarZumbi() {
-  let x, y;
-  if (Math.random() < 0.5) {
-    x = Math.random() < 0.5 ? -20 : canvas.width + 20;
-    y = Math.random() * canvas.height;
-  } else {
-    x = Math.random() * canvas.width;
-    y = Math.random() < 0.5 ? -20 : canvas.height + 20;
-  }
+function tratarColisaoObstaculos(p) {
+  const raio = p.tamanho / 2;
+  for (const o of obstaculos) {
+    if (p.x + raio > o.x && p.x - raio < o.x + o.w &&
+        p.y + raio > o.y && p.y - raio < o.y + o.h) {
+      const centroX = o.x + o.w / 2;
+      const centroY = o.y + o.h / 2;
+      const diffX = p.x - centroX;
+      const diffY = p.y - centroY;
+      const overlapX = (o.w / 2 + raio) - Math.abs(diffX);
+      const overlapY = (o.h / 2 + raio) - Math.abs(diffY);
 
-  zumbis.push({
-    x: x,
-    y: y,
-    raio: 14,
-    velocidade: 1 + Math.random() * 1.5,
-    vida: 2
-  });
-}
-
-function atualizar() {
-  if (vencedor) return;
-
-  // Movimento P1 (WASD)
-  let vx1 = 0, vy1 = 0;
-  if (teclas["KeyW"] && p1.y > p1.raio) vy1--;
-  if (teclas["KeyS"] && p1.y < canvas.height - p1.raio) vy1++;
-  if (teclas["KeyA"] && p1.x > p1.raio) vx1--;
-  if (teclas["KeyD"] && p1.x < canvas.width - p1.raio) vx1++;
-
-  if (vx1 !== 0 || vy1 !== 0) {
-    p1.x += vx1 * p1.velocidade;
-    p1.y += vy1 * p1.velocidade;
-    p1.angulo = Math.atan2(vy1, vx1);
-  }
-
-  // Movimento P2 (Setas)
-  let vx2 = 0, vy2 = 0;
-  if (teclas["ArrowUp"] && p2.y > p2.raio) vy2--;
-  if (teclas["ArrowDown"] && p2.y < canvas.height - p2.raio) vy2++;
-  if (teclas["ArrowLeft"] && p2.x > p2.raio) vx2--;
-  if (teclas["ArrowRight"] && p2.x < canvas.width - p2.raio) vx2++;
-
-  if (vx2 !== 0 || vy2 !== 0) {
-    p2.x += vx2 * p2.velocidade;
-    p2.y += vy2 * p2.velocidade;
-    p2.angulo = Math.atan2(vy2, vx2);
-  }
-
-  if (p1.recarregando > 0) p1.recarregando--;
-  if (p2.recarregando > 0) p2.recarregando--;
-
-  // Criar zumbis
-  tempoGerarZumbi++;
-  if (tempoGerarZumbi > 30) {
-    criarZumbi();
-    tempoGerarZumbi = 0;
-  }
-
-  // Atualizar Tiros
-  for (let i = tiros.length - 1; i >= 0; i--) {
-    let t = tiros[i];
-    t.x += t.vx;
-    t.y += t.vy;
-
-    if (t.x < 0 || t.x > canvas.width || t.y < 0 || t.y > canvas.height) {
-      tiros.splice(i, 1);
-      continue;
-    }
-
-    // Tiro acerta oponente
-    [p1, p2].forEach(p => {
-      if (p.vivo && p.id !== t.donoId) {
-        if (Math.hypot(p.x - t.x, p.y - t.y) < p.raio + t.raio) {
-          p.vida -= 15;
-          tiros.splice(i, 1);
-          tocarSom(120, "sawtooth", 0.1, 0.2);
-        }
+      if (overlapX < overlapY) {
+        p.x += diffX > 0 ? overlapX : -overlapX;
+      } else {
+        p.y += diffY > 0 ? overlapY : -overlapY;
       }
+    }
+  }
+}
+
+function atirar(p) {
+  if (jogoAcabou || p.cooldown > 0) return;
+
+  const criarBala = (angleOffset = 0) => {
+    const cos = Math.cos(angleOffset);
+    const sin = Math.sin(angleOffset);
+    const vx = p.direcaoX * cos - p.direcaoY * sin;
+    const vy = p.direcaoX * sin + p.direcaoY * cos;
+
+    balas.push({
+      x: p.x + vx * 18,
+      y: p.y + vy * 18,
+      vx: vx * 10,
+      vy: vy * 10,
+      cor: p.cor,
+      dono: p,
+      ricochete: 1,
+      rastro: []
+    });
+  };
+
+  if (p.tiroTriplo > 0) {
+    criarBala(-0.25);
+    criarBala(0);
+    criarBala(0.25);
+    p.tiroTriplo--;
+  } else {
+    criarBala(0);
+  }
+
+  p.cooldown = 12;
+  p.recuo = 6;
+  tocarSom(300, 'square', 0.08, 0.15);
+}
+
+function gerarPowerup() {
+  if (powerups.length >= 2) return;
+  const tipos = ['escudo', 'triplo'];
+  const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+  const x = 100 + Math.random() * (canvas.width - 200);
+  const y = 100 + Math.random() * (canvas.height - 200);
+
+  // Evitar nascer dentro de obstáculos
+  for (const o of obstaculos) {
+    if (x > o.x - 20 && x < o.x + o.w + 20 && y > o.y - 20 && y < o.y + o.h + 20) return;
+  }
+
+  powerups.push({ x, y, tipo, tempo: 400 });
+}
+
+function criarExplosao(x, y, cor, qtd = 20) {
+  for (let i = 0; i < qtd; i++) {
+    particulas.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8,
+      vida: 25 + Math.random() * 15,
+      cor: cor,
+      tamanho: 2 + Math.random() * 3
     });
   }
+}
 
-  // Atualizar Zumbis
-  for (let i = zumbis.length - 1; i >= 0; i--) {
-    let z = zumbis[i];
+function atualizarBalas() {
+  for (let i = balas.length - 1; i >= 0; i--) {
+    const b = balas[i];
 
-    // Zumbi persegue o jogador vivo mais próximo
-    let alvo = null;
-    let dist1 = p1.vivo ? Math.hypot(p1.x - z.x, p1.y - z.y) : Infinity;
-    let dist2 = p2.vivo ? Math.hypot(p2.x - z.x, p2.y - z.y) : Infinity;
+    b.rastro.push({x: b.x, y: b.y});
+    if (b.rastro.length > 5) b.rastro.shift();
 
-    if (dist1 < dist2) alvo = p1;
-    else if (dist2 < dist1) alvo = p2;
+    b.x += b.vx;
+    b.y += b.vy;
 
-    if (alvo) {
-      const dx = alvo.x - z.x;
-      const dy = alvo.y - z.y;
-      const dist = Math.hypot(dx, dy);
-      z.x += (dx / dist) * z.velocidade;
-      z.y += (dy / dist) * z.velocidade;
+    // Colisão com bordas da tela (Ricochete)
+    if (b.x < 5 || b.x > canvas.width - 5) {
+      if (b.ricochete > 0) { b.vx *= -1; b.ricochete--; tocarSom(150, 'sine', 0.05); }
+      else { balas.splice(i, 1); continue; }
+    }
+    if (b.y < 5 || b.y > canvas.height - 5) {
+      if (b.ricochete > 0) { b.vy *= -1; b.ricochete--; tocarSom(150, 'sine', 0.05); }
+      else { balas.splice(i, 1); continue; }
+    }
 
-      if (dist < alvo.raio + z.raio) {
-        alvo.vida -= 0.6;
-        tocarSom(100, "sawtooth", 0.05, 0.05);
+    // Colisão com obstáculos
+    for (const o of obstaculos) {
+      if (b.x > o.x && b.x < o.x + o.w && b.y > o.y && b.y < o.y + o.h) {
+        if (b.ricochete > 0) {
+          // Determina o lado do impacto para rebater corretamente
+          const prevX = b.x - b.vx;
+          if (prevX <= o.x || prevX >= o.x + o.w) b.vx *= -1;
+          else b.vy *= -1;
+          b.ricochete--;
+          tocarSom(150, 'sine', 0.05);
+        } else {
+          criarExplosao(b.x, b.y, "#888", 5);
+          balas.splice(i, 1);
+          break;
+        }
       }
     }
 
-    // Colisão com Tiros
-    for (let j = tiros.length - 1; j >= 0; j--) {
-      let t = tiros[j];
-      if (Math.hypot(z.x - t.x, z.y - t.y) < z.raio + t.raio) {
-        z.vida--;
-        tiros.splice(j, 1);
-        tocarSom(250, "sine", 0.05, 0.1);
+    if (!balas[i]) continue;
 
-        if (z.vida <= 0) {
-          if (t.donoId === 1) p1.pontos += 10;
-          if (t.donoId === 2) p2.pontos += 10;
-          zumbis.splice(i, 1);
+    // Colisão com Jogadores
+    const alvo = b.dono === jogador1 ? jogador2 : jogador1;
+    if (Math.hypot(b.x - alvo.x, b.y - alvo.y) < 18) {
+      if (alvo.escudos > 0) {
+        alvo.escudos--;
+        criarExplosao(alvo.x, alvo.y, "#00ff88", 15);
+        tocarSom(500, 'triangle', 0.15);
+      } else {
+        b.dono.pontos++;
+        screenShake = 12;
+        criarExplosao(alvo.x, alvo.y, alvo.cor, 30);
+        tocarSom(100, 'sawtooth', 0.3, 0.3);
+        resetarPosicoes();
+
+        if (b.dono.pontos >= 10) {
+          jogoAcabou = true;
+          vencedor = b.dono === jogador1 ? "JOGADOR 1" : "JOGADOR 2";
         }
-        break;
       }
+      balas.splice(i, 1);
     }
   }
-
-  // Checar mortes e fim de jogo
-  if (p1.vida <= 0) { p1.vivo = false; p1.vida = 0; }
-  if (p2.vida <= 0) { p2.vivo = false; p2.vida = 0; }
-
-  if (!p1.vivo && !p2.vivo) vencedor = "EMPATE!";
-  else if (!p1.vivo) vencedor = "JOGADOR 2 VENCEU!";
-  else if (!p2.vivo) vencedor = "JOGADOR 1 VENCEU!";
 }
 
-function desenharBarraVida(x, y, vida, cor, nome) {
-  ctx.fillStyle = "#fff";
-  ctx.font = "bold 14px monospace";
-  ctx.fillText(nome, x, y - 5);
+function atualizarPowerups() {
+  tempoPowerup++;
+  if (tempoPowerup > 300) {
+    gerarPowerup();
+    tempoPowerup = 0;
+  }
 
-  ctx.fillStyle = "#333";
-  ctx.fillRect(x, y, 150, 12);
-  ctx.fillStyle = cor;
-  ctx.fillRect(x, y, Math.max(0, vida * 1.5), 12);
-  ctx.strokeStyle = "#fff";
-  ctx.strokeRect(x, y, 150, 12);
+  for (let i = powerups.length - 1; i >= 0; i--) {
+    const pw = powerups[i];
+    pw.tempo--;
+
+    [jogador1, jogador2].forEach(p => {
+      if (Math.hypot(pw.x - p.x, pw.y - p.y) < 25) {
+        if (pw.tipo === 'escudo') p.escudos = 1;
+        if (pw.tipo === 'triplo') p.tiroTriplo = 5;
+        tocarSom(600, 'sine', 0.2, 0.2);
+        powerups.splice(i, 1);
+      }
+    });
+
+    if (pw.tempo <= 0) powerups.splice(i, 1);
+  }
 }
 
-function desenhar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function atualizarParticulas() {
+  for (let i = particulas.length - 1; i >= 0; i--) {
+    const p = particulas[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.92;
+    p.vy *= 0.92;
+    p.vida--;
+    if (p.vida <= 0) particulas.splice(i, 1);
+  }
+}
 
-  // Grade do piso
+function resetarPosicoes() {
+  jogador1.x = 120; jogador1.y = 275; jogador1.direcaoX = 1; jogador1.direcaoY = 0;
+  jogador2.x = 780; jogador2.y = 275; jogador2.direcaoX = -1; jogador2.direcaoY = 0;
+  jogador1.escudos = 0; jogador2.escudos = 0;
+  jogador1.tiroTriplo = 0; jogador2.tiroTriplo = 0;
+  balas = [];
+}
+
+function reiniciar() {
+  jogador1.pontos = 0;
+  jogador2.pontos = 0;
+  particulas = [];
+  powerups = [];
+  jogoAcabou = false;
+  vencedor = "";
+  resetarPosicoes();
+}
+
+function desenharArena() {
+  ctx.fillStyle = "#0b0b18";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Grade Neon
   ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
   ctx.lineWidth = 1;
   for (let x = 0; x < canvas.width; x += 40) {
@@ -307,57 +369,182 @@ function desenhar() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
   }
 
-  // Tiros
-  ctx.fillStyle = "#ffff00";
-  tiros.forEach(t => {
+  // Obstáculos
+  for (const o of obstaculos) {
+    ctx.fillStyle = "#1e1e38";
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.strokeStyle = "#4d4dff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(o.x, o.y, o.w, o.h);
+  }
+
+  // Moldura
+  ctx.strokeStyle = "#00f3ff";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+}
+
+function desenharJogador(p) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+
+  // Animação de Recuo
+  const offsetArma = Math.max(0, p.recuo);
+
+  // Escudo Ativo
+  if (p.escudos > 0) {
+    ctx.strokeStyle = "#00ff88";
+    ctx.lineWidth = 3;
+    ctx.shadowColor = "#00ff88";
+    ctx.shadowBlur = 10;
     ctx.beginPath();
-    ctx.arc(t.x, t.y, t.raio, 0, Math.PI * 2);
-    ctx.fill();
-  });
+    ctx.arc(0, 0, p.tamanho / 2 + 6, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 
-  // Zumbis
-  zumbis.forEach(z => {
-    ctx.fillStyle = "#33cc55";
+  // Corpo
+  ctx.shadowColor = p.cor;
+  ctx.shadowBlur = 15;
+  ctx.fillStyle = p.cor;
+  ctx.beginPath();
+  ctx.arc(0, 0, p.tamanho / 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Arma
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(
+    (p.direcaoX * 22) - (p.direcaoX * offsetArma),
+    (p.direcaoY * 22) - (p.direcaoY * offsetArma)
+  );
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function desenharBalas() {
+  for (const b of balas) {
+    // Rastro
+    ctx.strokeStyle = b.cor;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(z.x, z.y, z.raio, 0, Math.PI * 2);
-    ctx.fill();
+    for (let i = 0; i < b.rastro.length; i++) {
+      ctx.lineTo(b.rastro[i].x, b.rastro[i].y);
+    }
+    ctx.stroke();
 
-    ctx.fillStyle = "#ff0000";
-    ctx.beginPath();
-    ctx.arc(z.x - 3, z.y - 3, 2, 0, Math.PI * 2);
-    ctx.arc(z.x + 3, z.y - 3, 2, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  // Jogadores
-  p1.desenhar();
-  p2.desenhar();
-
-  // Interface HUD
-  desenharBarraVida(20, 25, p1.vida, "#00a2ff", `P1: ${p1.pontos} pts`);
-  desenharBarraVida(canvas.width - 170, 25, p2.vida, "#ffaa00", `P2: ${p2.pontos} pts`);
-
-  // Tela de Vitória
-  if (vencedor) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#ff3333";
-    ctx.font = "bold 40px monospace";
-    ctx.fillText(vencedor, 200, 230);
-
+    // Bala
+    ctx.save();
+    ctx.shadowColor = b.cor;
+    ctx.shadowBlur = 10;
     ctx.fillStyle = "#fff";
-    ctx.font = "16px monospace";
-    ctx.fillText("Pressione 'R' para Jogar Novamente", 230, 280);
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 }
 
-function reiniciarJogo() {
-  p1.x = 200; p1.y = 250; p1.vida = 100; p1.vivo = true; p1.pontos = 0;
-  p2.x = 600; p2.y = 250; p2.vida = 100; p2.vivo = true; p2.pontos = 0;
-  zumbis = [];
-  tiros = [];
-  vencedor = null;
+function desenharPowerups() {
+  for (const pw of powerups) {
+    ctx.save();
+    ctx.translate(pw.x, pw.y);
+    ctx.shadowBlur = 12;
+
+    if (pw.tipo === 'escudo') {
+      ctx.fillStyle = "#00ff88";
+      ctx.shadowColor = "#00ff88";
+      ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill();
+    } else {
+      ctx.fillStyle = "#ff00ea";
+      ctx.shadowColor = "#ff00ea";
+      ctx.fillRect(-8, -8, 16, 16);
+    }
+    ctx.restore();
+  }
+}
+
+function desenharParticulas() {
+  for (const p of particulas) {
+    ctx.globalAlpha = p.vida / 40;
+    ctx.fillStyle = p.cor;
+    ctx.fillRect(p.x, p.y, p.tamanho, p.tamanho);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function desenharHUD() {
+  ctx.font = "bold 24px monospace";
+
+  ctx.fillStyle = jogador1.cor;
+  ctx.fillText("P1: " + jogador1.pontos + (jogador1.tiroTriplo ? " [TRIPLO]" : ""), 30, 40);
+
+  ctx.fillStyle = jogador2.cor;
+  ctx.fillText("P2: " + jogador2.pontos + (jogador2.tiroTriplo ? " [TRIPLO]" : ""), 680, 40);
+
+  ctx.font = "14px monospace";
+  ctx.fillStyle = "#aaa";
+  ctx.fillText("PRIMEIRO A 10 PONTOS VENCE", 350, 35);
+}
+
+function desenharFim() {
+  if (!jogoAcabou) return;
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 50px monospace";
+  ctx.fillText(vencedor + " VENCEU!", canvas.width / 2, 230);
+
+  ctx.font = "20px monospace";
+  ctx.fillStyle = "#00f3ff";
+  ctx.fillText("Pressione 'R' para Jogar Novamente", canvas.width / 2, 290);
+  ctx.textAlign = "left";
+}
+
+function atualizar() {
+  if (jogoAcabou) return;
+
+  moverJogador(jogador1, { cima: "w", baixo: "s", esquerda: "a", direita: "d" });
+  moverJogador(jogador2, { cima: "arrowup", baixo: "arrowdown", esquerda: "arrowleft", direita: "arrowright" });
+
+  if (jogador1.cooldown > 0) jogador1.cooldown--;
+  if (jogador2.cooldown > 0) jogador2.cooldown--;
+
+  if (jogador1.recuo > 0) jogador1.recuo--;
+  if (jogador2.recuo > 0) jogador2.recuo--;
+
+  atualizarBalas();
+  atualizarPowerups();
+  atualizarParticulas();
+
+  if (screenShake > 0) screenShake--;
+}
+
+function desenhar() {
+  ctx.save();
+
+  // Aplica tremor de tela quando atingido
+  if (screenShake > 0) {
+    const rx = (Math.random() - 0.5) * screenShake;
+    const ry = (Math.random() - 0.5) * screenShake;
+    ctx.translate(rx, ry);
+  }
+
+  desenharArena();
+  desenharPowerups();
+  desenharParticulas();
+  desenharBalas();
+  desenharJogador(jogador1);
+  desenharJogador(jogador2);
+  desenharHUD();
+  desenharFim();
+
+  ctx.restore();
 }
 
 function loop() {
@@ -368,5 +555,6 @@ function loop() {
 
 loop();
 </script>
+
 </body>
 </html>
