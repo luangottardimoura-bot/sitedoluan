@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Super Soccer Arcade 90s</title>
+<title>Cyber Soccer 3D Perspective</title>
 <style>
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #0d0f12;
+    background: #050508;
     color: #fff;
     font-family: 'Courier New', Courier, monospace;
     display: flex;
@@ -16,37 +16,38 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    overflow: hidden;
   }
 
   h1 {
-    color: #ffea00;
+    color: #00ffcc;
     margin: 10px 0 5px;
-    text-shadow: 2px 2px #ff0055;
-    font-size: 24px;
+    text-shadow: 0 0 10px #00ffcc;
+    font-size: 22px;
   }
 
   canvas {
-    background: #1e8535;
-    border: 4px solid #fff;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    background: #020b12;
+    border: 3px solid #00ffcc;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
     image-rendering: pixelated;
   }
 
   .hud {
     margin-top: 10px;
     font-size: 13px;
-    color: #ccc;
+    color: #aaa;
   }
 
-  .destaque { color: #ffea00; font-weight: bold; }
+  .k { color: #ff0055; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<h1>⚡ SUPER SOCCER ARCADE ⚡</h1>
-<canvas id="campo" width="800" height="500"></canvas>
+<h1>⚽ CYBER SOCCER 3D CAM ⚽</h1>
+<canvas id="campo" width="800" height="450"></canvas>
 <div class="hud">
-  WASD: Mover | <span class="destaque">SHIFT: Pique</span> | <span class="destaque">ESPAÇO: Chute Direcionado</span> | <span class="destaque">K: Carrinho / Roubar Bola</span>
+  WASD: Mover | <span class="k">ESPAÇO: Chutar</span> | <span class="k">SHIFT: Correr</span>
 </div>
 
 <script>
@@ -70,281 +71,236 @@ function tocarSom(freq, tipo = 'sine', duracao = 0.1, vol = 0.2) {
   osc.stop(audioCtx.currentTime + duracao);
 }
 
-class Jogador {
-  constructor(x, y, cor, eJogador = false) {
-    this.x = x;
-    this.y = y;
+// Câmera Dinâmica
+const cam = { x: 0, y: 0, zoom: 1 };
+
+class Entidade3D {
+  constructor(x, z, cor, eGoleiro = false) {
+    this.x = x;     // Posição Horizontal no mundo
+    this.z = z;     // Profundidade (Distância da tela)
     this.vx = 0;
-    this.vy = 0;
-    this.tam = 18;
+    this.vz = 0;
     this.cor = cor;
-    this.eJogador = eJogador;
-    this.estamina = 100;
-    this.emCarrinho = false;
-    this.tempoCarrinho = 0;
-    this.miraAngulo = 0;
+    this.eGoleiro = eGoleiro;
+    this.tamBase = 28;
   }
 
   atualizar() {
-    if (this.emCarrinho) {
-      this.tempoCarrinho--;
-      this.x += this.vx * 1.5;
-      this.y += this.vy * 1.5;
-      if (this.tempoCarrinho <= 0) this.emCarrinho = false;
-    } else {
-      this.vx *= 0.85;
-      this.vy *= 0.85;
-      this.x += this.vx;
-      this.y += this.vy;
-    }
+    this.vx *= 0.85;
+    this.vz *= 0.85;
+    this.x += this.vx;
+    this.z += this.vz;
 
-    this.x = Math.max(25, Math.min(775, this.x));
-    this.y = Math.max(25, Math.min(475, this.y));
+    // Limites do Campo em 3D
+    this.x = Math.max(-380, Math.min(380, this.x));
+    this.z = Math.max(100, Math.min(900, this.z));
+  }
+
+  // Mapeamento de Coordenadas 3D para Projeção 2D na Tela
+  getProjecao() {
+    const escala = 300 / this.z; // Efeito de perspectiva (quanto mais longe, menor)
+    const telaX = canvas.width / 2 + (this.x - cam.x) * escala;
+    const telaY = canvas.height / 2 + (this.z - cam.y) * escala * 0.35 - 50;
+    const tamanho = this.tamBase * escala;
+    return { x: telaX, y: telaY, tamanho, escala };
   }
 }
 
-const p1 = new Jogador(250, 250, "#00e1ff", true);
-const rival = new Jogador(550, 250, "#ff0055", false);
-const goleiroEsq = new Jogador(35, 250, "#00ff66", false);
-const goleiroDir = new Jogador(765, 250, "#ffaa00", false);
+const p1 = new Entidade3D(0, 300, "#00ffcc");
+const rival = new Entidade3D(0, 600, "#ff0055");
+const goleiroRival = new Entidade3D(0, 850, "#ffcc00", true);
 
 const bola = {
-  x: 400, y: 250, vx: 0, vy: 0, raio: 6, atrito: 0.981
+  x: 0, z: 450, y: 0,
+  vx: 0, vz: 0, vy: 0,
+  atrito: 0.98,
+  getProjecao() {
+    const escala = 300 / this.z;
+    const telaX = canvas.width / 2 + (this.x - cam.x) * escala;
+    const telaY = canvas.height / 2 + (this.z - cam.y) * escala * 0.35 - 50 - (this.y * escala);
+    return { x: telaX, y: telaY, tamanho: 12 * escala, escala };
+  }
 };
 
 let teclas = {};
-let placarA = 0;
-let placarB = 0;
-let tremorCam = 0;
-let textoGolTempo = 0;
+let golsP1 = 0;
+let golsRival = 0;
+let textoGol = 0;
 
-document.addEventListener("keydown", e => {
-  teclas[e.key.toLowerCase()] = true;
+document.addEventListener("keydown", e => teclas[e.key.toLowerCase()] = true);
+document.addEventListener("keyup", e => teclas[e.key.toLowerCase()] = false);
 
-  if (e.code === "Space" && Math.hypot(p1.x - bola.x, p1.y - bola.y) < 35) {
-    bola.vx = Math.cos(p1.miraAngulo) * 14;
-    bola.vy = Math.sin(p1.miraAngulo) * 14;
-    tocarSom(300, "square", 0.12, 0.3);
-  }
+function dist3D(a, b) {
+  return Math.hypot(a.x - b.x, a.z - b.z);
+}
 
-  if (e.key.toLowerCase() === "k" && !p1.emCarrinho && p1.estamina > 20) {
-    p1.emCarrinho = true;
-    p1.tempoCarrinho = 18;
-    p1.estamina -= 20;
-    tocarSom(150, "sawtooth", 0.15, 0.2);
-  }
-});
+function processarControles() {
+  let vel = teclas["shift"] ? 4.5 : 2.8;
 
-document.addEventListener("keyup", e => {
-  teclas[e.key.toLowerCase()] = false;
-});
+  if (teclas["w"]) p1.vz += vel * 0.3;
+  if (teclas["s"]) p1.vz -= vel * 0.3;
+  if (teclas["a"]) p1.vx -= vel * 0.4;
+  if (teclas["d"]) p1.vx += vel * 0.4;
 
-function IA_Controlar(bot, alvoX, alvoY, velMax) {
-  if (bot.emCarrinho) return;
-  const dx = alvoX - bot.x;
-  const dy = alvoY - bot.y;
-  const d = Math.hypot(dx, dy);
-
-  if (d > 5) {
-    bot.vx += (dx / d) * 0.35;
-    bot.vy += (dy / d) * 0.35;
-    const vAtual = Math.hypot(bot.vx, bot.vy);
-    if (vAtual > velMax) {
-      bot.vx = (bot.vx / vAtual) * velMax;
-      bot.vy = (bot.vy / vAtual) * velMax;
-    }
-  }
-
-  // Carrinho da IA
-  if (d < 30 && Math.random() < 0.03 && !bot.emCarrinho) {
-    bot.emCarrinho = true;
-    bot.tempoCarrinho = 15;
-    tocarSom(140, "sawtooth", 0.1, 0.2);
+  if (teclas[" "] && dist3D(p1, bola) < 45) {
+    bola.vx = (bola.x - p1.x) * 0.3;
+    bola.vz = 14;
+    bola.vy = 6; // Elevação em 3D
+    tocarSom(300, "square", 0.1, 0.3);
   }
 }
 
-function resolverColisoes() {
-  const todos = [p1, rival, goleiroEsq, goleiroDir];
+function IA_Controlar() {
+  // Defender / Atacar da IA
+  const dz = bola.z - rival.z;
+  const dx = bola.x - rival.x;
+  rival.vx += Math.sign(dx) * 0.25;
+  rival.vz += Math.sign(dz) * 0.25;
 
-  todos.forEach(p => {
-    const d = Math.hypot(p.x - bola.x, p.y - bola.y);
-    const limite = p.tam + bola.raio;
+  if (dist3D(rival, bola) < 40 && Math.random() < 0.1) {
+    bola.vz = -12;
+    bola.vx = (Math.random() - 0.5) * 8;
+    tocarSom(200, "sawtooth", 0.1, 0.2);
+  }
 
-    if (d < limite) {
-      const ang = Math.atan2(bola.y - p.y, bola.x - p.x);
-      const forca = p.emCarrinho ? 8 : 3.5;
-      bola.vx = Math.cos(ang) * forca;
-      bola.vy = Math.sin(ang) * forca;
-      tocarSom(180, "sine", 0.05, 0.1);
-    }
-  });
+  // Goleiro
+  goleiroRival.x += (bola.x - goleiroRival.x) * 0.1;
+  goleiroRival.x = Math.max(-120, Math.min(120, goleiroRival.x));
 }
 
-function atualizar() {
-  // Controle P1 + Pique
-  let velAcel = 0.45;
-  let velMax = 3.5;
-
-  if (teclas["shift"] && p1.estamina > 1) {
-    velMax = 5.2;
-    p1.estamina -= 0.8;
-  } else if (p1.estamina < 100) {
-    p1.estamina += 0.4;
-  }
-
-  if (!p1.emCarrinho) {
-    if (teclas["w"]) p1.vy -= velAcel;
-    if (teclas["s"]) p1.vy += velAcel;
-    if (teclas["a"]) p1.vx -= velAcel;
-    if (teclas["d"]) p1.vx += velAcel;
-
-    const vP1 = Math.hypot(p1.vx, p1.vy);
-    if (vP1 > velMax) {
-      p1.vx = (p1.vx / vP1) * velMax;
-      p1.vy = (p1.vy / vP1) * velMax;
-    }
-  }
-
-  // Ângulo de mira baseado no movimento ou na bola
-  p1.miraAngulo = Math.atan2(250 - p1.y, 800 - p1.x);
-
-  // IAs
-  IA_Controlar(rival, bola.x, bola.y, 3.2);
-  IA_Controlar(goleiroEsq, 35, Math.max(170, Math.min(330, bola.y)), 2.8);
-  IA_Controlar(goleiroDir, 765, Math.max(170, Math.min(330, bola.y)), 2.8);
-
+function atualizarFisica() {
   p1.atualizar();
   rival.atualizar();
-  goleiroEsq.atualizar();
-  goleiroDir.atualizar();
+  goleiroRival.atualizar();
 
-  resolverColisoes();
-
-  // Movimento Bola
+  // Movimento da bola
   bola.x += bola.vx;
+  bola.z += bola.vz;
   bola.y += bola.vy;
+
   bola.vx *= bola.atrito;
-  bola.vy *= bola.atrito;
+  bola.vz *= bola.atrito;
 
-  // Bordas
-  if (bola.y < 15 || bola.y > 485) bola.vy *= -0.8;
-  if ((bola.x < 15 || bola.x > 785) && (bola.y < 170 || bola.y > 330)) bola.vx *= -0.8;
-
-  // Gol
-  if (bola.y >= 170 && bola.y <= 330) {
-    if (bola.x > 790) { placarA++; pontuar(); }
-    if (bola.x < 10) { placarB++; pontuar(); }
+  if (bola.y > 0) {
+    bola.vy -= 0.4; // Gravidade
+  } else {
+    bola.y = 0;
+    if (Math.abs(bola.vy) > 1) bola.vy = -bola.vy * 0.5;
+    else bola.vy = 0;
   }
 
-  if (tremorCam > 0) tremorCam--;
+  // Colisão física simples entre jogadores e bola
+  [p1, rival, goleiroRival].forEach(p => {
+    if (dist3D(p, bola) < 30 && bola.y < 20) {
+      bola.vx = (bola.x - p.x) * 0.4;
+      bola.vz = (bola.z - p.z) * 0.4;
+    }
+  });
+
+  // Câmera segue a bola suavemente
+  cam.x += (bola.x - cam.x) * 0.08;
+  cam.y += (bola.z - 200 - cam.y) * 0.08;
+
+  // Gol no Fundo (Z alto)
+  if (bola.z > 860 && Math.abs(bola.x) < 130 && bola.y < 60) {
+    golsP1++;
+    textoGol = 50;
+    tocarSom(500, "sine", 0.3, 0.3);
+    reset();
+  }
+
+  // Out de Fundo / Lateral
+  if (bola.z < 80 || bola.z > 920 || Math.abs(bola.x) > 400) {
+    reset();
+  }
 }
 
-function pontuar() {
-  textoGolTempo = 50;
-  tremorCam = 15;
-  tocarSom(587, "square", 0.3, 0.4);
-  bola.x = 400; bola.y = 250; bola.vx = 0; bola.vy = 0;
-  p1.x = 250; p1.y = 250;
-  rival.x = 550; rival.y = 250;
+function reset() {
+  bola.x = 0; bola.z = 450; bola.y = 0; bola.vx = 0; bola.vz = 0; bola.vy = 0;
+  p1.x = 0; p1.z = 300;
+  rival.x = 0; rival.z = 600;
 }
 
 function desenhar() {
-  ctx.save();
-  if (tremorCam > 0) {
-    ctx.translate((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
-  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.clearRect(0, 0, 800, 500);
+  // Desenhar Campo em Perspectiva (Linhas de Profundidade)
+  ctx.strokeStyle = "rgba(0, 255, 204, 0.15)";
+  ctx.lineWidth = 2;
 
-  // Gramado Retro
-  ctx.fillStyle = "#1e8535";
-  ctx.fillRect(0, 0, 800, 500);
-  ctx.fillStyle = "#186e2b";
-  for (let i = 0; i < 800; i += 100) {
-    ctx.fillRect(i, 0, 50, 500);
-  }
-
-  // Linhas
-  ctx.strokeStyle = "#fff";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(10, 10, 780, 480);
-  ctx.beginPath();
-  ctx.moveTo(400, 10); ctx.lineTo(400, 490);
-  ctx.arc(400, 250, 60, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Traves
-  ctx.strokeRect(10, 170, 50, 160);
-  ctx.strokeRect(740, 170, 50, 160);
-
-  // Bola e Sombra
-  ctx.fillStyle = "rgba(0,0,0,0.3)";
-  ctx.beginPath();
-  ctx.arc(bola.x + 3, bola.y + 4, bola.raio, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = "#fff";
-  ctx.beginPath();
-  ctx.arc(bola.x, bola.y, bola.raio, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Jogadores
-  [p1, rival, goleiroEsq, goleiroDir].forEach(p => {
-    ctx.fillStyle = "rgba(0,0,0,0.3)";
+  for (let z = 100; z <= 900; z += 80) {
+    const pEsq = (new Entidade3D(-380, z)).getProjecao();
+    const pDir = (new Entidade3D(380, z)).getProjecao();
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 8, p.tam, 5, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = p.cor;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#fff";
+    ctx.moveTo(pEsq.x, pEsq.y);
+    ctx.lineTo(pDir.x, pDir.y);
     ctx.stroke();
+  }
 
-    // Efeito Carrinho
-    if (p.emCarrinho) {
-      ctx.fillStyle = "rgba(255,255,255,0.4)";
+  // Trave 3D no Fundo
+  const tEsq = (new Entidade3D(-130, 870)).getProjecao();
+  const tDir = (new Entidade3D(130, 870)).getProjecao();
+  
+  ctx.strokeStyle = "#ff0055";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(tEsq.x, tEsq.y - 50 * tEsq.escala, tDir.x - tEsq.x, 50 * tEsq.escala);
+
+  // Ordenar entidades por profundidade (Z-Index rendering)
+  const listaProjecao = [
+    { tipo: 'p', obj: p1 },
+    { tipo: 'p', obj: rival },
+    { tipo: 'p', obj: goleiroRival },
+    { tipo: 'b', obj: bola }
+  ].sort((a, b) => (b.obj.z || b.obj.z) - (a.obj.z || a.obj.z));
+
+  // Renderizar entidades ordenadas
+  listaProjecao.forEach(item => {
+    if (item.tipo === 'p') {
+      const p = item.obj.getProjecao();
+      
+      // Sombra
+      ctx.fillStyle = "rgba(0,0,0,0.4)";
       ctx.beginPath();
-      ctx.arc(p.x - p.vx * 2, p.y - p.vy * 2, p.tam * 0.8, 0, Math.PI * 2);
+      ctx.ellipse(p.x, p.y, p.tamanho * 0.6, p.tamanho * 0.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Corpo
+      ctx.fillStyle = item.obj.cor;
+      ctx.fillRect(p.x - p.tamanho / 2, p.y - p.tamanho, p.tamanho, p.tamanho);
+    } else {
+      const b = bola.getProjecao();
+
+      // Sombra
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.beginPath();
+      ctx.ellipse(b.x, b.y + (bola.y * b.escala), b.tamanho * 0.8, b.tamanho * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bola
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.tamanho, 0, Math.PI * 2);
       ctx.fill();
     }
   });
 
-  // Guia de mira do P1
-  if (Math.hypot(p1.x - bola.x, p1.y - bola.y) < 35) {
-    ctx.strokeStyle = "#ffea00";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p1.x + Math.cos(p1.miraAngulo) * 40, p1.y + Math.sin(p1.miraAngulo) * 40);
-    ctx.stroke();
-  }
+  // HUD
+  ctx.fillStyle = "#00ffcc";
+  ctx.font = "bold 26px monospace";
+  ctx.fillText(`AZUL: ${golsP1}  |  VERMELHO: ${golsRival}`, 240, 40);
 
-  // HUD / Placar
-  ctx.fillStyle = "#ffea00";
-  ctx.font = "bold 28px monospace";
-  ctx.fillText(`${placarA} - ${placarB}`, 360, 45);
-
-  // Barra de Estamina
-  ctx.fillStyle = "#333";
-  ctx.fillRect(20, 20, 100, 8);
-  ctx.fillStyle = p1.estamina > 20 ? "#00e1ff" : "#ff0055";
-  ctx.fillRect(20, 20, p1.estamina, 8);
-
-  if (textoGolTempo > 0) {
-    ctx.fillStyle = "#ffea00";
+  if (textoGol > 0) {
+    ctx.fillStyle = "#ff0055";
     ctx.font = "bold 60px monospace";
-    ctx.fillText("GOOOOL!", 270, 260);
-    textoGolTempo--;
+    ctx.fillText("G O L !", 300, 230);
+    textoGol--;
   }
-
-  ctx.restore();
 }
 
 function loop() {
-  atualizar();
+  processarControles();
+  IA_Controlar();
+  atualizarFisica();
   desenhar();
   requestAnimationFrame(loop);
 }
@@ -352,4 +308,4 @@ function loop() {
 loop();
 </script>
 </body>
-</html>
+</html>ok
