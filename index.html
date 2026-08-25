@@ -85,9 +85,11 @@ function distancia(a, b) {
 }
 
 function chutar() {
-  if (distancia(jogador, bola) < 50) {
-    bola.vx = 9;
-    bola.vy = (bola.y - jogador.y) * 0.15;
+  if (distancia(jogador, bola) < 45) {
+    const angulo = Math.atan2(bola.y - jogador.y, bola.x - jogador.x);
+    const forca = 11;
+    bola.vx = Math.cos(angulo) * forca;
+    bola.vy = Math.sin(angulo) * forca;
   }
 }
 
@@ -99,15 +101,32 @@ function moverJogador() {
 
   jogador.x = Math.max(20, Math.min(780, jogador.x));
   jogador.y = Math.max(20, Math.min(480, jogador.y));
+
+  verificarColisao(jogador);
 }
 
 function moverAdversario() {
   if (adversario.y < bola.y) adversario.y += adversario.velocidade;
   if (adversario.y > bola.y) adversario.y -= adversario.velocidade;
 
-  if (distancia(adversario, bola) < 45) {
-    bola.vx = -7;
-    bola.vy = (bola.y - adversario.y) * 0.12;
+  if (adversario.x < bola.x && adversario.x < 700) adversario.x += adversario.velocidade * 0.5;
+  if (adversario.x > bola.x && adversario.x > 400) adversario.x -= adversario.velocidade * 0.5;
+
+  verificarColisao(adversario);
+
+  if (distancia(adversario, bola) < 40 && Math.random() < 0.05) {
+    const angulo = Math.atan2(bola.y - adversario.y, bola.x - adversario.x);
+    const forca = 8;
+    bola.vx = Math.cos(angulo) * forca;
+    bola.vy = Math.sin(angulo) * forca;
+  }
+}
+
+function verificarColisao(p) {
+  if (distancia(p, bola) < p.tamanho / 2 + bola.raio) {
+    const angulo = Math.atan2(bola.y - p.y, bola.x - p.x);
+    bola.vx = Math.cos(angulo) * 3;
+    bola.vy = Math.sin(angulo) * 3;
   }
 }
 
@@ -118,25 +137,37 @@ function atualizarBola() {
   bola.vx *= 0.985;
   bola.vy *= 0.985;
 
-  if (bola.y < 10 || bola.y > 490) {
+  if (bola.y - bola.raio < 5 || bola.y + bola.raio > 495) {
     bola.vy *= -1;
   }
 
   // Gol do jogador
   if (bola.x > 790 && bola.y > 190 && bola.y < 310) {
     golsJogador++;
+    verificarVitoria();
     reiniciar();
   }
 
   // Gol do adversário
   if (bola.x < 10 && bola.y > 190 && bola.y < 310) {
     golsAdversario++;
+    verificarVitoria();
     reiniciar();
   }
 
-  // Laterais
-  if (bola.x < 10 || bola.x > 790) {
+  // Rebote nas paredes laterais (fora do gol)
+  if ((bola.x - bola.raio < 5 || bola.x + bola.raio > 795) && (bola.y <= 190 || bola.y >= 310)) {
     bola.vx *= -1;
+  }
+}
+
+function verificarVitoria() {
+  if (golsJogador >= 5 || golsAdversario >= 5) {
+    setTimeout(() => {
+      alert(golsJogador >= 5 ? "🏆 VOCÊ VENCEU O JOGO!" : "❌ O ADVERSÁRIO VENCEU!");
+      golsJogador = 0;
+      golsAdversario = 0;
+    }, 100);
   }
 }
 
@@ -202,6 +233,7 @@ function desenharBola() {
   ctx.fill();
 
   ctx.strokeStyle = "black";
+  ctx.lineWidth = 1;
   ctx.stroke();
 }
 
@@ -210,7 +242,7 @@ function desenharPlacar() {
   ctx.font = "bold 28px monospace";
   ctx.fillText(
     `${golsJogador}  -  ${golsAdversario}`,
-    365,
+    355,
     40
   );
 }
@@ -231,6 +263,5 @@ function jogo() {
 
 jogo();
 </script>
-
 </body>
 </html>
