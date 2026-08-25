@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Soccer 3D Perspective</title>
+<title>Zombie Survival Arcade</title>
 <style>
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #050508;
+    background: #0a0a0c;
     color: #fff;
     font-family: 'Courier New', Courier, monospace;
     display: flex;
@@ -20,17 +20,17 @@
   }
 
   h1 {
-    color: #00ffcc;
+    color: #ff3333;
     margin: 10px 0 5px;
-    text-shadow: 0 0 10px #00ffcc;
+    text-shadow: 0 0 10px #ff0000;
     font-size: 22px;
   }
 
   canvas {
-    background: #020b12;
-    border: 3px solid #00ffcc;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
-    image-rendering: pixelated;
+    background: #15181c;
+    border: 3px solid #ff3333;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    cursor: crosshair;
   }
 
   .hud {
@@ -39,21 +39,22 @@
     color: #aaa;
   }
 
-  .k { color: #ff0055; font-weight: bold; }
+  .destaque { color: #ff3333; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<h1>⚽ CYBER SOCCER 3D CAM ⚽</h1>
-<canvas id="campo" width="800" height="450"></canvas>
+<h1>🧟 ZOMBIE SURVIVAL 🧟</h1>
+<canvas id="gameCanvas" width="800" height="500"></canvas>
 <div class="hud">
-  WASD: Mover | <span class="k">ESPAÇO: Chutar</span> | <span class="k">SHIFT: Correr</span>
+  WASD: Mover | <span class="destaque">Clique do Mouse: Atirar</span>
 </div>
 
 <script>
-const canvas = document.getElementById("campo");
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Sons com Web Audio API
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 
@@ -71,236 +72,249 @@ function tocarSom(freq, tipo = 'sine', duracao = 0.1, vol = 0.2) {
   osc.stop(audioCtx.currentTime + duracao);
 }
 
-// Câmera Dinâmica
-const cam = { x: 0, y: 0, zoom: 1 };
-
-class Entidade3D {
-  constructor(x, z, cor, eGoleiro = false) {
-    this.x = x;     // Posição Horizontal no mundo
-    this.z = z;     // Profundidade (Distância da tela)
-    this.vx = 0;
-    this.vz = 0;
-    this.cor = cor;
-    this.eGoleiro = eGoleiro;
-    this.tamBase = 28;
-  }
-
-  atualizar() {
-    this.vx *= 0.85;
-    this.vz *= 0.85;
-    this.x += this.vx;
-    this.z += this.vz;
-
-    // Limites do Campo em 3D
-    this.x = Math.max(-380, Math.min(380, this.x));
-    this.z = Math.max(100, Math.min(900, this.z));
-  }
-
-  // Mapeamento de Coordenadas 3D para Projeção 2D na Tela
-  getProjecao() {
-    const escala = 300 / this.z; // Efeito de perspectiva (quanto mais longe, menor)
-    const telaX = canvas.width / 2 + (this.x - cam.x) * escala;
-    const telaY = canvas.height / 2 + (this.z - cam.y) * escala * 0.35 - 50;
-    const tamanho = this.tamBase * escala;
-    return { x: telaX, y: telaY, tamanho, escala };
-  }
-}
-
-const p1 = new Entidade3D(0, 300, "#00ffcc");
-const rival = new Entidade3D(0, 600, "#ff0055");
-const goleiroRival = new Entidade3D(0, 850, "#ffcc00", true);
-
-const bola = {
-  x: 0, z: 450, y: 0,
-  vx: 0, vz: 0, vy: 0,
-  atrito: 0.98,
-  getProjecao() {
-    const escala = 300 / this.z;
-    const telaX = canvas.width / 2 + (this.x - cam.x) * escala;
-    const telaY = canvas.height / 2 + (this.z - cam.y) * escala * 0.35 - 50 - (this.y * escala);
-    return { x: telaX, y: telaY, tamanho: 12 * escala, escala };
-  }
+// Jogador
+const jogador = {
+  x: canvas.width / 2,
+  y: canvas.height / 2,
+  raio: 15,
+  velocidade: 3.5,
+  angulo: 0,
+  vida: 100,
+  pontos: 0
 };
 
+let tiros = [];
+let zumbis = [];
 let teclas = {};
-let golsP1 = 0;
-let golsRival = 0;
-let textoGol = 0;
+let posMouse = { x: 0, y: 0 };
+let tempoGerarZumbi = 0;
+let gameOver = false;
 
+// Controles
 document.addEventListener("keydown", e => teclas[e.key.toLowerCase()] = true);
 document.addEventListener("keyup", e => teclas[e.key.toLowerCase()] = false);
 
-function dist3D(a, b) {
-  return Math.hypot(a.x - b.x, a.z - b.z);
-}
+canvas.addEventListener("mousemove", e => {
+  const rect = canvas.getBoundingClientRect();
+  posMouse.x = e.clientX - rect.left;
+  posMouse.y = e.clientY - rect.top;
+});
 
-function processarControles() {
-  let vel = teclas["shift"] ? 4.5 : 2.8;
-
-  if (teclas["w"]) p1.vz += vel * 0.3;
-  if (teclas["s"]) p1.vz -= vel * 0.3;
-  if (teclas["a"]) p1.vx -= vel * 0.4;
-  if (teclas["d"]) p1.vx += vel * 0.4;
-
-  if (teclas[" "] && dist3D(p1, bola) < 45) {
-    bola.vx = (bola.x - p1.x) * 0.3;
-    bola.vz = 14;
-    bola.vy = 6; // Elevação em 3D
-    tocarSom(300, "square", 0.1, 0.3);
+canvas.addEventListener("mousedown", e => {
+  if (e.button === 0 && !gameOver) {
+    atirar();
+  } else if (gameOver) {
+    reiniciarJogo();
   }
-}
+});
 
-function IA_Controlar() {
-  // Defender / Atacar da IA
-  const dz = bola.z - rival.z;
-  const dx = bola.x - rival.x;
-  rival.vx += Math.sign(dx) * 0.25;
-  rival.vz += Math.sign(dz) * 0.25;
+function atirar() {
+  const dx = posMouse.x - jogador.x;
+  const dy = posMouse.y - jogador.y;
+  const angulo = Math.atan2(dy, dx);
 
-  if (dist3D(rival, bola) < 40 && Math.random() < 0.1) {
-    bola.vz = -12;
-    bola.vx = (Math.random() - 0.5) * 8;
-    tocarSom(200, "sawtooth", 0.1, 0.2);
-  }
-
-  // Goleiro
-  goleiroRival.x += (bola.x - goleiroRival.x) * 0.1;
-  goleiroRival.x = Math.max(-120, Math.min(120, goleiroRival.x));
-}
-
-function atualizarFisica() {
-  p1.atualizar();
-  rival.atualizar();
-  goleiroRival.atualizar();
-
-  // Movimento da bola
-  bola.x += bola.vx;
-  bola.z += bola.vz;
-  bola.y += bola.vy;
-
-  bola.vx *= bola.atrito;
-  bola.vz *= bola.atrito;
-
-  if (bola.y > 0) {
-    bola.vy -= 0.4; // Gravidade
-  } else {
-    bola.y = 0;
-    if (Math.abs(bola.vy) > 1) bola.vy = -bola.vy * 0.5;
-    else bola.vy = 0;
-  }
-
-  // Colisão física simples entre jogadores e bola
-  [p1, rival, goleiroRival].forEach(p => {
-    if (dist3D(p, bola) < 30 && bola.y < 20) {
-      bola.vx = (bola.x - p.x) * 0.4;
-      bola.vz = (bola.z - p.z) * 0.4;
-    }
+  tiros.push({
+    x: jogador.x + Math.cos(angulo) * jogador.raio,
+    y: jogador.y + Math.sin(angulo) * jogador.raio,
+    vx: Math.cos(angulo) * 10,
+    vy: Math.sin(angulo) * 10,
+    raio: 4
   });
 
-  // Câmera segue a bola suavemente
-  cam.x += (bola.x - cam.x) * 0.08;
-  cam.y += (bola.z - 200 - cam.y) * 0.08;
-
-  // Gol no Fundo (Z alto)
-  if (bola.z > 860 && Math.abs(bola.x) < 130 && bola.y < 60) {
-    golsP1++;
-    textoGol = 50;
-    tocarSom(500, "sine", 0.3, 0.3);
-    reset();
-  }
-
-  // Out de Fundo / Lateral
-  if (bola.z < 80 || bola.z > 920 || Math.abs(bola.x) > 400) {
-    reset();
-  }
+  tocarSom(400, "square", 0.08, 0.2);
 }
 
-function reset() {
-  bola.x = 0; bola.z = 450; bola.y = 0; bola.vx = 0; bola.vz = 0; bola.vy = 0;
-  p1.x = 0; p1.z = 300;
-  rival.x = 0; rival.z = 600;
+function criarZumbi() {
+  let x, y;
+  // Sorteia para aparecer nas bordas fora da tela
+  if (Math.random() < 0.5) {
+    x = Math.random() < 0.5 ? -20 : canvas.width + 20;
+    y = Math.random() * canvas.height;
+  } else {
+    x = Math.random() * canvas.width;
+    y = Math.random() < 0.5 ? -20 : canvas.height + 20;
+  }
+
+  const velocidade = 1 + Math.random() * 1.5;
+
+  zumbis.push({
+    x: x,
+    y: y,
+    raio: 14,
+    velocidade: velocidade,
+    vida: 2
+  });
+}
+
+function atualizar() {
+  if (gameOver) return;
+
+  // Movimentação do Jogador
+  if (teclas["w"] && jogador.y > jogador.raio) jogador.y -= jogador.velocidade;
+  if (teclas["s"] && jogador.y < canvas.height - jogador.raio) jogador.y += jogador.velocidade;
+  if (teclas["a"] && jogador.x > jogador.raio) jogador.x -= jogador.velocidade;
+  if (teclas["d"] && jogador.x < canvas.width - jogador.raio) jogador.x += jogador.velocidade;
+
+  // Ângulo de mira
+  jogador.angulo = Math.atan2(posMouse.y - jogador.y, posMouse.x - jogador.x);
+
+  // Criar zumbis periodicamente
+  tempoGerarZumbi++;
+  if (tempoGerarZumbi > 35) {
+    criarZumbi();
+    tempoGerarZumbi = 0;
+  }
+
+  // Atualizar Tiros
+  for (let i = tiros.length - 1; i >= 0; i--) {
+    let t = tiros[i];
+    t.x += t.vx;
+    t.y += t.vy;
+
+    if (t.x < 0 || t.x > canvas.width || t.y < 0 || t.y > canvas.height) {
+      tiros.splice(i, 1);
+    }
+  }
+
+  // Atualizar Zumbis
+  for (let i = zumbis.length - 1; i >= 0; i--) {
+    let z = zumbis[i];
+
+    // Zumbi segue o jogador
+    const dx = jogador.x - z.x;
+    const dy = jogador.y - z.y;
+    const dist = Math.hypot(dx, dy);
+
+    z.x += (dx / dist) * z.velocidade;
+    z.y += (dy / dist) * z.velocidade;
+
+    // Colisão Zumbi x Jogador
+    if (dist < jogador.raio + z.raio) {
+      jogador.vida -= 0.5;
+      tocarSom(100, "sawtooth", 0.05, 0.1);
+
+      if (jogador.vida <= 0) {
+        gameOver = true;
+        tocarSom(80, "sawtooth", 0.5, 0.4);
+      }
+    }
+
+    // Colisão Zumbi x Tiros
+    for (let j = tiros.length - 1; j >= 0; j--) {
+      let t = tiros[j];
+      const distTiro = Math.hypot(z.x - t.x, z.y - t.y);
+
+      if (distTiro < z.raio + t.raio) {
+        z.vida--;
+        tiros.splice(j, 1);
+        tocarSom(250, "sine", 0.05, 0.15);
+
+        if (z.vida <= 0) {
+          zumbis.splice(i, 1);
+          jogador.pontos += 10;
+        }
+        break;
+      }
+    }
+  }
 }
 
 function desenhar() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Desenhar Campo em Perspectiva (Linhas de Profundidade)
-  ctx.strokeStyle = "rgba(0, 255, 204, 0.15)";
-  ctx.lineWidth = 2;
-
-  for (let z = 100; z <= 900; z += 80) {
-    const pEsq = (new Entidade3D(-380, z)).getProjecao();
-    const pDir = (new Entidade3D(380, z)).getProjecao();
-    ctx.beginPath();
-    ctx.moveTo(pEsq.x, pEsq.y);
-    ctx.lineTo(pDir.x, pDir.y);
-    ctx.stroke();
+  // Grade do piso estilo retro
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+  ctx.lineWidth = 1;
+  for (let x = 0; x < canvas.width; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
   }
 
-  // Trave 3D no Fundo
-  const tEsq = (new Entidade3D(-130, 870)).getProjecao();
-  const tDir = (new Entidade3D(130, 870)).getProjecao();
-  
-  ctx.strokeStyle = "#ff0055";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(tEsq.x, tEsq.y - 50 * tEsq.escala, tDir.x - tEsq.x, 50 * tEsq.escala);
-
-  // Ordenar entidades por profundidade (Z-Index rendering)
-  const listaProjecao = [
-    { tipo: 'p', obj: p1 },
-    { tipo: 'p', obj: rival },
-    { tipo: 'p', obj: goleiroRival },
-    { tipo: 'b', obj: bola }
-  ].sort((a, b) => (b.obj.z || b.obj.z) - (a.obj.z || a.obj.z));
-
-  // Renderizar entidades ordenadas
-  listaProjecao.forEach(item => {
-    if (item.tipo === 'p') {
-      const p = item.obj.getProjecao();
-      
-      // Sombra
-      ctx.fillStyle = "rgba(0,0,0,0.4)";
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y, p.tamanho * 0.6, p.tamanho * 0.2, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Corpo
-      ctx.fillStyle = item.obj.cor;
-      ctx.fillRect(p.x - p.tamanho / 2, p.y - p.tamanho, p.tamanho, p.tamanho);
-    } else {
-      const b = bola.getProjecao();
-
-      // Sombra
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      ctx.beginPath();
-      ctx.ellipse(b.x, b.y + (bola.y * b.escala), b.tamanho * 0.8, b.tamanho * 0.3, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Bola
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.tamanho, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  // Desenhar Tiros
+  ctx.fillStyle = "#ffff00";
+  tiros.forEach(t => {
+    ctx.beginPath();
+    ctx.arc(t.x, t.y, t.raio, 0, Math.PI * 2);
+    ctx.fill();
   });
 
-  // HUD
-  ctx.fillStyle = "#00ffcc";
-  ctx.font = "bold 26px monospace";
-  ctx.fillText(`AZUL: ${golsP1}  |  VERMELHO: ${golsRival}`, 240, 40);
+  // Desenhar Zumbis
+  zumbis.forEach(z => {
+    ctx.fillStyle = "#33cc55";
+    ctx.beginPath();
+    ctx.arc(z.x, z.y, z.raio, 0, Math.PI * 2);
+    ctx.fill();
 
-  if (textoGol > 0) {
-    ctx.fillStyle = "#ff0055";
-    ctx.font = "bold 60px monospace";
-    ctx.fillText("G O L !", 300, 230);
-    textoGol--;
+    // Olhos dos zumbis
+    ctx.fillStyle = "#ff0000";
+    ctx.beginPath();
+    ctx.arc(z.x - 3, z.y - 3, 2, 0, Math.PI * 2);
+    ctx.arc(z.x + 3, z.y - 3, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Desenhar Jogador
+  if (!gameOver) {
+    ctx.save();
+    ctx.translate(jogador.x, jogador.y);
+    ctx.rotate(jogador.angulo);
+
+    // Arma
+    ctx.fillStyle = "#888";
+    ctx.fillRect(0, -3, 22, 6);
+
+    // Corpo
+    ctx.fillStyle = "#00a2ff";
+    ctx.beginPath();
+    ctx.arc(0, 0, jogador.raio, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // HUD / Interface
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 16px monospace";
+  ctx.fillText(`PONTOS: ${jogador.pontos}`, 20, 30);
+
+  // Barra de Vida
+  ctx.fillStyle = "#333";
+  ctx.fillRect(canvas.width - 170, 15, 150, 15);
+  ctx.fillStyle = jogador.vida > 30 ? "#00ff66" : "#ff0000";
+  ctx.fillRect(canvas.width - 170, 15, Math.max(0, jogador.vida * 1.5), 15);
+  ctx.strokeStyle = "#fff";
+  ctx.strokeRect(canvas.width - 170, 15, 150, 15);
+
+  // Tela de Game Over
+  if (gameOver) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ff3333";
+    ctx.font = "bold 45px monospace";
+    ctx.fillText("FIM DE JOGO", 250, 230);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "18px monospace";
+    ctx.fillText(`Pontuação Final: ${jogador.pontos}`, 280, 270);
+    ctx.fillText("Clique em qualquer lugar para reiniciar", 180, 320);
   }
 }
 
+function reiniciarJogo() {
+  jogador.x = canvas.width / 2;
+  jogador.y = canvas.height / 2;
+  jogador.vida = 100;
+  jogador.pontos = 0;
+  zumbis = [];
+  tiros = [];
+  gameOver = false;
+}
+
 function loop() {
-  processarControles();
-  IA_Controlar();
-  atualizarFisica();
+  atualizar();
   desenhar();
   requestAnimationFrame(loop);
 }
@@ -308,4 +322,4 @@ function loop() {
 loop();
 </script>
 </body>
-</html>ok
+</html>
