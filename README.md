@@ -3,677 +3,209 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZUMBI: NOITE DOS MORTOS</title>
+  <title>Minecraft Redondo - Ultra Detalhado</title>
+
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: #090b0d;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
       overflow: hidden;
+      background: #1a1a2e;
+      font-family: Arial, sans-serif;
     }
-    h1 { margin: 8px; color: #e53935; text-shadow: 0 0 10px #ff0000; }
-    #hud {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 5px;
-      font-size: 15px;
-    }
-    .card {
-      background: #171b20;
-      border: 2px solid #444;
-      border-radius: 8px;
-      padding: 6px 12px;
-    }
-    canvas {
-      width: 96vw;
-      max-width: 1100px;
-      height: auto;
-      border: 3px solid #777;
-      background: #18231a;
-    }
-    #controls { font-size: 13px; color: #bbb; margin: 5px; }
-    button {
-      background: #c62828;
-      border: 0;
+
+    #info {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      padding: 12px 16px;
       color: white;
-      padding: 9px 16px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-weight: bold;
-      margin: 3px;
-    }
-    button:hover { background: #ef5350; }
-    .btn-secondary {
-      background: #1565c0;
-    }
-    .btn-secondary:hover {
-      background: #1e88e5;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      background: #15191d;
-      border: 3px solid #e53935;
-      border-radius: 15px;
-      padding: 20px;
-      width: 360px;
-      max-width: 90vw;
-      box-shadow: 0 0 30px black;
-      z-index: 5;
-      text-align: left;
-    }
-    .modal h2 { color: #ff5252; margin-top: 0; text-align: center; }
-    .shopItem {
-      background: #252b31;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
-    }
-    .tut-section {
-      background: #252b31;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .tut-section h3 { margin: 0 0 5px 0; color: #4fc3f7; font-size: 15px; }
-    #gameOver {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.85);
+      background: rgba(0,0,0,.75);
+      border-radius: 10px;
       z-index: 10;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      line-height: 1.6;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    #gameOver h2 { font-size: 42px; color: #ff3333; margin-bottom: 10px; }
   </style>
 </head>
+
 <body>
 
-<h1>🧟 ZUMBI: NOITE DOS MORTOS</h1>
-
-<div id="hud">
-  <div class="card">
-    🔵 J1 | ❤️ <span id="hp1">100</span> | 🔫 Lv.<span id="gun1">1</span> | 💥 <span id="ammo1">20</span> | 🧟 <span id="kills1">0</span>
-  </div>
-  <div class="card">
-    🔴 J2 | ❤️ <span id="hp2">100</span> | 🔫 Lv.<span id="gun2">1</span> | 💥 <span id="ammo2">20</span> | 🧟 <span id="kills2">0</span>
-  </div>
-  <div class="card">
-    💰 J1: <span id="coins1">0</span> | 💰 J2: <span id="coins2">0</span>
-  </div>
-  <div class="card">
-    🌊 Onda: <span id="wave">1</span>
-  </div>
+<div id="info">
+  🌍 <b>Planeta Voxel Redondo</b><br>
+  🖱️ Clique e arraste para girar<br>
+  🔍 Scroll para zoom
 </div>
 
-<canvas id="game" width="1100" height="620"></canvas>
+<script type="module">
 
-<div id="controls">
-  J1: WASD mover | F atirar | R recarregar | 
-  J2: Setas mover | L atirar | K recarregar | 
-  | B = loja
-</div>
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/controls/OrbitControls.js";
 
-<button class="btn-secondary" onclick="openTutorial()">❓ Tutorial</button>
-<button onclick="restart()">🔄 Reiniciar</button>
+// CENA E FOG (NÉVOA)
+const cena = new THREE.Scene();
+cena.background = new THREE.Color(0x87ceeb);
 
-<!-- MODAL TUTORIAL -->
-<div id="tutorialModal" class="modal" style="display: block;">
-  <h2>📖 COMO JOGAR</h2>
-  
-  <div class="tut-section">
-    <h3>🎮 Controles</h3>
-    <b>🔵 Jogador 1:</b> WASD (Mover) | F (Atirar) | R (Recarregar)<br>
-    <b>🔴 Jogador 2:</b> Setas (Mover) | L (Atirar) | K (Recarregar)<br>
-    <b>🛒 Loja:</b> Aperte <b>B</b> a qualquer momento.
-  </div>
+// CÂMERA
+const camera = new THREE.PerspectiveCamera(
+  55,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 5, 15);
 
-  <div class="tut-section">
-    <h3>🎯 Objetivo</h3>
-    Sobreviva às hordas de zumbis! A cada 3 zumbis mortos, sua arma evolui automaticamente. Elimine zumbis para ganhar moedas.
-  </div>
+// RENDERIZADOR
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
 
-  <div class="tut-section">
-    <h3>🧟 Tipos de Inimigos</h3>
-    🟢 <b>Normal:</b> Equilibrado.<br>
-    🟠 <b>Rápido:</b> Corre muito, mas tem pouca vida.<br>
-    🟤 <b>Tanque:</b> Lento e muito resistente.<br>
-    🟣 <b>Chefão:</b> Aparece a cada 5 ondas!
-  </div>
+// ILUMINAÇÃO
+const luzDirecional = new THREE.DirectionalLight(0xffffff, 1.8);
+luzDirecional.position.set(12, 24, 12);
+luzDirecional.castShadow = true;
+luzDirecional.shadow.mapSize.width = 1024;
+luzDirecional.shadow.mapSize.height = 1024;
+cena.add(luzDirecional);
 
-  <div style="text-align: center; margin-top: 15px;">
-    <button class="btn-secondary" style="width: 100%; padding: 12px; font-size: 16px;" onclick="closeTutorial()">Entendi, Começar Jogo!</button>
-  </div>
-</div>
+const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.5);
+cena.add(luzAmbiente);
 
-<!-- MODAL LOJA -->
-<div id="shop" class="modal">
-  <h2>🛒 LOJA (PAUSADO)</h2>
-  <p style="text-align: center;">Compre melhorias com suas moedas.</p>
-  <div class="shopItem">
-    🔫 Melhorar arma (+ Dano / Velocidade)
-    <br>
-    <button onclick="upgradeWeapon(0)">J1 - 10 💰</button>
-    <button onclick="upgradeWeapon(1)">J2 - 10 💰</button>
-  </div>
-  <div class="shopItem">
-    💥 Mais munição (+10 Max)
-    <br>
-    <button onclick="upgradeAmmo(0)">J1 - 8 💰</button>
-    <button onclick="upgradeAmmo(1)">J2 - 8 💰</button>
-  </div>
-  <div class="shopItem">
-    ❤️ Curar Vida (+30 HP)
-    <br>
-    <button onclick="healPlayer(0)">J1 - 12 💰</button>
-    <button onclick="healPlayer(1)">J2 - 12 💰</button>
-  </div>
-  <button style="width: 100%; margin-top: 10px;" onclick="closeShop()">Fechar e Jogar</button>
-</div>
+// PLANETA
+const planeta = new THREE.Group();
+cena.add(planeta);
 
-<!-- TELA GAME OVER -->
-<div id="gameOver">
-  <h2 id="winner"></h2>
-  <p>Os mortos dominaram a noite...</p>
-  <button onclick="restart()">🔄 Jogar novamente</button>
-</div>
+// CONFIGURAÇÕES DO PLANETA
+const tamanhoBloco = 0.25; // Blocos pequenos garantem visual esférico suave
+const raioBase = 5.2;
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+// MATERIAIS DOS BLOCOS (CORES ESTILO MINECRAFT)
+const matGrama = new THREE.MeshStandardMaterial({ color: 0x47a036, roughness: 0.8 });
+const matTerra = new THREE.MeshStandardMaterial({ color: 0x795548, roughness: 0.9 });
+const matAreia = new THREE.MeshStandardMaterial({ color: 0xe0c38c, roughness: 0.9 });
+const matAgua  = new THREE.MeshStandardMaterial({ color: 0x2980b9, transparent: true, opacity: 0.8 });
 
-const keys = {};
-let isPaused = true; // Inicia pausado para o tutorial
-let gameOver = false;
+const geoBloco = new THREE.BoxGeometry(tamanhoBloco, tamanhoBloco, tamanhoBloco);
 
-document.addEventListener("keydown", function(e) {
-  const key = e.key.toLowerCase();
-  keys[key] = true;
+// GERAÇÃO DOS BLOCOS NA SUPERFÍCIE ESFÉRICA
+const limite = Math.ceil((raioBase + 1) / tamanhoBloco);
 
-  if (key === "f") shoot(0);
-  if (key === "l") shoot(1);
-  if (key === "r") reload(0);
-  if (key === "k") reload(1);
-  if (key === "b") {
-    if (document.getElementById("tutorialModal").style.display === "block") return;
-    const shop = document.getElementById("shop");
-    if (shop.style.display === "block") closeShop();
-    else openShop();
+for (let x = -limite; x <= limite; x++) {
+  for (let y = -limite; y <= limite; y++) {
+    for (let z = -limite; z <= limite; z++) {
+      const px = x * tamanhoBloco;
+      const py = y * tamanhoBloco;
+      const pz = z * tamanhoBloco;
+
+      const dist = Math.sqrt(px * px + py * py + pz * pz);
+
+      // Simula ondulação do terreno (relevo) usando funções trigonométricas
+      const variacaoTerreno = Math.sin(px * 1.2) * Math.cos(py * 1.2) * Math.sin(pz * 1.2) * 0.4;
+      const raioEfetivo = raioBase + variacaoTerreno;
+
+      // Camada externa (Grama/Areia/Água)
+      if (dist <= raioEfetivo && dist >= raioEfetivo - tamanhoBloco * 1.5) {
+        let materialUsado = matGrama;
+
+        if (variacaoTerreno < -0.1) {
+          materialUsado = matAreia; // Áreas baixas viram praia
+        }
+
+        const bloco = new THREE.Mesh(geoBloco, materialUsado);
+        bloco.position.set(px, py, pz);
+        bloco.castShadow = true;
+        bloco.receiveShadow = true;
+        planeta.add(bloco);
+      }
+      // Camada interna (Terra)
+      else if (dist < raioEfetivo - tamanhoBloco * 1.5 && dist >= raioBase - 0.8) {
+        const blocoTerra = new THREE.Mesh(geoBloco, matTerra);
+        blocoTerra.position.set(px, py, pz);
+        planeta.add(blocoTerra);
+      }
+    }
   }
-});
+}
 
-document.addEventListener("keyup", function(e) {
-  keys[e.key.toLowerCase()] = false;
-});
+// NÚCLEO INTERNO COMPACTO
+const geoNucleo = new THREE.SphereGeometry(raioBase - 0.8, 32, 32);
+const nucleo = new THREE.Mesh(geoNucleo, matTerra);
+planeta.add(nucleo);
 
-/* =========================   JOGADORES   ========================= */
-const players = [
-  {
-    x: 180,
-    y: 310,
-    color: "#2196f3",
-    hp: 100,
-    maxHp: 100,
-    weapon: 1,
-    ammo: 20,
-    maxAmmo: 20,
-    kills: 0,
-    coins: 0,
-    xp: 0,
-    cooldown: 0,
-    reload: false,
-    dirX: 1,
-    dirY: 0
-  },
-  {
-    x: 920,
-    y: 310,
-    color: "#f44336",
-    hp: 100,
-    maxHp: 100,
-    weapon: 1,
-    ammo: 20,
-    maxAmmo: 20,
-    kills: 0,
-    coins: 0,
-    xp: 0,
-    cooldown: 0,
-    reload: false,
-    dirX: -1,
-    dirY: 0
-  }
+// OCEANOS (ESFERA DE ÁGUA LÍQUIDA INTERNA)
+const geoAgua = new THREE.SphereGeometry(raioBase - 0.05, 48, 48);
+const oceano = new THREE.Mesh(geoAgua, matAgua);
+planeta.add(oceano);
+
+// ÁRVORES ESTILO MINECRAFT (ALINHADAS COM A CURVATURA)
+function criarArvore(direcao) {
+  const dir = direcao.clone().normalize();
+  const posBase = dir.clone().multiplyScalar(raioBase + 0.1);
+
+  const arvoreGroup = new THREE.Group();
+
+  // Tronco (Cubo vertical)
+  const geoTronco = new THREE.BoxGeometry(0.25, 1.0, 0.25);
+  const matTronco = new THREE.MeshStandardMaterial({ color: 0x5d4037 });
+  const tronco = new THREE.Mesh(geoTronco, matTronco);
+  tronco.position.y = 0.5;
+  tronco.castShadow = true;
+  arvoreGroup.add(tronco);
+
+  // Folhas (Bloco verde escuro)
+  const geoFolhas = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+  const matFolhas = new THREE.MeshStandardMaterial({ color: 0x2e7d32 });
+  const folhas = new THREE.Mesh(geoFolhas, matFolhas);
+  folhas.position.y = 1.1;
+  folhas.castShadow = true;
+  arvoreGroup.add(folhas);
+
+  // Ajusta rotação para apontar para fora do planeta
+  arvoreGroup.position.copy(posBase);
+  const eixoCima = new THREE.Vector3(0, 1, 0);
+  arvoreGroup.quaternion.setFromUnitVectors(eixoCima, dir);
+
+  planeta.add(arvoreGroup);
+}
+
+// DISTRIBUIÇÃO DAS ÁRVORES PELO PLANETA
+const posicoesArvores = [
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(1, 0.6, 0.4),
+  new THREE.Vector3(-0.8, 0.5, -0.6),
+  new THREE.Vector3(-0.5, -0.8, 0.4),
+  new THREE.Vector3(0.6, -0.7, -0.5),
+  new THREE.Vector3(0.3, 0.9, -0.4),
+  new THREE.Vector3(-0.9, 0.2, 0.6)
 ];
 
-let zombies = [];
-let bullets = [];
-let wave = 1;
-let spawnTimer = 0;
+posicoesArvores.forEach(p => criarArvore(p));
 
-/* =========================   ARMAS   ========================= */
-function shoot(playerNumber) {
-  if (gameOver || isPaused) return;
-  const p = players[playerNumber];
-  
-  if (p.hp <= 0 || p.reload || p.ammo <= 0 || p.cooldown > 0) return;
+// CONTROLES DE INTERAÇÃO
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 7;
+controls.maxDistance = 25;
 
-  p.ammo--;
-  p.cooldown = Math.max(4, 16 - p.weapon);
-
-  const speed = 8 + p.weapon;
-  const damage = 12 + p.weapon * 7;
-
-  bullets.push({
-    x: p.x + p.dirX * 20,
-    y: p.y + p.dirY * 20,
-    vx: p.dirX * speed,
-    vy: p.dirY * speed,
-    damage: damage,
-    owner: playerNumber
-  });
+// ANIMAÇÃO DE ROTAÇÃO
+function animar() {
+  requestAnimationFrame(animar);
+  planeta.rotation.y += 0.0015;
+  controls.update();
+  renderer.render(cena, camera);
 }
+animar();
 
-function reload(playerNumber) {
-  const p = players[playerNumber];
-  if (p.hp <= 0 || p.reload || p.ammo >= p.maxAmmo) return;
+// AJUSTE AUTOMÁTICO DE JANELA
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-  p.reload = true;
-  setTimeout(function() {
-    if (!gameOver) {
-      p.ammo = p.maxAmmo;
-      p.reload = false;
-    }
-  }, 900);
-}
-
-/* =========================   ZUMBIS   ========================= */
-function spawnZombie() {
-  const typeRoll = Math.random();
-  let type = "normal";
-
-  if (typeRoll >= 0.60 && typeRoll < 0.85) type = "rapido";
-  else if (typeRoll >= 0.85) type = "tanque";
-
-  let zombie = {
-    x: Math.random() < 0.5 ? -30 : canvas.width + 30,
-    y: 70 + Math.random() * 500,
-    type: type,
-    attackCooldown: 0
-  };
-
-  if (type === "normal") {
-    zombie.hp = 35 + wave * 3;
-    zombie.speed = 0.8 + wave * 0.02;
-    zombie.size = 18;
-  } else if (type === "rapido") {
-    zombie.hp = 25 + wave * 2;
-    zombie.speed = 1.8 + wave * 0.03;
-    zombie.size = 14;
-  } else if (type === "tanque") {
-    zombie.hp = 100 + wave * 12;
-    zombie.speed = 0.45 + wave * 0.01;
-    zombie.size = 27;
-  }
-
-  zombies.push(zombie);
-}
-
-function spawnBoss() {
-  zombies.push({
-    x: canvas.width / 2,
-    y: -40,
-    type: "boss",
-    hp: 500 + wave * 100,
-    maxHp: 500 + wave * 100,
-    speed: 0.5,
-    size: 45,
-    attackCooldown: 0
-  });
-}
-
-/* =========================   UPDATE   ========================= */
-function update() {
-  if (gameOver || isPaused) return;
-
-  /* MOVIMENTO J1 */
-  let moveX1 = 0, moveY1 = 0;
-  if (players[0].hp > 0) {
-    if (keys["w"]) moveY1 -= 1;
-    if (keys["s"]) moveY1 += 1;
-    if (keys["a"]) moveX1 -= 1;
-    if (keys["d"]) moveX1 += 1;
-
-    if (moveX1 !== 0 || moveY1 !== 0) {
-      const len = Math.hypot(moveX1, moveY1);
-      players[0].dirX = moveX1 / len;
-      players[0].dirY = moveY1 / len;
-      players[0].x += players[0].dirX * 4;
-      players[0].y += players[0].dirY * 4;
-    }
-  }
-
-  /* MOVIMENTO J2 */
-  let moveX2 = 0, moveY2 = 0;
-  if (players[1].hp > 0) {
-    if (keys["arrowup"]) moveY2 -= 1;
-    if (keys["arrowdown"]) moveY2 += 1;
-    if (keys["arrowleft"]) moveX2 -= 1;
-    if (keys["arrowright"]) moveX2 += 1;
-
-    if (moveX2 !== 0 || moveY2 !== 0) {
-      const len = Math.hypot(moveX2, moveY2);
-      players[1].dirX = moveX2 / len;
-      players[1].dirY = moveY2 / len;
-      players[1].x += players[1].dirX * 4;
-      players[1].y += players[1].dirY * 4;
-    }
-  }
-
-  /* LIMITES DE MAPA E RECARGA DE ATAQUE */
-  players.forEach(function(p) {
-    p.x = Math.max(25, Math.min(canvas.width - 25, p.x));
-    p.y = Math.max(60, Math.min(canvas.height - 25, p.y));
-    if (p.cooldown > 0) p.cooldown--;
-  });
-
-  /* SPAWN DE INIMIGOS */
-  spawnTimer++;
-  const spawnSpeed = Math.max(20, 75 - wave * 4);
-  if (spawnTimer > spawnSpeed) {
-    spawnZombie();
-    spawnTimer = 0;
-  }
-
-  /* CHEFÃO DA ONDA */
-  if (wave % 5 === 0 && zombies.length === 0 && !zombies.some(z => z.type === "boss")) {
-    spawnBoss();
-  }
-
-  /* ATUALIZAR POSIÇÃO DAS BALAS */
-  bullets.forEach(function(b) {
-    b.x += b.vx;
-    b.y += b.vy;
-  });
-
-  bullets = bullets.filter(function(b) {
-    return b.x > -50 && b.x < canvas.width + 50 && b.y > -50 && b.y < canvas.height + 50;
-  });
-
-  /* MOVIMENTO DOS ZUMBIS */
-  zombies.forEach(function(z) {
-    let target = null;
-    let d0 = players[0].hp > 0 ? Math.hypot(z.x - players[0].x, z.y - players[0].y) : Infinity;
-    let d1 = players[1].hp > 0 ? Math.hypot(z.x - players[1].x, z.y - players[1].y) : Infinity;
-
-    if (d0 < d1) target = players[0];
-    else if (d1 < d0) target = players[1];
-
-    if (target) {
-      const dx = target.x - z.x;
-      const dy = target.y - z.y;
-      const distance = Math.hypot(dx, dy);
-
-      if (distance > z.size + 18) {
-        z.x += (dx / distance) * z.speed;
-        z.y += (dy / distance) * z.speed;
-      } else {
-        if (z.attackCooldown <= 0) {
-          target.hp -= 15;
-          z.attackCooldown = 55;
-        }
-      }
-    }
-
-    if (z.attackCooldown > 0) z.attackCooldown--;
-  });
-
-  /* COLISÕES (BALA vs ZUMBI) */
-  for (let i = zombies.length - 1; i >= 0; i--) {
-    const z = zombies[i];
-    for (let j = bullets.length - 1; j >= 0; j--) {
-      const b = bullets[j];
-      const distance = Math.hypot(z.x - b.x, z.y - b.y);
-
-      if (distance < z.size + 6) {
-        z.hp -= b.damage;
-        bullets.splice(j, 1);
-
-        if (z.hp <= 0) {
-          const killer = players[b.owner];
-          killer.kills++;
-          killer.xp++;
-          killer.coins += (z.type === "boss") ? 25 : 2;
-
-          if (killer.xp % 3 === 0) {
-            killer.weapon++;
-            killer.maxAmmo += 5;
-            killer.ammo = killer.maxAmmo;
-          }
-
-          zombies.splice(i, 1);
-          break;
-        }
-      }
-    }
-  }
-
-  /* AVANÇAR DE ONDA */
-  if (zombies.length === 0 && spawnTimer > 100) {
-    wave++;
-    spawnTimer = 0;
-  }
-
-  /* VERIFICAR DERROTA */
-  players.forEach(p => { if (p.hp < 0) p.hp = 0; });
-
-  if (players[0].hp <= 0 && players[1].hp <= 0) {
-    endGame("💀 OS DOIS JOGADORES MORRERAM!");
-  }
-
-  updateHUD();
-}
-
-/* =========================   DESENHO   ========================= */
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  /* MAPA E GRADE */
-  ctx.fillStyle = "#18251a";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.strokeStyle = "#263b29";
-  for (let x = 0; x < canvas.width; x += 50) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
-    ctx.stroke();
-  }
-  for (let y = 50; y < canvas.height; y += 50) {
-    ctx.beginPath();
-    ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
-    ctx.stroke();
-  }
-
-  /* BALAS */
-  bullets.forEach(function(b) {
-    ctx.fillStyle = "#ffd740";
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, 5, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  /* ZUMBIS */
-  zombies.forEach(function(z) {
-    if (z.type === "boss") ctx.fillStyle = "#8e24aa";
-    else if (z.type === "tanque") ctx.fillStyle = "#5d4037";
-    else if (z.type === "rapido") ctx.fillStyle = "#ff9800";
-    else ctx.fillStyle = "#66bb6a";
-
-    ctx.beginPath();
-    ctx.arc(z.x, z.y, z.size, 0, Math.PI * 2);
-    ctx.fill();
-
-    /* OLHOS */
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(z.x - z.size / 3, z.y - 4, 3, 0, Math.PI * 2);
-    ctx.arc(z.x + z.size / 3, z.y - 4, 3, 0, Math.PI * 2);
-    ctx.fill();
-
-    /* BARRA DE VIDA */
-    let maxHp = 35 + wave * 3;
-    if (z.type === "boss") maxHp = z.maxHp;
-    else if (z.type === "tanque") maxHp = 100 + wave * 12;
-    else if (z.type === "rapido") maxHp = 25 + wave * 2;
-
-    ctx.fillStyle = "#222";
-    ctx.fillRect(z.x - z.size, z.y - z.size - 9, z.size * 2, 5);
-    ctx.fillStyle = "#e53935";
-    ctx.fillRect(z.x - z.size, z.y - z.size - 9, (z.size * 2) * Math.max(0, z.hp / maxHp), 5);
-  });
-
-  /* JOGADORES */
-  if (players[0].hp > 0) drawPlayer(players[0], "J1");
-  if (players[1].hp > 0) drawPlayer(players[1], "J2");
-
-  /* AVISO DE CHEFÃO */
-  if (wave % 5 === 0 && zombies.some(z => z.type === "boss")) {
-    ctx.fillStyle = "#ff1744";
-    ctx.font = "bold 28px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("👑 CHEFÃO!", canvas.width / 2, 45);
-    ctx.textAlign = "left";
-  }
-}
-
-function drawPlayer(p, name) {
-  /* SOMBRA */
-  ctx.fillStyle = "rgba(0,0,0,.4)";
-  ctx.beginPath();
-  ctx.ellipse(p.x, p.y + 20, 22, 8, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  /* PERSONAGEM */
-  ctx.fillStyle = p.color;
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, 19, 0, Math.PI * 2);
-  ctx.fill();
-
-  /* MIRA/INDICADOR DE DIREÇÃO */
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
-  ctx.lineTo(p.x + p.dirX * 25, p.y + p.dirY * 25);
-  ctx.stroke();
-  ctx.lineWidth = 1;
-
-  /* NOME */
-  ctx.fillStyle = "white";
-  ctx.font = "bold 13px Arial";
-  ctx.fillText(name, p.x - 8, p.y + 5);
-
-  /* BARRA DE VIDA */
-  ctx.fillStyle = "#222";
-  ctx.fillRect(p.x - 25, p.y - 34, 50, 7);
-  ctx.fillStyle = "#4caf50";
-  ctx.fillRect(p.x - 25, p.y - 34, 50 * (p.hp / p.maxHp), 7);
-}
-
-/* =========================   HUD E MODAIS   ========================= */
-function updateHUD() {
-  document.getElementById("hp1").textContent = players[0].hp;
-  document.getElementById("hp2").textContent = players[1].hp;
-  document.getElementById("gun1").textContent = players[0].weapon;
-  document.getElementById("gun2").textContent = players[1].weapon;
-  document.getElementById("ammo1").textContent = players[0].reload ? "..." : players[0].ammo;
-  document.getElementById("ammo2").textContent = players[1].reload ? "..." : players[1].ammo;
-  document.getElementById("kills1").textContent = players[0].kills;
-  document.getElementById("kills2").textContent = players[1].kills;
-  document.getElementById("coins1").textContent = players[0].coins;
-  document.getElementById("coins2").textContent = players[1].coins;
-  document.getElementById("wave").textContent = wave;
-}
-
-function openTutorial() {
-  isPaused = true;
-  document.getElementById("shop").style.display = "none";
-  document.getElementById("tutorialModal").style.display = "block";
-}
-
-function closeTutorial() {
-  document.getElementById("tutorialModal").style.display = "none";
-  isPaused = false;
-}
-
-function openShop() {
-  if (!gameOver) {
-    isPaused = true;
-    document.getElementById("tutorialModal").style.display = "none";
-    document.getElementById("shop").style.display = "block";
-  }
-}
-
-function closeShop() {
-  isPaused = false;
-  document.getElementById("shop").style.display = "none";
-}
-
-function upgradeWeapon(playerNumber) {
-  const p = players[playerNumber];
-  if (p.coins < 10) return alert("Você precisa de 10 moedas!");
-  p.coins -= 10;
-  p.weapon++;
-  updateHUD();
-}
-
-function upgradeAmmo(playerNumber) {
-  const p = players[playerNumber];
-  if (p.coins < 8) return alert("Você precisa de 8 moedas!");
-  p.coins -= 8;
-  p.maxAmmo += 10;
-  p.ammo = p.maxAmmo;
-  updateHUD();
-}
-
-function healPlayer(playerNumber) {
-  const p = players[playerNumber];
-  if (p.hp <= 0) return alert("Jogador está morto!");
-  if (p.coins < 12) return alert("Você precisa de 12 moedas!");
-  p.coins -= 12;
-  p.hp = Math.min(p.maxHp, p.hp + 30);
-  updateHUD();
-}
-
-/* =========================   FIM E LOOP   ========================= */
-function endGame(text) {
-  gameOver = true;
-  document.getElementById("winner").textContent = text;
-  document.getElementById("gameOver").style.display = "flex";
-}
-
-function restart() {
-  location.reload();
-}
-
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-updateHUD();
-gameLoop();
 </script>
 
 </body>
